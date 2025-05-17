@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import GameLogo from './GameLogo';
 import MenuButton from './MenuButton';
 import VersionInfo from './VersionInfo';
@@ -11,10 +12,11 @@ import { Button } from "@/components/ui/button";
 const MainMenu = () => {
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const [hasGameSaves, setHasGameSaves] = useState(false);
+  const navigate = useNavigate();
 
   const handleNewGame = () => {
     console.log('Starting new game...');
-    // TODO: Navigate to NewGameSetupScreen
+    navigate('/galaxy-map');
   };
 
   const handleLoadGame = () => {
