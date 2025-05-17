@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,25 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Game specific colors
+				space: {
+					dark: '#050510',
+					nebula: '#7700AA',
+					stars: '#D0E0F0',
+					controls: '#3388ff',
+					buttons: {
+						DEFAULT: '#1a1a2e',
+						border: '#4a4a5e',
+						hover: '#2c2c4e',
+						text: '#c0c0ff',
+						glow: '#7a7aff',
+					},
+					ui: {
+						text: '#D0E0F0',
+						subtext: '#A0B0C0',
+						version: '#8080A0',
+					}
 				}
 			},
 			borderRadius: {
@@ -84,11 +104,57 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-glow': {
+					'0%, 100%': { opacity: '0.6' },
+					'50%': { opacity: '1' },
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' },
+				},
+				'scanline': {
+					'0%': { top: '-100%', opacity: '0.1' },
+					'50%': { opacity: '0.3' },
+					'100%': { top: '100%', opacity: '0.1' },
+				},
+				'shimmer': {
+					'0%': { backgroundPosition: '-200% 50%' },
+					'100%': { backgroundPosition: '200% 50%' },
+				},
+				'stars-scroll': {
+					'0%': { backgroundPosition: '0 0' },
+					'100%': { backgroundPosition: '-100% -100%' },
+				},
+				'nebula-scroll': {
+					'0%': { backgroundPosition: '0 0' },
+					'100%': { backgroundPosition: '-200% -100%' },
+				},
+				'blink': {
+					'0%, 49%': { opacity: '1' },
+					'50%, 100%': { opacity: '0' },
+				},
+				'controls-blink': {
+					'0%': { opacity: '0.5' },
+					'50%': { opacity: '1' },
+					'100%': { opacity: '0.5' },
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+				'float': 'float 6s ease-in-out infinite',
+				'scanline': 'scanline 4s linear infinite',
+				'shimmer': 'shimmer 2s infinite linear',
+				'stars-scroll': 'stars-scroll 100s linear infinite',
+				'nebula-scroll': 'nebula-scroll 200s linear infinite',
+				'blink': 'blink 2s steps(1) infinite',
+				'controls-blink': 'controls-blink 3s linear infinite',
+			},
+			fontFamily: {
+				'pixel': ['"Press Start 2P"', 'cursive'],
+				'pixel-mono': ['monospace'],
 			}
 		}
 	},
