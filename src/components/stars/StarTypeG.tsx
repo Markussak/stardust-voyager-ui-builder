@@ -1,204 +1,193 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { StarDataTypeG } from '../../types/stars';
-import { starTypeG_Specifics } from '../../config/starsConfig';
+import React, { useEffect, useState, useRef } from 'react';
+import { StarDataTypeG, StarType } from '../../types/stars';
 
 interface StarTypeGProps {
   star: StarDataTypeG;
-  size?: number;
+  size: number;
   showDetails?: boolean;
-  interactive?: boolean;
-  onClick?: (starId: string) => void;
 }
 
-const StarTypeG: React.FC<StarTypeGProps> = ({ 
-  star, 
-  size = 300, 
-  showDetails = false, 
-  interactive = false,
-  onClick
-}) => {
-  const animationRef = useRef<number>(0);
-  const coronaRef = useRef<HTMLDivElement>(null);
-  const [activeTime, setActiveTime] = useState(0);
-  const [activeSunspots, setActiveSunspots] = useState<Array<{id: number; type: string; x: number; y: number; size: number}>>([]);
-  const [flareActive, setFlareActive] = useState(false);
+const StarTypeG: React.FC<StarTypeGProps> = ({ star, size, showDetails = false }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [rotation, setRotation] = useState(0);
+  const [activityLevel, setActivityLevel] = useState(star.activityLevel || 0.5);
 
-  // Nastavení animace rotace a dynamických prvků
+  // Efekt pro rotaci hvězdy
   useEffect(() => {
-    let lastTime = 0;
-    
-    // Simulace náhodného generování slunečních skvrn
-    generateRandomSunspots();
-    
-    // Funkce pro animaci hvězdy
-    const animate = (currentTime: number) => {
-      if (!lastTime) lastTime = currentTime;
-      const deltaTime = currentTime - lastTime;
-      lastTime = currentTime;
-      
-      setActiveTime(prev => prev + deltaTime * 0.001); // Převod na sekundy
-      
-      // Animace koróny - jemná pulzující rotace
-      if (coronaRef.current) {
-        const rotationSpeed = 0.02; // radiány za sekundu
-        coronaRef.current.style.transform = `rotate(${activeTime * rotationSpeed}rad)`;
-      }
-      
-      // Náhodné generování erupcí/výronů hmoty
-      if (Math.random() < 0.0005 && !flareActive) {
-        setFlareActive(true);
-        
-        // Po určitém čase erupce zmizí
-        setTimeout(() => {
-          setFlareActive(false);
-        }, 5000);
-      }
-      
-      animationRef.current = requestAnimationFrame(animate);
-    };
-    
-    animationRef.current = requestAnimationFrame(animate);
-    
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
+    const rotationInterval = setInterval(() => {
+      setRotation(prev => (prev + 0.1) % 360);
+    }, 100);
+    return () => clearInterval(rotationInterval);
   }, []);
 
-  // Generování náhodných slunečních skvrn
-  const generateRandomSunspots = () => {
-    const { sunspotConfig } = starTypeG_Specifics;
-    const numSpots = Math.floor(Math.random() * (sunspotConfig.maxActiveSpots - 1)) + 1;
+  // Vykreslení hvězdy pomocí Canvas API
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = size / 2;
+
+    // Vyčištění canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Vykreslení základního disku hvězdy
+    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+    gradient.addColorStop(0, '#FFFF00'); // Žluté jádro
+    gradient.addColorStop(0.8, '#FFCC00'); // Přechod do oranžova
+    gradient.addColorStop(1, '#FF9900'); // Okraj do oranžova
     
-    const spots = [];
-    for (let i = 0; i < numSpots; i++) {
-      // Preferujeme rovníkové oblasti pro skvrny
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Funkce pro vytvoření náhodné polohy na disku hvězdy
+    const randomPosition = () => {
       const angle = Math.random() * Math.PI * 2;
-      const distFromCenter = 0.3 + Math.random() * 0.5; // 30-80% od středu k okraji
-      
-      spots.push({
-        id: i,
-        type: Object.values(sunspotConfig.spots)[0].type, // Pro zjednodušení používáme jeden typ
-        x: Math.cos(angle) * distFromCenter * size/2 + size/2,
-        y: Math.sin(angle) * distFromCenter * size/2 + size/2,
-        size: Math.random() * 20 + 10 // Velikost 10-30px
-      });
+      const distance = Math.random() * radius * 0.8; // Omezení maximální vzdálenosti od středu
+      return {
+        x: centerX + Math.cos(angle) * distance,
+        y: centerY + Math.sin(angle) * distance
+      };
+    };
+
+    // Vykreslení granulace povrchu
+    ctx.globalAlpha = 0.1;
+    for (let i = 0; i < 300; i++) {
+      const pos = randomPosition();
+      const granuleSize = 1 + Math.random() * 2;
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, granuleSize, 0, Math.PI * 2);
+      ctx.fillStyle = Math.random() > 0.5 ? '#FFFFFF80' : '#FF880080';
+      ctx.fill();
     }
+    ctx.globalAlpha = 1;
+
+    // Vykreslení slunečních skvrn (více při vyšší aktivitě)
+    const spotCount = Math.floor(3 + activityLevel * 5);
+    for (let i = 0; i < spotCount; i++) {
+      const pos = randomPosition();
+      const spotSize = 3 + Math.random() * 5 * activityLevel;
+      
+      // Umbra (tmavý střed)
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, spotSize, 0, Math.PI * 2);
+      ctx.fillStyle = '#884400';
+      ctx.fill();
+      
+      // Penumbra (světlejší okraj)
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, spotSize * 1.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#AA7700';
+      ctx.globalCompositeOperation = 'destination-over';
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // Vykreslení koróny (vnější atmosféry)
+    ctx.save();
+    ctx.globalAlpha = 0.2;
+    const coronaGradient = ctx.createRadialGradient(centerX, centerY, radius, centerX, centerY, radius * 1.5);
+    coronaGradient.addColorStop(0, '#FFFF88');
+    coronaGradient.addColorStop(1, 'transparent');
     
-    setActiveSunspots(spots);
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius * 1.5, 0, Math.PI * 2);
+    ctx.fillStyle = coronaGradient;
+    ctx.fill();
+    ctx.restore();
+
+    // Vykreslení protuberancí (slunečních erupcí) při vyšší aktivitě
+    if (activityLevel > 0.3) {
+      const flareCount = Math.floor(activityLevel * 3);
+      for (let i = 0; i < flareCount; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const flareSize = radius * 0.2 + Math.random() * radius * 0.3 * activityLevel;
+        
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle);
+        ctx.translate(radius, 0);
+        
+        // Vykreslit protuberanci jako trojúhelníkový tvar
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(flareSize, -flareSize / 3);
+        ctx.lineTo(flareSize, flareSize / 3);
+        ctx.closePath();
+        
+        const flareGradient = ctx.createLinearGradient(0, 0, flareSize, 0);
+        flareGradient.addColorStop(0, '#FFAA00');
+        flareGradient.addColorStop(1, 'transparent');
+        
+        ctx.fillStyle = flareGradient;
+        ctx.globalAlpha = 0.7;
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+  }, [size, rotation, activityLevel]);
+
+  // Definice CSS stylu pro komponentu
+  const starStyles: React.CSSProperties = {
+    position: 'relative',
+    width: size,
+    height: size,
+    borderRadius: '50%',
+    filter: `blur(${size * 0.005}px) brightness(1.05)`,
+    boxShadow: `0 0 ${size * 0.2}px #FFFF80, 0 0 ${size * 0.5}px #FFCC40`
   };
 
-  // Manipulace s kliknutím
-  const handleClick = () => {
-    if (interactive && onClick) {
-      onClick(star.id);
-    }
+  const canvasStyles: React.CSSProperties = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    borderRadius: '50%'
+  };
+
+  // Definice stylu pro info-panel, pokud je zobrazen
+  const infoPanelStyles: React.CSSProperties = {
+    position: 'absolute',
+    top: '100%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    marginTop: '20px',
+    padding: '10px',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    color: 'white',
+    borderRadius: '5px',
+    maxWidth: '400px',
+    textAlign: 'center',
+    display: showDetails ? 'block' : 'none'
   };
 
   return (
-    <div 
-      className={`relative ${interactive ? 'cursor-pointer' : ''}`} 
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-      }}
-      onClick={handleClick}
-    >
-      {/* Koróna */}
-      <div 
-        ref={coronaRef}
-        className="absolute inset-0 animate-pulse"
-        style={{
-          width: `${size * 1.5}px`, // 1.5x větší než hvězda
-          height: `${size * 1.5}px`,
-          left: `-${size * 0.25}px`, // Vycentrování
-          top: `-${size * 0.25}px`,
-          background: `radial-gradient(circle, rgba(255,255,224,0.2) 0%, rgba(255,255,170,0.1) 70%, rgba(255,255,150,0) 100%)`,
-          borderRadius: '50%',
-        }}
-      />
-      
-      {/* Fotosféra - základní disk hvězdy */}
-      <div 
-        className="absolute inset-0 z-10"
-        style={{
-          background: `radial-gradient(circle, rgba(255,255,0,1) 0%, rgba(255,220,0,1) 60%, rgba(255,200,0,0.8) 80%, rgba(255,200,0,0.6) 100%)`,
-          borderRadius: '50%',
-          boxShadow: '0 0 80px rgba(255, 255, 128, 0.8)',
-          animation: 'pulse 4s ease-in-out infinite',
-        }}
-      />
-      
-      {/* Granulace povrchu - textura "vařící plazmy" */}
-      <div 
-        className="absolute inset-0 z-20 opacity-30"
-        style={{
-          borderRadius: '50%',
-          backgroundImage: `url(${starTypeG_Specifics.photosphere.granulationTexture.animation.spritesheetUrl})`,
-          backgroundSize: '160%', // Větší měřítko pro texturu
-          animation: 'granulation 10s linear infinite',
-        }}
-      />
-      
-      {/* Sluneční skvrny */}
-      {activeSunspots.map(spot => (
-        <div
-          key={spot.id}
-          className="absolute z-30"
-          style={{
-            left: `${spot.x - spot.size/2}px`,
-            top: `${spot.y - spot.size/2}px`,
-            width: `${spot.size}px`,
-            height: `${spot.size}px`,
-            borderRadius: '50%',
-            background: `radial-gradient(circle, ${starTypeG_Specifics.sunspotConfig.spots[0].umbraColor} 0%, ${starTypeG_Specifics.sunspotConfig.spots[0].penumbraColor} 70%, transparent 100%)`,
-            opacity: 0.8,
-          }}
+    <div style={{ position: 'relative' }}>
+      <div style={starStyles}>
+        <canvas 
+          ref={canvasRef} 
+          width={size} 
+          height={size}
+          style={canvasStyles}
         />
-      ))}
+      </div>
       
-      {/* Vizualizace slunečních erupcí */}
-      {flareActive && (
-        <div
-          className="absolute z-40 animate-pulse"
-          style={{
-            width: `${size * 0.4}px`,
-            height: `${size * 0.3}px`,
-            left: `${(Math.random() * 0.6 + 0.2) * size}px`,
-            top: `${(Math.random() * 0.2) * size}px`,
-            background: 'radial-gradient(ellipse at bottom, rgba(255, 160, 0, 0.8) 0%, rgba(255, 120, 0, 0.5) 60%, transparent 100%)',
-            borderRadius: '50% 50% 10% 10% / 80% 80% 20% 20%',
-            transform: `rotate(${Math.random() * 360}deg)`,
-            filter: 'blur(2px)',
-            opacity: 0.8,
-          }}
-        />
-      )}
-      
-      {/* Informační panel, pokud je zapnutý detail */}
-      {showDetails && (
-        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-2 z-50 rounded-b-full">
-          <h3 className="text-lg font-bold">{star.name}</h3>
-          <p className="text-sm">Typ: G - Žlutý trpaslík</p>
-          <p className="text-xs">{starTypeG_Specifics.sunspotConfig.maxActiveSpots} aktivních oblastí</p>
+      {showDetails && star.loreEntry && (
+        <div style={infoPanelStyles}>
+          <h3>{star.name}</h3>
+          <p>Typ: G (Žlutý trpaslík)</p>
+          <p>Aktivita: {activityLevel < 0.3 ? 'Nízká' : activityLevel < 0.7 ? 'Střední' : 'Vysoká'}</p>
         </div>
       )}
-      
-      {/* CSS pro animace */}
-      <style jsx>{`
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.02); }
-          100% { transform: scale(1); }
-        }
-        
-        @keyframes granulation {
-          0% { background-position: 0 0; }
-          100% { background-position: 100% 100%; }
-        }
-      `}</style>
     </div>
   );
 };
