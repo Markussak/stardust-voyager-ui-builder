@@ -1,90 +1,98 @@
 
+import { useNavigate } from 'react-router-dom';
 import { useGalaxy } from '../../contexts/GalaxyContext';
+import { StarSystem, StarType } from '../../types/galaxy';
 import { Button } from '../ui/button';
 
-const SystemInfoPanel = () => {
-  const { galaxy, selectedSystem, setSelectedSystem } = useGalaxy();
-  
+// Mapování typů hvězd na čitelné názvy
+const starTypeNames: Record<StarType, string> = {
+  [StarType.M_RedDwarf]: "Červený trpaslík (M)",
+  [StarType.G_YellowMainSequence]: "Žlutá hvězda hlavní posloupnosti (G)",
+  [StarType.A_White]: "Bílá hvězda (A)",
+  [StarType.O_BlueGiant]: "Modrý obr (O)",
+  [StarType.NeutronStar]: "Neutronová hvězda",
+  [StarType.BlackHole]: "Černá díra",
+  [StarType.BinarySystem]: "Binární systém",
+  [StarType.TrinarySystem]: "Trojhvězdný systém"
+};
+
+const SystemInfoPanel: React.FC = () => {
+  const { selectedSystem } = useGalaxy();
+  const navigate = useNavigate();
+
   if (!selectedSystem) return null;
-  
-  const isPlayerLocation = galaxy?.playerPosition === selectedSystem.id;
-  
+
+  const handleViewSystem = () => {
+    navigate(`/system/${selectedSystem.id}`);
+  };
+
+  const handleSetWaypoint = () => {
+    console.log(`Waypoint set to ${selectedSystem.name}`);
+    // Implementace nastavení waypointu by přišla zde
+  };
+
   return (
-    <div className="absolute right-0 top-0 h-full w-72 bg-space-dark bg-opacity-80 border-l border-space-buttons-border p-4 text-space-ui-text font-pixel-mono overflow-y-auto">
-      <div className="flex justify-between items-start mb-4">
-        <h2 className="text-xl font-bold">{selectedSystem.name}</h2>
-        <button 
-          onClick={() => setSelectedSystem(null)} 
-          className="text-space-ui-subtext hover:text-space-ui-text"
-        >
-          X
-        </button>
-      </div>
+    <div className="absolute right-4 top-4 w-80 bg-space-dark bg-opacity-90 border border-space-border rounded-lg p-4 text-space-ui-text font-pixel-mono">
+      <h2 className="text-xl font-bold mb-3">{selectedSystem.name}</h2>
       
-      <div className="mb-6">
-        <div className="flex items-center mb-2">
-          <div 
-            className="w-4 h-4 rounded-full mr-2"
-            style={{ 
-              backgroundColor: selectedSystem.starType === "M_RedDwarf" ? "#FF6666" :
-                              selectedSystem.starType === "G_YellowMainSequence" ? "#FFFF99" :
-                              selectedSystem.starType === "A_White" ? "#DDDDFF" :
-                              selectedSystem.starType === "O_BlueGiant" ? "#99CCFF" :
-                              selectedSystem.starType === "NeutronStar" ? "#FFFFFF" :
-                              selectedSystem.starType === "BlackHole" ? "#333333" :
-                              selectedSystem.starType === "BinarySystem" ? "#FFCC99" : "#FFFFFF",
-              boxShadow: `0 0 4px ${selectedSystem.starType === "M_RedDwarf" ? "#FF6666" :
-                          selectedSystem.starType === "G_YellowMainSequence" ? "#FFFF99" :
-                          selectedSystem.starType === "A_White" ? "#DDDDFF" :
-                          selectedSystem.starType === "O_BlueGiant" ? "#99CCFF" :
-                          selectedSystem.starType === "NeutronStar" ? "#FFFFFF" :
-                          selectedSystem.starType === "BlackHole" ? "#333333" :
-                          selectedSystem.starType === "BinarySystem" ? "#FFCC99" : "#FFFFFF"}`
-            }}
-          />
-          <span>Typ hvězdy: {selectedSystem.starType.replace('_', ' ')}</span>
+      <div className="space-y-2 mb-4">
+        <div className="flex justify-between">
+          <div className="opacity-70">Typ hvězdy:</div>
+          <div>{starTypeNames[selectedSystem.starType]}</div>
         </div>
         
-        <div className="mb-2">
-          <span>Počet planet: {selectedSystem.planets}</span>
+        <div className="flex justify-between">
+          <div className="opacity-70">Počet planet:</div>
+          <div>{selectedSystem.planets}</div>
         </div>
         
-        {selectedSystem.explored ? (
-          <div className="mb-2 text-green-400">Prozkoumaný systém</div>
-        ) : (
-          <div className="mb-2 text-yellow-400">Neprozkoumaný systém</div>
-        )}
+        <div className="flex justify-between">
+          <div className="opacity-70">Status:</div>
+          <div className={selectedSystem.explored ? "text-green-400" : "text-yellow-400"}>
+            {selectedSystem.explored ? "Prozkoumaný" : "Neprozkoumaný"}
+          </div>
+        </div>
         
-        {isPlayerLocation && (
-          <div className="mb-2 text-blue-400">Aktuální pozice</div>
+        {selectedSystem.controllingFaction && (
+          <div className="flex justify-between">
+            <div className="opacity-70">Frakce:</div>
+            <div>{selectedSystem.controllingFaction}</div>
+          </div>
         )}
         
         {selectedSystem.anomalyPresent && (
-          <div className="mb-2 text-purple-400">Detekována anomálie</div>
+          <div className="text-amber-400 mt-2">
+            Detekována anomálie!
+          </div>
+        )}
+        
+        {selectedSystem.resources && selectedSystem.resources.length > 0 && (
+          <div className="mt-2">
+            <div className="opacity-70">Zdroje:</div>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {selectedSystem.resources.map(resource => (
+                <span key={resource} className="bg-space-border rounded px-2 py-0.5 text-xs">
+                  {resource}
+                </span>
+              ))}
+            </div>
+          </div>
         )}
       </div>
       
-      <div className="space-y-2">
+      <div className="flex gap-2 mt-4">
         <Button 
-          variant="outline" 
-          className="w-full border-space-buttons-border text-space-ui-text hover:bg-space-buttons-hover"
+          onClick={handleSetWaypoint}
+          className="flex-1 bg-space-accent hover:bg-space-accent-hover"
         >
-          Nastavit jako cíl
+          Nastavit cíl
         </Button>
-        
-        {isPlayerLocation ? (
-          <Button className="w-full">
-            Vstoupit do systému
-          </Button>
-        ) : selectedSystem.explored ? (
-          <Button className="w-full">
-            Zahájit warp
-          </Button>
-        ) : (
-          <Button disabled className="w-full">
-            Neprozkoumaný systém
-          </Button>
-        )}
+        <Button 
+          onClick={handleViewSystem}
+          className="flex-1 bg-space-dark-accent hover:bg-space-dark-accent-hover"
+        >
+          Zobrazit systém
+        </Button>
       </div>
     </div>
   );

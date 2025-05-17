@@ -1,34 +1,51 @@
 
-import { StarSystem } from '../../types/galaxy';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { StarSystem, StarType } from '../../types/galaxy';
 
 interface SystemTooltipProps {
   system: StarSystem;
+  children?: React.ReactNode;
 }
 
-const SystemTooltip = ({ system }: SystemTooltipProps) => {
+const SystemTooltip = ({ system, children }: SystemTooltipProps) => {
+  // Mapování typů hvězd na čitelné názvy
+  const starTypeNames: Record<StarType, string> = {
+    [StarType.M_RedDwarf]: "Červený trpaslík (M)",
+    [StarType.G_YellowMainSequence]: "Žlutá hvězda hlavní posloupnosti (G)",
+    [StarType.A_White]: "Bílá hvězda (A)",
+    [StarType.O_BlueGiant]: "Modrý obr (O)",
+    [StarType.NeutronStar]: "Neutronová hvězda",
+    [StarType.BlackHole]: "Černá díra",
+    [StarType.BinarySystem]: "Binární systém",
+    [StarType.TrinarySystem]: "Trojhvězdný systém"
+  };
+
   return (
-    <Tooltip open={true}>
+    <Tooltip>
       <TooltipTrigger asChild>
-        <div className="absolute" style={{ 
-          left: 0,
-          top: 0,
-          opacity: 0, // Hidden trigger
-          pointerEvents: 'none'
-        }} />
+        {children ? children : <div className="absolute inset-0 cursor-pointer" />}
       </TooltipTrigger>
-      <TooltipContent 
-        className="bg-space-dark border border-space-buttons-border text-space-ui-text font-pixel-mono py-2 px-3"
-      >
-        <div className="font-bold">{system.name}</div>
-        <div className="text-xs">Hvězda: {system.starType.replace('_', ' ')}</div>
-        <div className="text-xs">Planet: {system.planets}</div>
-        <div className="text-xs">
-          Status: {system.explored ? "Prozkoumaný" : "Neprozkoumaný"}
+      <TooltipContent className="bg-space-dark border border-space-border p-3 rounded text-space-ui-text">
+        <div className="space-y-1">
+          <h3 className="text-lg font-pixel-mono">{system.name}</h3>
+          <div className="text-sm font-pixel-mono opacity-80">
+            <div>Typ hvězdy: {starTypeNames[system.starType]}</div>
+            <div>Planet: {system.planets}</div>
+            {system.explored ? 
+              <div className="text-space-ui-highlight">Prozkoumaný systém</div> :
+              <div className="text-yellow-500">Neprozkoumaný systém</div>
+            }
+            {system.controllingFaction && 
+              <div>Kontrolující frakce: {system.controllingFaction}</div>
+            }
+            {system.anomalyPresent && 
+              <div className="text-amber-400">Detekována anomálie</div>
+            }
+            {system.resources && system.resources.length > 0 &&
+              <div>Zdroje: {system.resources.join(', ')}</div>
+            }
+          </div>
         </div>
-        {system.anomalyPresent && (
-          <div className="text-xs text-purple-400">Detekována anomálie</div>
-        )}
       </TooltipContent>
     </Tooltip>
   );
