@@ -2,7 +2,8 @@
 import { useGalaxy } from '../../contexts/GalaxyContext';
 import { Button } from '../ui/button';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { Search, ZoomIn, ZoomOut, Filter } from 'lucide-react';
+import { Search, ZoomIn, ZoomOut, Filter, Ship } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MapControls = () => {
   const { 
@@ -12,6 +13,8 @@ const MapControls = () => {
     setZoomLevel,
     generateNewGalaxy
   } = useGalaxy();
+  
+  const navigate = useNavigate();
 
   const handleZoomIn = () => {
     setZoomLevel(Math.min(zoomLevel + 0.1, 3.0));
@@ -72,6 +75,16 @@ const MapControls = () => {
           ))}
         </div>
       </div>
+      
+      {/* Ship details button */}
+      <Button 
+        variant="outline"
+        className="border-space-buttons-border text-space-ui-text hover:bg-space-buttons-hover text-xs flex items-center gap-2"
+        onClick={() => navigate('/ship-details')}
+      >
+        <Ship className="h-3 w-3" />
+        Detaily lodi
+      </Button>
       
       {/* Regenerace galaxie */}
       <Button 

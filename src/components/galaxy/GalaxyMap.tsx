@@ -5,6 +5,7 @@ import { galaxyMapVisuals } from '../../config/galaxyConfig';
 import { StarSystem, Hyperlane } from '../../types/galaxy';
 import SystemTooltip from './SystemTooltip';
 import MapControls from './MapControls';
+import PlayerShip from './PlayerShip';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 const GalaxyMap = () => {
@@ -210,6 +211,12 @@ const GalaxyMap = () => {
         <div ref={mapRef} className="absolute inset-0">
           {renderStarSystems()}
         </div>
+
+        {/* Player ship */}
+        <PlayerShip 
+          zoomLevel={zoomLevel} 
+          panOffset={panOffset} 
+        />
         
         {/* Tooltip nad hvězdou */}
         <TooltipProvider>
