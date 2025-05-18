@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGalaxy } from '../contexts/GalaxyContext';
+import { useGalaxy, GalaxyProvider } from '../contexts/GalaxyContext';
 import StarTypeG from '../components/stars/StarTypeG';
 import { StarDataTypeG, StarType } from '../types/stars';
 import { generateStarTypeG } from '../services/StarGenerator';
@@ -11,7 +11,8 @@ import SpaceBackground from '../components/game/SpaceBackground';
 import CockpitOverlay from '../components/game/CockpitOverlay';
 import GameHUD from '../components/hud/GameHUD';
 
-const StarSystemScreen = () => {
+// Inner component that uses the GalaxyContext
+const StarSystemContent = () => {
   const navigate = useNavigate();
   const { systemId } = useParams<{ systemId: string }>();
   const { galaxy, selectedSystem } = useGalaxy();
@@ -111,6 +112,15 @@ const StarSystemScreen = () => {
       
       <VersionInfo />
     </div>
+  );
+};
+
+// Main component that provides the GalaxyProvider
+const StarSystemScreen = () => {
+  return (
+    <GalaxyProvider>
+      <StarSystemContent />
+    </GalaxyProvider>
   );
 };
 
