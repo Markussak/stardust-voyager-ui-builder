@@ -10,6 +10,7 @@ import GalaxyMapScreen from "./pages/GalaxyMapScreen";
 import NotFound from "./pages/NotFound";
 import ShipDetailsScreen from "./pages/ShipDetailsScreen";
 import StarSystemScreen from "./pages/StarSystemScreen";
+import SettingsScreen from "./pages/SettingsScreen";
 import "./App.css";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/galaxy-map" element={<GalaxyMapScreen />} />
             <Route path="/ship-details" element={<ShipDetailsScreen />} />
             <Route path="/system/:systemId" element={<StarSystemScreen />} />
+            <Route path="/settings" element={<SettingsScreen />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -26,7 +26,7 @@ const MainMenu = () => {
 
   const handleSettings = () => {
     console.log('Opening settings...');
-    // TODO: Navigate to SettingsScreen
+    navigate('/settings');
   };
 
   const handleLibrary = () => {
