@@ -7,6 +7,9 @@ import { StarDataTypeG, StarType } from '../types/stars';
 import { generateStarTypeG } from '../services/StarGenerator';
 import MenuButton from '../components/game/MenuButton';
 import VersionInfo from '../components/game/VersionInfo';
+import SpaceBackground from '../components/game/SpaceBackground';
+import CockpitOverlay from '../components/game/CockpitOverlay';
+import GameHUD from '../components/hud/GameHUD';
 
 const StarSystemScreen = () => {
   const navigate = useNavigate();
@@ -52,7 +55,11 @@ const StarSystemScreen = () => {
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-space-dark relative">
-      <div className="absolute top-4 left-4 z-10">
+      {/* Dynamic space background */}
+      <SpaceBackground />
+      
+      {/* Navigation button */}
+      <div className="absolute top-4 left-4 z-30">
         <MenuButton 
           text="ZPĚT NA MAPU" 
           onClick={handleBackToGalaxy}
@@ -60,7 +67,8 @@ const StarSystemScreen = () => {
         />
       </div>
       
-      <div className="h-full w-full flex flex-col items-center justify-center">
+      {/* Main star system content */}
+      <div className="h-full w-full flex flex-col items-center justify-center relative z-10">
         {/* Hvězda */}
         <div className="mb-8">
           <StarTypeG 
@@ -94,6 +102,12 @@ const StarSystemScreen = () => {
           )}
         </div>
       </div>
+      
+      {/* Cockpit overlay */}
+      <CockpitOverlay />
+      
+      {/* Game HUD */}
+      <GameHUD />
       
       <VersionInfo />
     </div>
