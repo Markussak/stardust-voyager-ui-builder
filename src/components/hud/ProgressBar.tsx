@@ -52,7 +52,8 @@ const ProgressBar = ({
           <Progress 
             value={percentage} 
             className="h-4 bg-opacity-40 bg-black border border-space-dark" 
-            indicatorClassName={`transition-all bg-[${getColor()}]`}
+            style={{ height: `${height}px` }}
+            indicatorStyle={{ backgroundColor: getColor() }}
           />
           {showValue && (
             <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
