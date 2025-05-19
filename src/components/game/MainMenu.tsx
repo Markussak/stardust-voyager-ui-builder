@@ -9,19 +9,23 @@ import SpaceBackground from './SpaceBackground';
 import CockpitOverlay from './CockpitOverlay';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { ShieldIcon, Users, FlaskConical, ShoppingCart, Briefcase } from 'lucide-react';
 
 const MainMenu = () => {
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
+  const [isGameStarted, setIsGameStarted] = useState(false);
   const { hasSavedGames } = useGame();
   const navigate = useNavigate();
 
   const handleNewGame = () => {
     console.log('Starting new game...');
+    setIsGameStarted(true);
     navigate('/galaxy-map');
   };
 
   const handleLoadGame = () => {
     console.log('Loading game...');
+    setIsGameStarted(true);
     // TODO: Navigate to LoadGameScreen
   };
 
@@ -43,6 +47,11 @@ const MainMenu = () => {
   const handleTrade = () => {
     console.log('Opening trade screen...');
     navigate('/trade');
+  };
+
+  const handleDiplomacy = () => {
+    console.log('Opening diplomacy screen...');
+    navigate('/diplomacy');
   };
 
   const handleLibrary = () => {
@@ -80,15 +89,42 @@ const MainMenu = () => {
         
         {/* Menu buttons */}
         <div className="flex flex-col gap-4 mt-4">
-          <MenuButton text="NOVÁ HRA" onClick={handleNewGame} />
-          <MenuButton text="NAČÍST HRU" onClick={handleLoadGame} disabled={!hasSavedGames} />
-          <MenuButton text="INVENTÁŘ" onClick={handleInventory} />
-          <MenuButton text="VÝZKUM" onClick={handleResearch} />
-          <MenuButton text="OBCHOD" onClick={handleTrade} />
-          <MenuButton text="NASTAVENÍ" onClick={handleSettings} />
-          <MenuButton text="KNIHOVNA ZNALOSTÍ" onClick={handleLibrary} />
-          <MenuButton text="TVŮRCI" onClick={handleCredits} />
-          <MenuButton text="UKONČIT HRU" onClick={handleExitGame} className="mt-4" />
+          {!isGameStarted ? (
+            <>
+              <MenuButton text="NOVÁ HRA" onClick={handleNewGame} />
+              <MenuButton text="NAČÍST HRU" onClick={handleLoadGame} disabled={!hasSavedGames} />
+              <MenuButton text="NASTAVENÍ" onClick={handleSettings} />
+              <MenuButton text="TVŮRCI" onClick={handleCredits} />
+              <MenuButton text="UKONČIT HRU" onClick={handleExitGame} className="mt-4" />
+            </>
+          ) : (
+            <>
+              <MenuButton text="NÁVRAT DO HRY" onClick={() => navigate('/galaxy-map')} />
+              <MenuButton 
+                text="INVENTÁŘ" 
+                onClick={handleInventory}
+                icon={<Briefcase size={18} />}
+              />
+              <MenuButton 
+                text="VÝZKUM" 
+                onClick={handleResearch}
+                icon={<FlaskConical size={18} />}
+              />
+              <MenuButton 
+                text="OBCHOD" 
+                onClick={handleTrade}
+                icon={<ShoppingCart size={18} />}
+              />
+              <MenuButton 
+                text="DIPLOMACIE" 
+                onClick={handleDiplomacy}
+                icon={<Users size={18} />}
+              />
+              <MenuButton text="KNIHOVNA ZNALOSTÍ" onClick={handleLibrary} />
+              <MenuButton text="NASTAVENÍ" onClick={handleSettings} />
+              <MenuButton text="UKONČIT HRU" onClick={handleExitGame} className="mt-4" />
+            </>
+          )}
         </div>
       </div>
       

@@ -1,340 +1,275 @@
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { InventoryData, ItemInstance, InventorySlot, SpecializedStorageType, ItemRarity, BaseItemData } from '../types/inventory';
-import { toast } from "sonner";
+import React, { createContext, useContext, useReducer, useState, ReactNode } from "react";
+import { InventoryItem, InventorySlotType, SpecializedStorageType } from "../types/inventory";
 
-// Mock item data - in a real app, this would come from a database or API
-const mockItems: Record<string, BaseItemData> = {
-  'iron_ore': {
-    itemId: 'iron_ore',
-    itemNameKey: 'items.iron_ore.name',
-    defaultItemName: 'Železná ruda',
-    itemDescriptionKey: 'items.iron_ore.description',
-    defaultItemDescription: 'Běžná kovová ruda těžená z asteroidů. Používá se k výrobě základních komponent.',
-    itemIconKey: 'resource_iron_ore',
-    itemTypeKey: 'item.type.resource',
-    defaultItemType: 'Surovina',
-    isStackable: true,
-    maxStackSize: 100,
-    baseValue_Credits: 10,
-    weightPerUnit: 1,
-    rarity: ItemRarity.Common
+// Initial state type definition
+interface InventoryState {
+  slots: {
+    [key: string]: InventoryItem | null;
+  };
+  selectedItemId: string | null;
+  specializedStorage: {
+    [key in SpecializedStorageType]?: {
+      [slotId: string]: InventoryItem | null;
+    };
+  };
+  filters: {
+    category: string | null;
+    search: string;
+    sortBy: 'name' | 'value' | 'weight' | 'rarity';
+    sortDirection: 'asc' | 'desc';
+  };
+}
+
+// Define the context interface
+interface InventoryContextType {
+  inventoryState: InventoryState;
+  selectItem: (itemId: string | null) => void;
+  addItem: (item: InventoryItem) => boolean;
+  removeItem: (slotId: string) => InventoryItem | null;
+  moveItem: (fromSlotId: string, toSlotId: string) => boolean;
+  updateFilters: (filters: Partial<InventoryState["filters"]>) => void;
+  clearFilters: () => void;
+  getItemById: (itemId: string) => InventoryItem | null;
+}
+
+// Initial state
+const initialInventoryState: InventoryState = {
+  slots: {
+    "slot1": {
+      id: "item1",
+      name: "Power Crystal",
+      description: "A rare energy source that powers advanced technology.",
+      type: "resource",
+      quantity: 5,
+      value: 500,
+      rarity: "rare",
+      iconSrc: "/placeholder.svg",
+    },
+    "slot2": {
+      id: "item2",
+      name: "Shield Module",
+      description: "Enhanced shield generator for spacecraft.",
+      type: "module",
+      quantity: 1,
+      value: 1200,
+      rarity: "uncommon",
+      iconSrc: "/placeholder.svg",
+    },
+    "slot3": {
+      id: "item3",
+      name: "Repair Kit",
+      description: "Basic kit for repairing hull damage.",
+      type: "consumable",
+      quantity: 3,
+      value: 150,
+      rarity: "common",
+      iconSrc: "/placeholder.svg",
+    },
+    "slot4": null,
+    "slot5": null,
+    "slot6": null,
+    "slot7": null,
+    "slot8": null,
+    "slot9": null,
+    "slot10": null,
+    "slot11": null,
+    "slot12": null
   },
-  'titanium_alloy': {
-    itemId: 'titanium_alloy',
-    itemNameKey: 'items.titanium_alloy.name',
-    defaultItemName: 'Titanová slitina',
-    itemDescriptionKey: 'items.titanium_alloy.description',
-    defaultItemDescription: 'Odolná lehká slitina. Ideální pro konstrukci trupu lodí a stanic.',
-    itemIconKey: 'resource_titanium_alloy',
-    itemTypeKey: 'item.type.component',
-    defaultItemType: 'Komponenta',
-    isStackable: true,
-    maxStackSize: 50,
-    baseValue_Credits: 45,
-    weightPerUnit: 1.5,
-    rarity: ItemRarity.Uncommon
+  selectedItemId: null,
+  specializedStorage: {
+    [SpecializedStorageType.Resources]: {
+      "resource1": {
+        id: "resource_crystal",
+        name: "Raw Crystal",
+        description: "Raw crystalline material for crafting.",
+        type: "resource",
+        quantity: 25,
+        value: 10,
+        rarity: "common",
+        iconSrc: "/placeholder.svg",
+      },
+      "resource2": {
+        id: "resource_metal",
+        name: "Refined Metal",
+        description: "Processed metal alloy.",
+        type: "resource",
+        quantity: 40,
+        value: 15,
+        rarity: "common",
+        iconSrc: "/placeholder.svg",
+      }
+    },
+    [SpecializedStorageType.Components]: {
+      "component1": {
+        id: "component_circuit",
+        name: "Circuit Board",
+        description: "Electronic component used in crafting.",
+        type: "component",
+        quantity: 8,
+        value: 75,
+        rarity: "uncommon",
+        iconSrc: "/placeholder.svg",
+      }
+    }
   },
-  'quantum_processor': {
-    itemId: 'quantum_processor',
-    itemNameKey: 'items.quantum_processor.name',
-    defaultItemName: 'Kvantový procesor',
-    itemDescriptionKey: 'items.quantum_processor.description',
-    defaultItemDescription: 'Pokročilý výpočetní komponent pro navigační systémy a AI.',
-    itemIconKey: 'component_quantum_processor',
-    itemTypeKey: 'item.type.component',
-    defaultItemType: 'Komponenta',
-    isStackable: true,
-    maxStackSize: 10,
-    baseValue_Credits: 350,
-    weightPerUnit: 0.5,
-    rarity: ItemRarity.Rare
-  },
-  'laser_cannon_mk2': {
-    itemId: 'laser_cannon_mk2',
-    itemNameKey: 'items.laser_cannon_mk2.name',
-    defaultItemName: 'Laserový kanón Mk2',
-    itemDescriptionKey: 'items.laser_cannon_mk2.description',
-    defaultItemDescription: 'Vylepšená verze standardního laserového kanónu. Vyšší účinnost a rychlost nabíjení.',
-    itemIconKey: 'module_weapon_laser_mk2',
-    itemTypeKey: 'item.type.ship_module',
-    defaultItemType: 'Lodní modul',
-    isStackable: false,
-    baseValue_Credits: 2500,
-    weightPerUnit: 12,
-    rarity: ItemRarity.Rare
-  },
-  'ancient_datapad': {
-    itemId: 'ancient_datapad',
-    itemNameKey: 'items.ancient_datapad.name',
-    defaultItemName: 'Prastarý datapad',
-    itemDescriptionKey: 'items.ancient_datapad.description',
-    defaultItemDescription: 'Záhadné zařízení s neznámou technologií. Obsahuje fragmenty prastarých textů a souřadnic.',
-    itemIconKey: 'questitem_ancient_datapad',
-    itemTypeKey: 'item.type.quest_item',
-    defaultItemType: 'Misijní předmět',
-    isStackable: false,
-    baseValue_Credits: 0,
-    rarity: ItemRarity.Artifact,
-    loreTextKey: 'items.ancient_datapad.lore',
-    defaultLoreText: 'Tento datapad byl nalezen v troskách lodi neznámého původu. Jeho pokročilá technologie naznačuje souvislost s legendárními Předchůdci.'
+  filters: {
+    category: null,
+    search: "",
+    sortBy: 'name',
+    sortDirection: 'asc'
   }
 };
 
-// Initialize mock inventory data
-const initializeInventoryData = (): InventoryData => {
-  // Create cargo hold with 24 slots (6x4 grid)
-  const cargoHoldSlots: InventorySlot[] = Array(24).fill(null).map((_, index) => ({
-    slotId: `cargo-${index}`,
-    isLocked: index >= 18 // Last row is locked initially
-  }));
-  
-  // Add some items to the cargo hold for testing
-  cargoHoldSlots[0].containedItem = {
-    itemInstanceId: 'instance-iron-1',
-    baseItemId: 'iron_ore',
-    quantity: 50
-  };
-  
-  cargoHoldSlots[1].containedItem = {
-    itemInstanceId: 'instance-titanium-1',
-    baseItemId: 'titanium_alloy',
-    quantity: 25
-  };
-  
-  cargoHoldSlots[2].containedItem = {
-    itemInstanceId: 'instance-laser-1',
-    baseItemId: 'laser_cannon_mk2',
-    quantity: 1
-  };
-
-  // Create specialized storage for each type
-  const specializedStorage: Record<SpecializedStorageType, SpecializedStorageData> = {
-    [SpecializedStorageType.RawMaterials]: {
-      type: SpecializedStorageType.RawMaterials,
-      items: [
-        {
-          itemInstanceId: 'instance-iron-2',
-          baseItemId: 'iron_ore',
-          quantity: 75
-        }
-      ]
-    },
-    [SpecializedStorageType.CraftingComponents]: {
-      type: SpecializedStorageType.CraftingComponents,
-      items: [
-        {
-          itemInstanceId: 'instance-quantum-1',
-          baseItemId: 'quantum_processor',
-          quantity: 2
-        }
-      ]
-    },
-    [SpecializedStorageType.ShipModules_Unequipped]: {
-      type: SpecializedStorageType.ShipModules_Unequipped,
-      items: []
-    },
-    [SpecializedStorageType.TradeGoods_Commodities]: {
-      type: SpecializedStorageType.TradeGoods_Commodities,
-      items: []
-    },
-    [SpecializedStorageType.QuestItems_KeyItems]: {
-      type: SpecializedStorageType.QuestItems_KeyItems,
-      items: [
-        {
-          itemInstanceId: 'instance-datapad-1',
-          baseItemId: 'ancient_datapad',
-          quantity: 1
-        }
-      ]
-    },
-    [SpecializedStorageType.Artifacts_UniqueDiscoveries]: {
-      type: SpecializedStorageType.Artifacts_UniqueDiscoveries,
-      items: []
-    }
-  };
-
-  // Calculate used capacity
-  let usedCapacity = 0;
-  cargoHoldSlots.forEach(slot => {
-    if (slot.containedItem) {
-      const item = mockItems[slot.containedItem.baseItemId];
-      usedCapacity += (item.weightPerUnit || 1) * slot.containedItem.quantity;
-    }
-  });
-
-  return {
-    cargoHold: {
-      totalCapacity: 100,
-      usedCapacity,
-      slots: cargoHoldSlots
-    },
-    specializedStorage,
-    selectedItemId: undefined,
-    filterType: undefined,
-    sortKey: undefined,
-    searchText: undefined
-  };
-};
-
-interface InventoryProviderProps {
-  children: ReactNode;
-}
-
-interface InventoryContextType {
-  inventory: InventoryData;
-  itemDatabase: Record<string, BaseItemData>;
-  selectItem: (itemInstanceId?: string) => void;
-  moveItem: (fromSlotId: string, toSlotId: string, quantity?: number) => void;
-  dropItem: (itemInstanceId: string, quantity?: number) => void;
-  useItem: (itemInstanceId: string) => void;
-  setFilter: (filterType?: string) => void;
-  setSort: (sortKey?: string) => void;
-  setSearchText: (text?: string) => void;
-  getItemById: (itemId: string) => BaseItemData | undefined;
-  getItemsByFilter: (filterType?: string, searchText?: string) => ItemInstance[];
-}
-
+// Create context
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
-export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children }) => {
-  const [inventory, setInventory] = useState<InventoryData>(initializeInventoryData);
+// Provider component
+export const InventoryProvider = ({ children }: { children: ReactNode }) => {
+  const [inventoryState, setInventoryState] = useState<InventoryState>(initialInventoryState);
 
-  // Simulate loading inventory data from storage on component mount
-  useEffect(() => {
-    const savedInventory = localStorage.getItem('playerInventory');
-    if (savedInventory) {
-      try {
-        setInventory(JSON.parse(savedInventory));
-      } catch (error) {
-        console.error('Failed to load inventory from storage:', error);
+  const selectItem = (itemId: string | null) => {
+    setInventoryState(prevState => ({
+      ...prevState,
+      selectedItemId: itemId
+    }));
+  };
+
+  const getItemById = (itemId: string): InventoryItem | null => {
+    // Check in regular slots
+    for (const slotId in inventoryState.slots) {
+      const item = inventoryState.slots[slotId];
+      if (item && item.id === itemId) {
+        return item;
       }
     }
-  }, []);
-
-  // Save inventory changes to storage
-  useEffect(() => {
-    localStorage.setItem('playerInventory', JSON.stringify(inventory));
-  }, [inventory]);
-
-  // Select an item
-  const selectItem = (itemInstanceId?: string) => {
-    setInventory(prev => ({
-      ...prev,
-      selectedItemId: itemInstanceId
-    }));
-  };
-
-  // Get item data by ID
-  const getItemById = (itemId: string): BaseItemData | undefined => {
-    return mockItems[itemId];
-  };
-
-  // Move item between slots
-  const moveItem = (fromSlotId: string, toSlotId: string, quantity?: number) => {
-    // Implementation would handle moving items between slots in the cargo hold
-    // or between cargo hold and specialized storage
-    toast.success("Předmět přemístěn");
-  };
-
-  // Drop item (destroy)
-  const dropItem = (itemInstanceId: string, quantity?: number) => {
-    // Implementation would handle removing items from inventory
-    toast.error("Předmět byl zahozen");
-  };
-
-  // Use item (consumables)
-  const useItem = (itemInstanceId: string) => {
-    // Implementation would handle using consumable items
-    toast.info("Předmět byl použit");
-  };
-
-  // Set filter for item display
-  const setFilter = (filterType?: string) => {
-    setInventory(prev => ({
-      ...prev,
-      filterType
-    }));
-  };
-
-  // Set sort method for item display
-  const setSort = (sortKey?: string) => {
-    setInventory(prev => ({
-      ...prev,
-      sortKey
-    }));
-  };
-
-  // Set search text
-  const setSearchText = (searchText?: string) => {
-    setInventory(prev => ({
-      ...prev,
-      searchText
-    }));
-  };
-
-  // Get items matching current filter and search
-  const getItemsByFilter = (filterType?: string, searchText?: string): ItemInstance[] => {
-    // Start with all items from cargo hold
-    let filteredItems: ItemInstance[] = inventory.cargoHold.slots
-      .filter(slot => slot.containedItem)
-      .map(slot => slot.containedItem as ItemInstance);
     
-    // Add items from specialized storage if no filter or if filter matches storage type
-    Object.values(inventory.specializedStorage).forEach(storage => {
-      if (!filterType || storage.type === filterType) {
-        filteredItems = [...filteredItems, ...storage.items];
+    // Check in specialized storage
+    for (const storageType in inventoryState.specializedStorage) {
+      const storage = inventoryState.specializedStorage[storageType as SpecializedStorageType];
+      if (storage) {
+        for (const slotId in storage) {
+          const item = storage[slotId];
+          if (item && item.id === itemId) {
+            return item;
+          }
+        }
       }
-    });
-    
-    // Filter by item type if specified
-    if (filterType) {
-      filteredItems = filteredItems.filter(item => {
-        const baseItem = mockItems[item.baseItemId];
-        return baseItem.itemTypeKey === filterType;
-      });
     }
     
-    // Filter by search text if specified
-    if (searchText) {
-      const searchLower = searchText.toLowerCase();
-      filteredItems = filteredItems.filter(item => {
-        const baseItem = mockItems[item.baseItemId];
-        return (
-          baseItem.defaultItemName.toLowerCase().includes(searchLower) ||
-          baseItem.defaultItemDescription.toLowerCase().includes(searchLower)
-        );
-      });
-    }
-    
-    return filteredItems;
+    return null;
   };
 
-  const value = {
-    inventory,
-    itemDatabase: mockItems,
-    selectItem,
-    moveItem,
-    dropItem,
-    useItem,
-    setFilter,
-    setSort,
-    setSearchText,
-    getItemById,
-    getItemsByFilter,
+  const addItem = (item: InventoryItem): boolean => {
+    // Find an empty slot
+    let emptySlotId: string | null = null;
+    
+    for (const slotId in inventoryState.slots) {
+      if (!inventoryState.slots[slotId]) {
+        emptySlotId = slotId;
+        break;
+      }
+    }
+    
+    if (!emptySlotId) {
+      console.log("Inventory is full");
+      return false;
+    }
+    
+    setInventoryState(prevState => ({
+      ...prevState,
+      slots: {
+        ...prevState.slots,
+        [emptySlotId!]: item
+      }
+    }));
+    
+    return true;
+  };
+
+  const removeItem = (slotId: string): InventoryItem | null => {
+    const item = inventoryState.slots[slotId];
+    
+    if (!item) {
+      console.log("No item in this slot");
+      return null;
+    }
+    
+    setInventoryState(prevState => ({
+      ...prevState,
+      slots: {
+        ...prevState.slots,
+        [slotId]: null
+      }
+    }));
+    
+    return item;
+  };
+
+  const moveItem = (fromSlotId: string, toSlotId: string): boolean => {
+    const fromItem = inventoryState.slots[fromSlotId];
+    const toItem = inventoryState.slots[toSlotId];
+    
+    if (!fromItem) {
+      console.log("No item to move");
+      return false;
+    }
+    
+    setInventoryState(prevState => ({
+      ...prevState,
+      slots: {
+        ...prevState.slots,
+        [fromSlotId]: toItem,
+        [toSlotId]: fromItem
+      }
+    }));
+    
+    return true;
+  };
+
+  const updateFilters = (filters: Partial<InventoryState["filters"]>) => {
+    setInventoryState(prevState => ({
+      ...prevState,
+      filters: {
+        ...prevState.filters,
+        ...filters
+      }
+    }));
+  };
+
+  const clearFilters = () => {
+    setInventoryState(prevState => ({
+      ...prevState,
+      filters: {
+        category: null,
+        search: "",
+        sortBy: 'name',
+        sortDirection: 'asc'
+      }
+    }));
   };
 
   return (
-    <InventoryContext.Provider value={value}>
+    <InventoryContext.Provider value={{
+      inventoryState,
+      selectItem,
+      addItem,
+      removeItem,
+      moveItem,
+      updateFilters,
+      clearFilters,
+      getItemById
+    }}>
       {children}
     </InventoryContext.Provider>
   );
 };
 
+// Custom hook to use the inventory context
 export const useInventory = (): InventoryContextType => {
   const context = useContext(InventoryContext);
   if (context === undefined) {
-    throw new Error('useInventory must be used within an InventoryProvider');
+    throw new Error("useInventory must be used within an InventoryProvider");
   }
   return context;
 };
