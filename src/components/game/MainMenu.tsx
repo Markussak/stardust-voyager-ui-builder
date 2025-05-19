@@ -40,6 +40,11 @@ const MainMenu = () => {
     navigate('/research');
   };
 
+  const handleTrade = () => {
+    console.log('Opening trade screen...');
+    navigate('/trade');
+  };
+
   const handleLibrary = () => {
     console.log('Opening knowledge library...');
     // TODO: Navigate to KnowledgeLibraryScreen
@@ -79,6 +84,7 @@ const MainMenu = () => {
           <MenuButton text="NAČÍST HRU" onClick={handleLoadGame} disabled={!hasSavedGames} />
           <MenuButton text="INVENTÁŘ" onClick={handleInventory} />
           <MenuButton text="VÝZKUM" onClick={handleResearch} />
+          <MenuButton text="OBCHOD" onClick={handleTrade} />
           <MenuButton text="NASTAVENÍ" onClick={handleSettings} />
           <MenuButton text="KNIHOVNA ZNALOSTÍ" onClick={handleLibrary} />
           <MenuButton text="TVŮRCI" onClick={handleCredits} />

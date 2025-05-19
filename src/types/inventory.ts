@@ -70,3 +70,31 @@ export interface InventoryData {
   sortKey?: string;
   searchText?: string;
 }
+
+// Types for tradeable items
+export interface TradeableItemData extends BaseItemData {
+  isCommodity?: boolean;
+  baseMarketDemand?: 'Low' | 'Medium' | 'High' | 'VeryHigh';
+  priceFluctuationFactor?: number;
+  legalStatus?: 'Legal' | 'GrayMarket' | 'Illegal';
+  producedByFactionIds?: string[];
+  consumedByFactionIds?: string[];
+}
+
+export interface CurrencyDefinition {
+  id: string;
+  displayNameKey: string;
+  defaultDisplayName: string;
+  iconAsset: string;
+  playerBalance_StoreKey: string;
+}
+
+export interface TraderInventoryItemSlot {
+  itemId: string;
+  itemInstance: ItemInstance;
+  buyPrice_ForPlayer: number;
+  stockQuantity?: number;
+  isUnavailable_OutOfStock?: boolean;
+  marketDemandIndicator?: 'Low' | 'Medium' | 'High';
+}
+

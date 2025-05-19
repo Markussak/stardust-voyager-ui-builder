@@ -15,6 +15,7 @@ import SettingsScreen from "./pages/SettingsScreen";
 import InventoryScreen from "./pages/InventoryScreen";
 import ShipEditorScreen from "./pages/ShipEditorScreen";
 import ResearchTreeScreen from "./pages/ResearchTreeScreen";
+import TradeScreen from "./pages/TradeScreen";
 import "./App.css";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/inventory" element={<InventoryScreen />} />
               <Route path="/ship-editor" element={<ShipEditorScreen />} />
               <Route path="/research" element={<ResearchTreeScreen />} />
+              <Route path="/trade" element={<TradeScreen />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

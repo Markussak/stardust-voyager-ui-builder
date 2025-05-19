@@ -1,161 +1,119 @@
 
 import React from 'react';
 import { useInventory } from "@/contexts/InventoryContext";
-import { ItemRarity } from "@/types/inventory";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Package, Info, Trash2, Layers } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ItemRarity, SpecializedStorageType } from "@/types/inventory";
 
 interface ItemDetailsPanelProps {
   itemInstanceId: string;
 }
 
-const getRarityColor = (rarity: ItemRarity): string => {
-  switch (rarity) {
-    case ItemRarity.Common: return "text-neutral-400";
-    case ItemRarity.Uncommon: return "text-green-500";
-    case ItemRarity.Rare: return "text-blue-500";
-    case ItemRarity.Epic: return "text-purple-500";
-    case ItemRarity.Legendary: return "text-amber-500";
-    case ItemRarity.Artifact: return "text-yellow-400";
-    default: return "text-neutral-400";
-  }
-};
-
-const getRarityText = (rarity: ItemRarity): string => {
-  switch (rarity) {
-    case ItemRarity.Common: return "Běžný";
-    case ItemRarity.Uncommon: return "Neobvyklý";
-    case ItemRarity.Rare: return "Vzácný";
-    case ItemRarity.Epic: return "Epický";
-    case ItemRarity.Legendary: return "Legendární";
-    case ItemRarity.Artifact: return "Artefakt";
-    default: return "Neznámý";
-  }
-};
-
 const ItemDetailsPanel: React.FC<ItemDetailsPanelProps> = ({ itemInstanceId }) => {
-  const { inventory, itemDatabase, dropItem, useItem } = useInventory();
+  const { inventory, itemDatabase, getItemById } = useInventory();
   
-  // Find the item instance across all storage types
-  const findItemInstance = () => {
-    // Check cargo hold
-    for (const slot of inventory.cargoHold.slots) {
-      if (slot.containedItem?.itemInstanceId === itemInstanceId) {
-        return slot.containedItem;
+  // Find the item instance in the inventory
+  let itemInstance = null;
+  
+  // Check cargo hold first
+  for (const slot of inventory.cargoHold.slots) {
+    if (slot.containedItem && slot.containedItem.itemInstanceId === itemInstanceId) {
+      itemInstance = slot.containedItem;
+      break;
+    }
+  }
+  
+  // If not found in cargo hold, check specialized storage
+  if (!itemInstance) {
+    for (const storageType of Object.values(SpecializedStorageType)) {
+      const storage = inventory.specializedStorage[storageType];
+      const foundItem = storage.items.find(item => item.itemInstanceId === itemInstanceId);
+      if (foundItem) {
+        itemInstance = foundItem;
+        break;
       }
     }
-    
-    // Check specialized storage
-    for (const storageType in inventory.specializedStorage) {
-      const storage = inventory.specializedStorage[storageType as SpecializedStorageType];
-      const found = storage.items.find(item => item.itemInstanceId === itemInstanceId);
-      if (found) {
-        return found;
-      }
-    }
-    
-    return undefined;
-  };
-  
-  const itemInstance = findItemInstance();
+  }
   
   if (!itemInstance) {
     return (
-      <div className="h-full flex items-center justify-center text-space-ui-subtext">
-        <p>Předmět nenalezen</p>
+      <div className="h-full flex items-center justify-center">
+        <p className="text-space-ui-subtext">Položka nebyla nalezena</p>
       </div>
     );
   }
   
-  const baseItem = itemDatabase[itemInstance.baseItemId];
-  
-  if (!baseItem) {
+  const itemData = getItemById(itemInstance.baseItemId);
+  if (!itemData) {
     return (
-      <div className="h-full flex items-center justify-center text-space-ui-subtext">
-        <p>Chyba při načítání dat předmětu</p>
+      <div className="h-full flex items-center justify-center">
+        <p className="text-space-ui-subtext">Neplatná položka</p>
       </div>
     );
   }
   
-  const rarityColorClass = getRarityColor(baseItem.rarity);
-  const rarityText = getRarityText(baseItem.rarity);
+  // Helper function to get color based on rarity
+  const getRarityColor = (rarity: ItemRarity) => {
+    switch (rarity) {
+      case ItemRarity.Common: return 'text-gray-200';
+      case ItemRarity.Uncommon: return 'text-green-400';
+      case ItemRarity.Rare: return 'text-blue-400';
+      case ItemRarity.Epic: return 'text-purple-400';
+      case ItemRarity.Legendary: return 'text-yellow-400';
+      case ItemRarity.Artifact: return 'text-red-400';
+      default: return 'text-gray-200';
+    }
+  };
   
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-center mb-4">
-        <div className="w-12 h-12 mr-3 bg-space-buttons border border-space-buttons-border flex items-center justify-center">
-          <Package size={24} />
+        <div className="h-16 w-16 mr-4 bg-space-buttons flex items-center justify-center text-2xl">
+          {itemData.defaultItemName.charAt(0)}
         </div>
-        <div className="flex-1">
-          <h3 className="text-lg font-pixel">{baseItem.defaultItemName}</h3>
+        <div>
+          <h3 className="text-xl font-pixel">{itemData.defaultItemName}</h3>
           <div className="flex items-center">
-            <Badge variant="outline" className="mr-2">{baseItem.defaultItemType}</Badge>
-            <span className={`text-xs ${rarityColorClass}`}>{rarityText}</span>
+            <span className={`text-sm ${getRarityColor(itemData.rarity)}`}>{itemData.rarity}</span>
+            <span className="mx-2 text-space-ui-subtext">•</span>
+            <span className="text-sm text-space-ui-subtext">{itemData.defaultItemType}</span>
           </div>
         </div>
       </div>
       
-      <ScrollArea className="flex-1">
-        <div className="space-y-4">
-          <div className="space-y-1">
-            <div className="text-xs text-space-ui-subtext">Popis:</div>
-            <p className="text-sm">{baseItem.defaultItemDescription}</p>
-          </div>
-          
-          {itemInstance.quantity > 1 && (
-            <div className="space-y-1">
-              <div className="text-xs text-space-ui-subtext">Množství:</div>
-              <p className="text-sm">{itemInstance.quantity}</p>
-            </div>
-          )}
-          
-          <div className="space-y-1">
-            <div className="text-xs text-space-ui-subtext">Hodnota:</div>
-            <p className="text-sm">{baseItem.baseValue_Credits} kreditů{itemInstance.quantity > 1 ? ` (celkem: ${baseItem.baseValue_Credits * itemInstance.quantity})` : ''}</p>
-          </div>
-          
-          {baseItem.weightPerUnit && (
-            <div className="space-y-1">
-              <div className="text-xs text-space-ui-subtext">Hmotnost:</div>
-              <p className="text-sm">{baseItem.weightPerUnit} jednotek{itemInstance.quantity > 1 ? ` (celkem: ${baseItem.weightPerUnit * itemInstance.quantity})` : ''}</p>
-            </div>
-          )}
-          
-          {baseItem.defaultLoreText && (
-            <div className="space-y-1 pt-2 border-t border-space-buttons-border">
-              <div className="text-xs text-space-ui-subtext flex items-center">
-                <Info size={12} className="mr-1" /> Podrobnosti:
-              </div>
-              <p className="text-sm italic text-space-ui-subtext">{baseItem.defaultLoreText}</p>
-            </div>
-          )}
-        </div>
-      </ScrollArea>
+      <div className="border-t border-space-buttons-border pt-3 mb-4">
+        <p className="text-sm text-space-ui-text">
+          {itemData.defaultItemDescription}
+        </p>
+      </div>
       
-      <div className="mt-4 flex gap-2 justify-end">
-        {baseItem.isStackable && itemInstance.quantity > 1 && (
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => {}} 
-            className="border-space-buttons-border hover:bg-space-buttons-hover"
-          >
-            <Layers size={16} className="mr-1" />
-            Rozdělit
-          </Button>
+      <div className="flex flex-wrap gap-4 mb-4">
+        {itemData.isStackable && (
+          <div className="bg-space-dark/60 px-3 py-2 rounded-md">
+            <span className="text-xs text-space-ui-subtext">Množství</span>
+            <p className="text-space-ui-text">{itemInstance.quantity} / {itemData.maxStackSize || "∞"}</p>
+          </div>
         )}
         
-        <Button 
-          variant="destructive" 
-          size="sm"
-          onClick={() => dropItem(itemInstanceId)}
-        >
-          <Trash2 size={16} className="mr-1" />
-          Zahodit
-        </Button>
+        {itemData.weightPerUnit && (
+          <div className="bg-space-dark/60 px-3 py-2 rounded-md">
+            <span className="text-xs text-space-ui-subtext">Váha za jednotku</span>
+            <p className="text-space-ui-text">{itemData.weightPerUnit}</p>
+          </div>
+        )}
+        
+        <div className="bg-space-dark/60 px-3 py-2 rounded-md">
+          <span className="text-xs text-space-ui-subtext">Hodnota</span>
+          <p className="text-space-ui-text">{itemData.baseValue_Credits} kr.</p>
+        </div>
       </div>
+      
+      {itemData.defaultLoreText && (
+        <div className="mt-auto pt-3 border-t border-space-buttons-border">
+          <h4 className="text-sm text-space-ui-subtext mb-1">Informace:</h4>
+          <p className="text-sm italic text-space-ui-text/80">
+            {itemData.defaultLoreText}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
