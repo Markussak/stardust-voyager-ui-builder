@@ -35,6 +35,11 @@ const MainMenu = () => {
     navigate('/settings');
   };
 
+  const handleResearch = () => {
+    console.log('Opening research tree...');
+    navigate('/research');
+  };
+
   const handleLibrary = () => {
     console.log('Opening knowledge library...');
     // TODO: Navigate to KnowledgeLibraryScreen
@@ -73,6 +78,7 @@ const MainMenu = () => {
           <MenuButton text="NOVÁ HRA" onClick={handleNewGame} />
           <MenuButton text="NAČÍST HRU" onClick={handleLoadGame} disabled={!hasSavedGames} />
           <MenuButton text="INVENTÁŘ" onClick={handleInventory} />
+          <MenuButton text="VÝZKUM" onClick={handleResearch} />
           <MenuButton text="NASTAVENÍ" onClick={handleSettings} />
           <MenuButton text="KNIHOVNA ZNALOSTÍ" onClick={handleLibrary} />
           <MenuButton text="TVŮRCI" onClick={handleCredits} />

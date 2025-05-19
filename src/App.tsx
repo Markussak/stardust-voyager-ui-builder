@@ -14,6 +14,7 @@ import StarSystemScreen from "./pages/StarSystemScreen";
 import SettingsScreen from "./pages/SettingsScreen";
 import InventoryScreen from "./pages/InventoryScreen";
 import ShipEditorScreen from "./pages/ShipEditorScreen";
+import ResearchTreeScreen from "./pages/ResearchTreeScreen";
 import "./App.css";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/settings" element={<SettingsScreen />} />
               <Route path="/inventory" element={<InventoryScreen />} />
               <Route path="/ship-editor" element={<ShipEditorScreen />} />
+              <Route path="/research" element={<ResearchTreeScreen />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
