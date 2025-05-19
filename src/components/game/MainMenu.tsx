@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
+import { useGame } from '@/contexts/GameContext';
 import GameLogo from './GameLogo';
 import MenuButton from './MenuButton';
 import VersionInfo from './VersionInfo';
@@ -11,7 +12,7 @@ import { Button } from "@/components/ui/button";
 
 const MainMenu = () => {
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
-  const [hasGameSaves, setHasGameSaves] = useState(false);
+  const { hasSavedGames } = useGame();
   const navigate = useNavigate();
 
   const handleNewGame = () => {
@@ -22,6 +23,11 @@ const MainMenu = () => {
   const handleLoadGame = () => {
     console.log('Loading game...');
     // TODO: Navigate to LoadGameScreen
+  };
+
+  const handleInventory = () => {
+    console.log('Opening inventory...');
+    navigate('/inventory');
   };
 
   const handleSettings = () => {
@@ -65,7 +71,8 @@ const MainMenu = () => {
         {/* Menu buttons */}
         <div className="flex flex-col gap-4 mt-4">
           <MenuButton text="NOVÁ HRA" onClick={handleNewGame} />
-          <MenuButton text="NAČÍST HRU" onClick={handleLoadGame} disabled={!hasGameSaves} />
+          <MenuButton text="NAČÍST HRU" onClick={handleLoadGame} disabled={!hasSavedGames} />
+          <MenuButton text="INVENTÁŘ" onClick={handleInventory} />
           <MenuButton text="NASTAVENÍ" onClick={handleSettings} />
           <MenuButton text="KNIHOVNA ZNALOSTÍ" onClick={handleLibrary} />
           <MenuButton text="TVŮRCI" onClick={handleCredits} />
