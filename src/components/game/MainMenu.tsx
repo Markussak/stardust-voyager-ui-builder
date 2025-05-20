@@ -9,7 +9,7 @@ import SpaceBackground from './SpaceBackground';
 import CockpitOverlay from './CockpitOverlay';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ShieldIcon, Users, FlaskConical, ShoppingCart, Briefcase } from 'lucide-react';
+import { ShieldIcon, Users, FlaskConical, ShoppingCart, Briefcase, BookOpen } from 'lucide-react';
 
 const MainMenu = () => {
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
@@ -56,7 +56,7 @@ const MainMenu = () => {
 
   const handleLibrary = () => {
     console.log('Opening knowledge library...');
-    // TODO: Navigate to KnowledgeLibraryScreen
+    navigate('/knowledge-library');
   };
 
   const handleCredits = () => {
@@ -120,7 +120,11 @@ const MainMenu = () => {
                 onClick={handleDiplomacy}
                 icon={<Users size={18} />}
               />
-              <MenuButton text="KNIHOVNA ZNALOSTÍ" onClick={handleLibrary} />
+              <MenuButton 
+                text="KNIHOVNA ZNALOSTÍ" 
+                onClick={handleLibrary}
+                icon={<BookOpen size={18} />}
+              />
               <MenuButton text="NASTAVENÍ" onClick={handleSettings} />
               <MenuButton text="UKONČIT HRU" onClick={handleExitGame} className="mt-4" />
             </>

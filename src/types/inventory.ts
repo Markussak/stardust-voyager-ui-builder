@@ -1,100 +1,54 @@
 
-import { Vector2D } from './galaxy';
-
-export enum ItemRarity {
-  Common = "Common",
-  Uncommon = "Uncommon",
-  Rare = "Rare",
-  Epic = "Epic",
-  Legendary = "Legendary",
-  Artifact = "Artifact" // Pro unikátní příběhové předměty
+export enum ItemType {
+  Resource = "resource",
+  Component = "component",
+  Artifact = "artifact",
+  Consumable = "consumable",
+  Module = "module",
+  Special = "special"
 }
 
 export enum SpecializedStorageType {
-  RawMaterials = "RawMaterials",
-  CraftingComponents = "CraftingComponents",
-  ShipModules_Unequipped = "ShipModules_Unequipped",
-  TradeGoods_Commodities = "TradeGoods_Commodities",
-  QuestItems_KeyItems = "QuestItems_KeyItems",
-  Artifacts_UniqueDiscoveries = "Artifacts_UniqueDiscoveries"
+  Resources = "resources",
+  Components = "components",
+  Artifacts = "artifacts"
 }
 
-export interface BaseItemData {
-  itemId: string;
-  itemNameKey: string;
-  defaultItemName: string;
-  itemDescriptionKey: string;
-  defaultItemDescription: string;
-  itemIconKey: string;
-  itemTypeKey: string;
-  defaultItemType: string;
-  isStackable: boolean;
-  maxStackSize?: number;
-  baseValue_Credits: number;
-  weightPerUnit?: number;
-  rarity: ItemRarity;
-  loreTextKey?: string;
-  defaultLoreText?: string;
-}
-
-export interface ItemInstance {
-  itemInstanceId: string;
-  baseItemId: string;
+export interface InventoryItem {
+  id: string;
+  name: string;
   quantity: number;
-  // Additional item instance properties could go here
+  type: ItemType | string;
+  icon: string;
+  value: number;
+  description: string;
 }
 
 export interface InventorySlot {
-  slotId: string;
-  containedItem?: ItemInstance;
-  isLocked?: boolean;
-  slotTypeRestriction?: string[];
+  itemId: string | null;
+  quantity: number;
 }
 
-export interface CargoHoldData {
-  totalCapacity: number;
+export interface SpecializedStorage {
+  items: InventoryItem[];
+  maxCapacity: number;
   usedCapacity: number;
-  slots: InventorySlot[];
 }
 
-export interface SpecializedStorageData {
-  type: SpecializedStorageType;
-  items: ItemInstance[];
+export interface InventoryContextType {
+  inventory: Record<string, SpecializedStorage>;
+  selectedItemId: string | null;
+  selectItem: (itemId: string | null) => void;
+  findItem: (itemId: string) => InventoryItem | null;
+  getTotalCapacity: () => number;
+  getUsedCapacity: () => number;
+  addItem: (itemId: string, quantity: number, storageType: SpecializedStorageType) => void;
+  removeItem: (itemId: string, quantity: number) => void;
+  itemDatabase: Record<string, Omit<InventoryItem, 'quantity'>>;
+  filter: ItemType | null;
+  setFilter: (filter: ItemType | null) => void;
+  sort: 'name' | 'quantity' | 'value';
+  setSort: (sort: 'name' | 'quantity' | 'value') => void;
+  searchText: string;
+  setSearchText: (text: string) => void;
 }
-
-export interface InventoryData {
-  cargoHold: CargoHoldData;
-  specializedStorage: Record<SpecializedStorageType, SpecializedStorageData>;
-  selectedItemId?: string;
-  filterType?: string;
-  sortKey?: string;
-  searchText?: string;
-}
-
-// Types for tradeable items
-export interface TradeableItemData extends BaseItemData {
-  isCommodity?: boolean;
-  baseMarketDemand?: 'Low' | 'Medium' | 'High' | 'VeryHigh';
-  priceFluctuationFactor?: number;
-  legalStatus?: 'Legal' | 'GrayMarket' | 'Illegal';
-  producedByFactionIds?: string[];
-  consumedByFactionIds?: string[];
-}
-
-export interface CurrencyDefinition {
-  id: string;
-  displayNameKey: string;
-  defaultDisplayName: string;
-  iconAsset: string;
-  playerBalance_StoreKey: string;
-}
-
-export interface TraderInventoryItemSlot {
-  itemId: string;
-  itemInstance: ItemInstance;
-  buyPrice_ForPlayer: number;
-  stockQuantity?: number;
-  isUnavailable_OutOfStock?: boolean;
-  marketDemandIndicator?: 'Low' | 'Medium' | 'High';
-}
-

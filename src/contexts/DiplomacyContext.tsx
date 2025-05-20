@@ -1,7 +1,7 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-// Types from the specification
+// Define the FactionId enum from the prompt
 export enum FactionId {
   Player = "player",
   SolarConfederacy = "solar_confederacy",
@@ -12,38 +12,25 @@ export enum FactionId {
   Guardians_AncientAI = "guardians_ancient_ai",
 }
 
+// Define the DiplomaticStatus enum from the prompt
 export enum DiplomaticStatus {
   War = "War",
   Hostile = "Hostile",
   Neutral = "Neutral",
-  Amity_NonAggressionPact = "Amity_NonAggressionPact",
-  Friendly_TradeAgreement = "Friendly_TradeAgreement",
-  Ally_DefensivePact = "Ally_DefensivePact",
-  Vassal = "Vassal",
-  Overlord = "Overlord"
+  Amity_NonAggressionPact = "Amity_NonAggressionPact", // Přátelství / Pakt o neútočení
+  Friendly_TradeAgreement = "Friendly_TradeAgreement", // Přátelský / Obchodní dohoda
+  Ally_DefensivePact = "Ally_DefensivePact", // Spojenec / Obranný pakt
+  Vassal = "Vassal", // Vazal
+  Overlord = "Overlord" // Nadvládce
 }
 
 export interface Treaty {
-  type: string;
-  startTurn: number;
-  duration: number; // -1 for indefinite
-  iconAsset: string;
-}
-
-export interface Faction {
-  id: FactionId;
+  id: string;
   name: string;
-  governmentType: string;
   description: string;
-  color: string;
-  logoAsset: string;
-  leaderPortraitAsset?: string;
-  power: {
-    military: number; // 0-100
-    economic: number; // 0-100
-    technological: number; // 0-100
-  };
-  discovered: boolean;
+  effectDescription: string;
+  duration: number; // In turns or -1 for permanent
+  icon: string;
 }
 
 export interface FactionRelation {
@@ -53,274 +40,216 @@ export interface FactionRelation {
   treaties: Treaty[];
 }
 
-interface DiplomacyState {
-  factions: Record<FactionId, Faction>;
-  playerRelations: Record<FactionId, FactionRelation>;
-  selectedFactionId: FactionId | null;
-  aiRelations: Record<string, DiplomaticStatus>; // Key format: "faction1Id_faction2Id"
+export interface Faction {
+  id: FactionId;
+  name: string;
+  governmentType: string;
+  description: string;
+  color: string;
+  leaderName?: string;
+  leaderPortrait?: string;
+  discovered: boolean;
+  powerLevel: {
+    military: number;
+    economy: number;
+    technology: number;
+  };
 }
 
-interface DiplomacyContextType {
-  diplomacyState: DiplomacyState;
+export interface DiplomacyContextType {
+  diplomacyState: {
+    factions: Record<FactionId, Faction>;
+    playerRelations: Record<FactionId, FactionRelation>;
+    selectedFactionId: FactionId | null;
+  };
   selectFaction: (factionId: FactionId) => void;
-  updateRelation: (factionId: FactionId, status: DiplomaticStatus, relationChange?: number) => void;
-  addTreaty: (factionId: FactionId, treaty: Treaty) => void;
-  removeTreaty: (factionId: FactionId, treatyType: string) => void;
+  // Additional methods will be added as needed
 }
 
-// Initial mock data
-const initialDiplomacyState: DiplomacyState = {
-  factions: {
-    [FactionId.SolarConfederacy]: {
-      id: FactionId.SolarConfederacy,
-      name: "Solar Confederacy",
-      governmentType: "Democratic Federation",
-      description: "The Solar Confederacy is a democratic alliance of human colonies centered around the original solar system. They value peace, trade, and technological advancement.",
-      color: "#3388ff",
-      logoAsset: "/placeholder.svg",
-      leaderPortraitAsset: "/placeholder.svg",
-      power: {
-        military: 70,
-        economic: 85,
-        technological: 80,
-      },
-      discovered: true
-    },
-    [FactionId.KrallEmpire]: {
-      id: FactionId.KrallEmpire,
-      name: "Krall Empire",
-      governmentType: "Militaristic Autocracy",
-      description: "The Krall Empire is a militaristic regime that values strength and conquest. Their society is hierarchical and focused on expansion.",
-      color: "#cc2200",
-      logoAsset: "/placeholder.svg",
-      leaderPortraitAsset: "/placeholder.svg",
-      power: {
-        military: 90,
-        economic: 60,
-        technological: 65,
-      },
-      discovered: true
-    },
-    [FactionId.CultOfTheNexus]: {
-      id: FactionId.CultOfTheNexus,
-      name: "Cult of the Nexus",
-      governmentType: "Theocratic Order",
-      description: "The Cult of the Nexus is a secretive organization that worships ancient stellar phenomena. They seek to understand and harness cosmic energy.",
-      color: "#9b87f5",
-      logoAsset: "/placeholder.svg",
-      leaderPortraitAsset: "/placeholder.svg",
-      power: {
-        military: 40,
-        economic: 50,
-        technological: 90,
-      },
-      discovered: true
-    },
-    [FactionId.FreeTradersSyndicate]: {
-      id: FactionId.FreeTradersSyndicate,
-      name: "Free Traders Syndicate",
-      governmentType: "Mercantile Coalition",
-      description: "The Free Traders Syndicate is a loose coalition of merchants, entrepreneurs, and independent traders who value free commerce and profit.",
-      color: "#ffaa00",
-      logoAsset: "/placeholder.svg",
-      leaderPortraitAsset: "/placeholder.svg",
-      power: {
-        military: 50,
-        economic: 95,
-        technological: 70,
-      },
-      discovered: true
-    },
-    [FactionId.PirateClan_RedMasks]: {
-      id: FactionId.PirateClan_RedMasks,
-      name: "Red Masks Pirate Clan",
-      governmentType: "Criminal Syndicate",
-      description: "The Red Masks are a notorious pirate clan operating in the fringes of civilized space. They prey on merchant vessels and raid unprotected colonies.",
-      color: "#cc0000",
-      logoAsset: "/placeholder.svg",
-      leaderPortraitAsset: "/placeholder.svg",
-      power: {
-        military: 60,
-        economic: 40,
-        technological: 50,
-      },
-      discovered: false
-    },
-    [FactionId.Guardians_AncientAI]: {
-      id: FactionId.Guardians_AncientAI,
-      name: "Ancient AI Guardians",
-      governmentType: "Autonomous Collective",
-      description: "The Guardians are remnants of an ancient civilization, now existing as sentient AI systems that protect certain regions of space and ancient technology.",
-      color: "#00ccaa",
-      logoAsset: "/placeholder.svg",
-      leaderPortraitAsset: "/placeholder.svg",
-      power: {
-        military: 85,
-        economic: 20,
-        technological: 100,
-      },
-      discovered: false
-    },
-    [FactionId.Player]: {
-      id: FactionId.Player,
-      name: "Your Faction",
-      governmentType: "Independent",
-      description: "Your faction of independent explorers and traders, seeking fortune and adventure in the galaxy.",
-      color: "#00ff88",
-      logoAsset: "/placeholder.svg",
-      power: {
-        military: 30,
-        economic: 40,
-        technological: 50,
-      },
-      discovered: true
-    },
+// Create the context
+const DiplomacyContext = createContext<DiplomacyContextType | undefined>(undefined);
+
+// Dummy faction data for initial setup
+const mockFactions: Record<FactionId, Faction> = {
+  [FactionId.Player]: {
+    id: FactionId.Player,
+    name: "Star Dust Voyagers",
+    governmentType: "Player Faction",
+    description: "Your faction of intrepid explorers and traders.",
+    color: "#33AAFF",
+    discovered: true,
+    powerLevel: {
+      military: 50,
+      economy: 50,
+      technology: 50
+    }
   },
-  playerRelations: {
-    [FactionId.SolarConfederacy]: {
-      factionId: FactionId.SolarConfederacy,
-      status: DiplomaticStatus.Neutral,
-      relationValue: 20,
-      treaties: [],
-    },
-    [FactionId.KrallEmpire]: {
-      factionId: FactionId.KrallEmpire,
-      status: DiplomaticStatus.Hostile,
-      relationValue: -30,
-      treaties: [],
-    },
-    [FactionId.CultOfTheNexus]: {
-      factionId: FactionId.CultOfTheNexus,
-      status: DiplomaticStatus.Neutral,
-      relationValue: 0,
-      treaties: [],
-    },
-    [FactionId.FreeTradersSyndicate]: {
-      factionId: FactionId.FreeTradersSyndicate,
-      status: DiplomaticStatus.Friendly_TradeAgreement,
-      relationValue: 50,
-      treaties: [
-        {
-          type: "trade_agreement",
-          startTurn: 10,
-          duration: -1,
-          iconAsset: "/placeholder.svg",
-        }
-      ],
-    },
-    [FactionId.PirateClan_RedMasks]: {
-      factionId: FactionId.PirateClan_RedMasks,
-      status: DiplomaticStatus.War,
-      relationValue: -80,
-      treaties: [],
-    },
-    [FactionId.Guardians_AncientAI]: {
-      factionId: FactionId.Guardians_AncientAI,
-      status: DiplomaticStatus.Neutral,
-      relationValue: 10,
-      treaties: [],
-    },
+  [FactionId.SolarConfederacy]: {
+    id: FactionId.SolarConfederacy,
+    name: "Solární Konfederace",
+    governmentType: "Democratic Alliance",
+    description: "A coalition of democratic planets promoting peace and trade.",
+    color: "#3366FF",
+    leaderName: "Prezident Aaren Solus",
+    leaderPortrait: "assets/images/factions/portraits/solar_confederacy_leader_01.png",
+    discovered: true,
+    powerLevel: {
+      military: 70,
+      economy: 80,
+      technology: 75
+    }
   },
-  selectedFactionId: null,
-  aiRelations: {
-    "solar_confederacy_krall_empire": DiplomaticStatus.Hostile,
-    "solar_confederacy_cult_of_the_nexus": DiplomaticStatus.Neutral,
-    "solar_confederacy_free_traders_syndicate": DiplomaticStatus.Friendly_TradeAgreement,
-    "krall_empire_cult_of_the_nexus": DiplomaticStatus.Hostile,
-    "krall_empire_free_traders_syndicate": DiplomaticStatus.Neutral,
-    "cult_of_the_nexus_free_traders_syndicate": DiplomaticStatus.Neutral,
+  [FactionId.KrallEmpire]: {
+    id: FactionId.KrallEmpire,
+    name: "Impérium Krall",
+    governmentType: "Militaristic Empire",
+    description: "A warrior empire focused on conquest and honor.",
+    color: "#CC3333",
+    leaderName: "Imperátor Drakk III",
+    leaderPortrait: "assets/images/factions/portraits/krall_empire_leader_01.png",
+    discovered: true,
+    powerLevel: {
+      military: 90,
+      economy: 60,
+      technology: 65
+    }
+  },
+  [FactionId.CultOfTheNexus]: {
+    id: FactionId.CultOfTheNexus,
+    name: "Kult Nexusu",
+    governmentType: "Theocratic Order",
+    description: "Mysterious cult worshipping ancient technology and cosmic entities.",
+    color: "#9933CC",
+    leaderName: "Velký Hierarcha Zorak",
+    leaderPortrait: "assets/images/factions/portraits/cult_nexus_leader_01.png",
+    discovered: true,
+    powerLevel: {
+      military: 60,
+      economy: 50,
+      technology: 85
+    }
+  },
+  [FactionId.FreeTradersSyndicate]: {
+    id: FactionId.FreeTradersSyndicate,
+    name: "Syndikát Volných Obchodníků",
+    governmentType: "Mercantile Network",
+    description: "An alliance of traders and merchants controlling key trade routes.",
+    color: "#FFCC33",
+    leaderName: "Velkoobchodník Sylla",
+    leaderPortrait: "assets/images/factions/portraits/free_traders_leader_01.png",
+    discovered: true,
+    powerLevel: {
+      military: 40,
+      economy: 95,
+      technology: 65
+    }
+  },
+  [FactionId.PirateClan_RedMasks]: {
+    id: FactionId.PirateClan_RedMasks,
+    name: "Klan Červených Masek",
+    governmentType: "Pirate Collective",
+    description: "Notorious pirates preying on trade routes and isolated colonies.",
+    color: "#CC0000",
+    leaderName: "Kapitán Bloodclaw",
+    leaderPortrait: "assets/images/factions/portraits/red_masks_leader_01.png",
+    discovered: false,
+    powerLevel: {
+      military: 55,
+      economy: 40,
+      technology: 30
+    }
+  },
+  [FactionId.Guardians_AncientAI]: {
+    id: FactionId.Guardians_AncientAI,
+    name: "Strážci",
+    governmentType: "Advanced AI Collective",
+    description: "Ancient AI entities guarding remnants of a long-lost civilization.",
+    color: "#00CCAA",
+    discovered: false,
+    powerLevel: {
+      military: 85,
+      economy: 20,
+      technology: 100
+    }
   }
 };
 
-const DiplomacyContext = createContext<DiplomacyContextType | undefined>(undefined);
+// Mock player relations data
+const mockPlayerRelations: Record<FactionId, FactionRelation> = {
+  [FactionId.Player]: {
+    factionId: FactionId.Player,
+    status: DiplomaticStatus.Neutral, // Self relation
+    relationValue: 0,
+    treaties: []
+  },
+  [FactionId.SolarConfederacy]: {
+    factionId: FactionId.SolarConfederacy,
+    status: DiplomaticStatus.Neutral,
+    relationValue: 30,
+    treaties: []
+  },
+  [FactionId.KrallEmpire]: {
+    factionId: FactionId.KrallEmpire,
+    status: DiplomaticStatus.Hostile,
+    relationValue: -40,
+    treaties: []
+  },
+  [FactionId.CultOfTheNexus]: {
+    factionId: FactionId.CultOfTheNexus,
+    status: DiplomaticStatus.Neutral,
+    relationValue: 10,
+    treaties: []
+  },
+  [FactionId.FreeTradersSyndicate]: {
+    factionId: FactionId.FreeTradersSyndicate,
+    status: DiplomaticStatus.Friendly_TradeAgreement,
+    relationValue: 60,
+    treaties: []
+  },
+  [FactionId.PirateClan_RedMasks]: {
+    factionId: FactionId.PirateClan_RedMasks,
+    status: DiplomaticStatus.War,
+    relationValue: -80,
+    treaties: []
+  },
+  [FactionId.Guardians_AncientAI]: {
+    factionId: FactionId.Guardians_AncientAI,
+    status: DiplomaticStatus.Neutral,
+    relationValue: 0,
+    treaties: []
+  }
+};
 
-export const DiplomacyProvider: React.FC<{children: ReactNode}> = ({ children }) => {
-  const [diplomacyState, setDiplomacyState] = useState<DiplomacyState>(initialDiplomacyState);
+// Create the provider component
+export const DiplomacyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [selectedFactionId, setSelectedFactionId] = useState<FactionId | null>(null);
 
+  // Function to select a faction
   const selectFaction = (factionId: FactionId) => {
-    setDiplomacyState(prevState => ({
-      ...prevState,
-      selectedFactionId: factionId
-    }));
+    setSelectedFactionId(factionId);
   };
 
-  const updateRelation = (factionId: FactionId, status: DiplomaticStatus, relationChange: number = 0) => {
-    setDiplomacyState(prevState => {
-      const currentRelation = prevState.playerRelations[factionId];
-      if (!currentRelation) return prevState;
-
-      const newRelationValue = Math.max(-100, Math.min(100, currentRelation.relationValue + relationChange));
-      
-      return {
-        ...prevState,
-        playerRelations: {
-          ...prevState.playerRelations,
-          [factionId]: {
-            ...currentRelation,
-            status,
-            relationValue: newRelationValue
-          }
-        }
-      };
-    });
-  };
-
-  const addTreaty = (factionId: FactionId, treaty: Treaty) => {
-    setDiplomacyState(prevState => {
-      const currentRelation = prevState.playerRelations[factionId];
-      if (!currentRelation) return prevState;
-      
-      // Remove any existing treaty of the same type
-      const filteredTreaties = currentRelation.treaties.filter(t => t.type !== treaty.type);
-      
-      return {
-        ...prevState,
-        playerRelations: {
-          ...prevState.playerRelations,
-          [factionId]: {
-            ...currentRelation,
-            treaties: [...filteredTreaties, treaty]
-          }
-        }
-      };
-    });
-  };
-
-  const removeTreaty = (factionId: FactionId, treatyType: string) => {
-    setDiplomacyState(prevState => {
-      const currentRelation = prevState.playerRelations[factionId];
-      if (!currentRelation) return prevState;
-      
-      return {
-        ...prevState,
-        playerRelations: {
-          ...prevState.playerRelations,
-          [factionId]: {
-            ...currentRelation,
-            treaties: currentRelation.treaties.filter(t => t.type !== treatyType)
-          }
-        }
-      };
-    });
+  const value: DiplomacyContextType = {
+    diplomacyState: {
+      factions: mockFactions,
+      playerRelations: mockPlayerRelations,
+      selectedFactionId
+    },
+    selectFaction
   };
 
   return (
-    <DiplomacyContext.Provider value={{
-      diplomacyState,
-      selectFaction,
-      updateRelation,
-      addTreaty,
-      removeTreaty
-    }}>
+    <DiplomacyContext.Provider value={value}>
       {children}
     </DiplomacyContext.Provider>
   );
 };
 
+// Custom hook for using the diplomacy context
 export const useDiplomacy = (): DiplomacyContextType => {
   const context = useContext(DiplomacyContext);
-  if (!context) {
-    throw new Error("useDiplomacy must be used within a DiplomacyProvider");
+  if (context === undefined) {
+    throw new Error('useDiplomacy must be used within a DiplomacyProvider');
   }
   return context;
 };
