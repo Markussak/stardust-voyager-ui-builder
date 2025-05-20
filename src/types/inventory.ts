@@ -14,6 +14,15 @@ export enum SpecializedStorageType {
   Artifacts = "artifacts"
 }
 
+export enum ItemRarity {
+  Common = "common",
+  Uncommon = "uncommon",
+  Rare = "rare",
+  Epic = "epic",
+  Legendary = "legendary",
+  Unique = "unique"
+}
+
 export interface InventoryItem {
   id: string;
   name: string;
@@ -22,17 +31,26 @@ export interface InventoryItem {
   icon: string;
   value: number;
   description: string;
+  rarity?: ItemRarity;
+  defaultItemName?: string;
+  defaultItemType?: string;
+  isStackable?: boolean;
+  baseValue_Credits?: number;
 }
 
 export interface InventorySlot {
   itemId: string | null;
   quantity: number;
+  containedItem?: string;
+  isLocked?: boolean;
 }
 
 export interface SpecializedStorage {
   items: InventoryItem[];
   maxCapacity: number;
   usedCapacity: number;
+  slots?: InventorySlot[];
+  totalCapacity?: number;
 }
 
 export interface InventoryContextType {
@@ -51,4 +69,5 @@ export interface InventoryContextType {
   setSort: (sort: 'name' | 'quantity' | 'value') => void;
   searchText: string;
   setSearchText: (text: string) => void;
+  getItemById?: (itemId: string) => InventoryItem | null;
 }
