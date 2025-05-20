@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { 
   CombatSystemConfig, 
@@ -9,7 +8,17 @@ import {
 } from '@/types/combat';
 import { toast } from "sonner";
 import { useShipMovement } from './ShipMovementContext';
-import { ShipModuleData } from '@/types/ship-editor';
+import { ShipModuleData, ShipModuleType } from '@/types/ship-editor';
+import { ItemRarity } from '@/types/inventory';
+
+// Define enum for FactionId since it's being used but not found in the types
+enum FactionId {
+  Player = "player",
+  Pirates = "pirates",
+  Syndicate = "syndicate",
+  Federation = "federation",
+  Empire = "empire"
+}
 
 // Default combat system configuration
 const defaultCombatSystemConfig: CombatSystemConfig = {
@@ -70,8 +79,8 @@ const sampleWeaponDefinitions: Record<string, WeaponModuleDefinition> = {
     isStackable: false,
     baseValue_Credits: 1500,
     weightPerUnit: 8,
-    rarity: "common",
-    moduleType: "Weapon_Laser_Small",
+    rarity: ItemRarity.Common,
+    moduleType: ShipModuleType.Weapon_Laser_Small,
     slotTypeRequired: "Weapon_Small",
     weaponType: "Laser_Pulse",
     damageOutput: {
@@ -117,8 +126,8 @@ const sampleWeaponDefinitions: Record<string, WeaponModuleDefinition> = {
     isStackable: false,
     baseValue_Credits: 2500,
     weightPerUnit: 10,
-    rarity: "common",
-    moduleType: "Weapon_Missile_Large",
+    rarity: ItemRarity.Common,
+    moduleType: ShipModuleType.Weapon_Missile_Large,
     slotTypeRequired: "Weapon_Small",
     weaponType: "MissileLauncher_Homing",
     damageOutput: {
@@ -169,7 +178,7 @@ const initialPlayerCombatState: CombatComponent = {
   shield_RechargeDelaySec: 3,
   armor_Rating: 10,
   isHostileToPlayer: false,
-  factionId: "player",
+  factionId: FactionId.Player,
   equippedWeaponSlots: [
     { slotId: "weapon_slot_front_small_01", weaponModuleId: "weapon_laser_pulse_mk1", currentHeat: 0 }
   ],
@@ -279,7 +288,7 @@ export const CombatSystemProvider: React.FC<CombatSystemProviderProps> = ({ chil
     }
 
     // Get the weapon definition
-    const weaponDef = weaponDefinitions[weaponSlot.weaponModuleId];
+    const weaponDef = sampleWeaponDefinitions[weaponSlot.weaponModuleId];
     if (!weaponDef) {
       console.error(`Weapon definition for ${weaponSlot.weaponModuleId} not found`);
       return;
@@ -421,7 +430,7 @@ export const CombatSystemProvider: React.FC<CombatSystemProviderProps> = ({ chil
       shield_Max: 40,
       shield_RegenRatePerSec: 0.5,
       isHostileToPlayer: true,
-      factionId: "pirates",
+      factionId: FactionId.Pirates,
       equippedWeaponSlots: [
         { slotId: "weapon_slot_front_small_01", weaponModuleId: "weapon_laser_pulse_mk1" }
       ],
@@ -442,7 +451,7 @@ export const CombatSystemProvider: React.FC<CombatSystemProviderProps> = ({ chil
     const weaponSlot = playerCombatState.equippedWeaponSlots.find(slot => slot.slotId === slotId);
     if (!weaponSlot) return 0;
 
-    const weaponDef = weaponDefinitions[weaponSlot.weaponModuleId];
+    const weaponDef = sampleWeaponDefinitions[weaponSlot.weaponModuleId];
     if (!weaponDef || !weaponDef.rateOfFire_PerSec) return 0;
 
     const totalCooldown = 1 / weaponDef.rateOfFire_PerSec;
@@ -458,7 +467,7 @@ export const CombatSystemProvider: React.FC<CombatSystemProviderProps> = ({ chil
     const weaponSlot = playerCombatState.equippedWeaponSlots.find(slot => slot.slotId === slotId);
     if (!weaponSlot) return 'no_ammo';
     
-    const weaponDef = weaponDefinitions[weaponSlot.weaponModuleId];
+    const weaponDef = sampleWeaponDefinitions[weaponSlot.weaponModuleId];
     if (!weaponDef) return 'no_ammo';
     
     // Here we could check for ammo, energy, etc.
@@ -476,7 +485,7 @@ export const CombatSystemProvider: React.FC<CombatSystemProviderProps> = ({ chil
     const weaponSlot = playerCombatState.equippedWeaponSlots.find(slot => slot.slotId === weaponSlotId);
     if (!weaponSlot) return false;
     
-    const weaponDef = weaponDefinitions[weaponSlot.weaponModuleId];
+    const weaponDef = sampleWeaponDefinitions[weaponSlot.weaponModuleId];
     if (!weaponDef) return false;
     
     const distance = getDistanceToTarget(targetId);
