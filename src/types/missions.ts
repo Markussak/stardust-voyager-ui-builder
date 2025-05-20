@@ -1,3 +1,4 @@
+
 import { Vector2D } from './galaxy';
 import { FactionId } from './diplomacy';
 
@@ -48,7 +49,7 @@ export enum RequirementType {
   CollectItem = "CollectItem",
   DefeatEnemies = "DefeatEnemies",
   DeliverItem = "DeliverItem",
-  Reach определённаяReputation = "Reach определённаяReputation",
+  ReachReputation = "ReachReputation",  // Fixed the Cyrillic characters
   ScanObject = "ScanObject",
   TalkToNPC = "TalkToNPC",
   CompleteMissions = "CompleteMissions",
@@ -88,5 +89,5 @@ export enum RequirementType {
   DefensiveAlliance = "DefensiveAlliance",
   DeclareWar = "DeclareWar",
   SignTreaty = "SignTreaty",
-  DeliverCargo = "DeliverCargo",
+  DeliverCargo = "DeliverCargo"
 }
