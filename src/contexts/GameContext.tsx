@@ -1,35 +1,75 @@
 
-import { createContext, useContext, ReactNode, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
+import { GameContextType, GameSettings } from '../types/game';
 
-interface GameProviderProps {
-  children: ReactNode;
-}
-
-interface GameContextType {
-  hasSavedGames: boolean;
-  setHasSavedGames: (value: boolean) => void;
-}
+const defaultSettings: GameSettings = {
+  graphics: {
+    resolution: 'native',
+    displayMode: 'fullscreen',
+    vsync: true,
+    textureQuality: 'high',
+    shadowQuality: 'medium',
+    particleQuality: 'high',
+    bloom: true,
+    gravitationalLensing: true,
+    colorblindMode: 'none'
+  },
+  sound: {
+    masterVolume: 80,
+    musicVolume: 70,
+    sfxVolume: 100,
+    uiSounds: true,
+    ambientSounds: true
+  },
+  controls: {
+    keyBindings: {}
+  }
+};
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
-export const GameProvider = ({ children }: GameProviderProps) => {
-  const [hasSavedGames, setHasSavedGames] = useState(false);
+export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [settings, setSettings] = useState<GameSettings>(defaultSettings);
 
-  const value = {
-    hasSavedGames,
-    setHasSavedGames,
+  const startNewGame = () => {
+    setIsGameStarted(true);
+    // Additional game initialization logic would go here
+    console.log("Starting new game");
+  };
+
+  const exitGame = () => {
+    setIsGameStarted(false);
+    // Additional game cleanup logic would go here
+    console.log("Exiting game");
+  };
+
+  const updateSettings = (category: string, key: string, value: any) => {
+    setSettings(prevSettings => ({
+      ...prevSettings,
+      [category]: {
+        ...prevSettings[category as keyof GameSettings],
+        [key]: value
+      }
+    }));
   };
 
   return (
-    <GameContext.Provider value={value}>
+    <GameContext.Provider value={{
+      isGameStarted,
+      startNewGame,
+      exitGame,
+      settings,
+      updateSettings
+    }}>
       {children}
     </GameContext.Provider>
   );
 };
 
-export const useGame = (): GameContextType => {
+export const useGame = () => {
   const context = useContext(GameContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useGame must be used within a GameProvider');
   }
   return context;

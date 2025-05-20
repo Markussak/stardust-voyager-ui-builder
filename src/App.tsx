@@ -22,6 +22,7 @@ import TradeScreen from "./pages/TradeScreen";
 import DiplomacyScreen from "./pages/DiplomacyScreen";
 import KnowledgeLibraryScreen from "./pages/KnowledgeLibraryScreen";
 import MissionLogScreen from "./pages/MissionLogScreen";
+import ShipTestScreen from "./pages/ShipTestScreen";
 import "./App.css";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
                     <Route path="/diplomacy" element={<DiplomacyScreen />} />
                     <Route path="/knowledge-library" element={<KnowledgeLibraryScreen />} />
                     <Route path="/mission-log" element={<MissionLogScreen />} />
+                    <Route path="/ship-test" element={<ShipTestScreen />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>

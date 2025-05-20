@@ -1,16 +1,32 @@
 
+export interface GameSettings {
+  graphics: {
+    resolution: string;
+    displayMode: string;
+    vsync: boolean;
+    textureQuality: string;
+    shadowQuality: string;
+    particleQuality: string;
+    bloom: boolean;
+    gravitationalLensing: boolean;
+    colorblindMode: string;
+  };
+  sound: {
+    masterVolume: number;
+    musicVolume: number;
+    sfxVolume: number;
+    uiSounds: boolean;
+    ambientSounds: boolean;
+  };
+  controls: {
+    keyBindings: Record<string, string>;
+  };
+}
+
 export interface GameContextType {
   isGameStarted: boolean;
   startNewGame: () => void;
   exitGame: () => void;
-  gameSettings: GameSettings;
-  updateSetting: (key: string, value: any) => void;
-}
-
-export interface GameSettings {
-  soundVolume: number;
-  musicVolume: number;
-  graphicsQuality: 'low' | 'medium' | 'high';
-  language: string;
-  keyBindings: Record<string, string>;
+  settings: GameSettings;
+  updateSettings: (category: string, key: string, value: any) => void;
 }

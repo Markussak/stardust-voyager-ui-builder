@@ -1,53 +1,32 @@
 
-import { ReactNode } from 'react';
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { Button } from '@/components/ui/button';
 
 interface MenuButtonProps {
-  text: string;
-  onClick: () => void;
+  onClick?: () => void;
   disabled?: boolean;
   className?: string;
-  icon?: ReactNode;
-  iconPosition?: 'left' | 'right';
+  text?: string;
+  children?: React.ReactNode;
 }
 
-const MenuButton = ({ 
-  text, 
+const MenuButton: React.FC<MenuButtonProps> = ({ 
   onClick, 
   disabled = false, 
-  className = '',
-  icon,
-  iconPosition = 'left'
-}: MenuButtonProps) => {
-
-  const handleClick = () => {
-    if (!disabled) {
-      // TODO: Add sound effect here
-      onClick();
-    }
-  };
-
-  const handleMouseOver = () => {
-    // TODO: Add hover sound effect
-  };
-
+  className = "",
+  text,
+  children
+}) => {
   return (
-    <button
-      className={cn(
-        "menu-button w-[200px]",
-        disabled && "opacity-50 cursor-not-allowed hover:bg-space-buttons hover:border-space-buttons-border",
-        className
-      )}
-      onClick={handleClick}
-      onMouseOver={handleMouseOver}
+    <Button
+      onClick={onClick}
       disabled={disabled}
+      className={`w-full py-3 font-pixel text-white bg-space-buttons border border-space-buttons-border 
+      hover:bg-space-buttons-hover hover:border-space-buttons-glow transition-all duration-300
+      disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
-      <div className="flex items-center justify-center gap-2">
-        {icon && iconPosition === 'left' && <div>{icon}</div>}
-        <span>{text}</span>
-        {icon && iconPosition === 'right' && <div>{icon}</div>}
-      </div>
-    </button>
+      {children || text}
+    </Button>
   );
 };
 

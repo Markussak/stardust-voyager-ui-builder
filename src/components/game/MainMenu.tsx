@@ -48,6 +48,10 @@ const MainMenu: React.FC = () => {
               Diplomacie
             </MenuButton>
             
+            <MenuButton onClick={() => navigate('/ship-test')}>
+              Test Ovládání Lodi
+            </MenuButton>
+            
             <MenuButton onClick={exitGame}>
               Ukončit Hru
             </MenuButton>

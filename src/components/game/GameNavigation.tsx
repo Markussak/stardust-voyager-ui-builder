@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
-import { Map, Package, Book, Flask, Users, FileText, LogOut } from 'lucide-react';
+import { Map, Package, Book, ChevronRight, Users, FileText, LogOut } from 'lucide-react';
 
 const GameNavigation: React.FC = () => {
   const { isGameStarted } = useGame();
@@ -56,7 +56,7 @@ const GameNavigation: React.FC = () => {
             asChild
           >
             <Link to="/research">
-              <Flask className="h-4 w-4 mr-1" />
+              <ChevronRight className="h-4 w-4 mr-1" />
               Výzkum
             </Link>
           </Button>
