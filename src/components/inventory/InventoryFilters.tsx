@@ -23,6 +23,13 @@ const InventoryFilters = () => {
     setSearchText(searchValue);
   };
   
+  // Helper function to safely check filter type
+  const isFilterType = (filterType: any, itemType: ItemType | null): boolean => {
+    if (filterType === null && itemType === null) return true;
+    if (typeof filterType === 'string' && filterType === itemType) return true;
+    return false;
+  };
+  
   return (
     <div className="bg-space-dark bg-opacity-80 border border-space-buttons-border rounded-lg p-3">
       <div className="flex flex-wrap gap-3 items-center">
@@ -40,7 +47,7 @@ const InventoryFilters = () => {
             </Button>
             <Button 
               size="sm" 
-              variant={inventory.filterType === ItemType.Resource ? "default" : "outline"}
+              variant={isFilterType(inventory.filterType, ItemType.Resource) ? "default" : "outline"}
               onClick={() => setFilter(ItemType.Resource)}
               className="text-xs py-1 h-auto"
             >
@@ -48,7 +55,7 @@ const InventoryFilters = () => {
             </Button>
             <Button 
               size="sm" 
-              variant={inventory.filterType === ItemType.Component ? "default" : "outline"}
+              variant={isFilterType(inventory.filterType, ItemType.Component) ? "default" : "outline"}
               onClick={() => setFilter(ItemType.Component)}
               className="text-xs py-1 h-auto"
             >
@@ -56,7 +63,7 @@ const InventoryFilters = () => {
             </Button>
             <Button 
               size="sm" 
-              variant={inventory.filterType === ItemType.Module ? "default" : "outline"}
+              variant={isFilterType(inventory.filterType, ItemType.Module) ? "default" : "outline"}
               onClick={() => setFilter(ItemType.Module)}
               className="text-xs py-1 h-auto"
             >
@@ -64,7 +71,7 @@ const InventoryFilters = () => {
             </Button>
             <Button 
               size="sm" 
-              variant={inventory.filterType === ItemType.Special ? "default" : "outline"}
+              variant={isFilterType(inventory.filterType, ItemType.Special) ? "default" : "outline"}
               onClick={() => setFilter(ItemType.Special)}
               className="text-xs py-1 h-auto"
             >
@@ -81,7 +88,7 @@ const InventoryFilters = () => {
           <Label htmlFor="sort-select" className="mr-2 text-xs">Třídit dle:</Label>
           <Select 
             onValueChange={(value: string) => setSort(value)}
-            defaultValue={inventory.sortKey || "name"}
+            defaultValue={typeof inventory.sortKey === 'string' ? inventory.sortKey : "name"}
           >
             <SelectTrigger className="w-[140px] h-8 text-xs" id="sort-select">
               <SelectValue placeholder="Název A-Z" />

@@ -1,11 +1,11 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { 
   InventoryContextType, 
   InventoryItem,
   InventorySlot,
   ItemType,
-  SpecializedStorageType
+  SpecializedStorageType,
+  ItemRarity
 } from '../types/inventory';
 
 interface InventoryProviderProps {
@@ -64,7 +64,8 @@ const mockInventory = {
   searchText: ''
 };
 
-const mockItemDatabase = {
+// Define the item database with proper types
+const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
   titanium: { id: 'titanium', baseItemId: 'titanium', name: 'Titanium', type: 'resource', icon: 'titanium', value: 50, description: 'A strong, lightweight metal', defaultItemName: 'Titanium', defaultItemType: 'Resource', defaultItemDescription: 'A strong, lightweight metal', isStackable: true, maxStackSize: 999, baseValue_Credits: 50 },
   crystal: { id: 'crystal', baseItemId: 'crystal', name: 'Crystal', type: 'resource', icon: 'crystal', value: 100, description: 'An energy-focusing crystal', defaultItemName: 'Crystal', defaultItemType: 'Resource', defaultItemDescription: 'An energy-focusing crystal', isStackable: true, maxStackSize: 999, baseValue_Credits: 100 },
   fuel: { id: 'fuel', baseItemId: 'fuel', name: 'Fuel', type: 'resource', icon: 'fuel', value: 30, description: 'Spacecraft propellant', defaultItemName: 'Fuel', defaultItemType: 'Resource', defaultItemDescription: 'Spacecraft propellant', isStackable: true, maxStackSize: 999, baseValue_Credits: 30 },
@@ -72,7 +73,7 @@ const mockItemDatabase = {
   engine_part: { id: 'engine_part', baseItemId: 'engine_part', name: 'Engine Component', type: 'component', icon: 'engine_part', value: 300, description: 'Used for ship repairs and upgrades', defaultItemName: 'Engine Component', defaultItemType: 'Component', defaultItemDescription: 'Used for ship repairs and upgrades', isStackable: true, maxStackSize: 10, baseValue_Credits: 300 },
   circuit: { id: 'circuit', baseItemId: 'circuit', name: 'Circuit Board', type: 'component', icon: 'circuit', value: 200, description: 'Electronic component', defaultItemName: 'Circuit Board', defaultItemType: 'Component', defaultItemDescription: 'Electronic component', isStackable: true, maxStackSize: 20, baseValue_Credits: 200 },
   weapon_part: { id: 'weapon_part', baseItemId: 'weapon_part', name: 'Weapon Component', type: 'component', icon: 'weapon_part', value: 400, description: 'Used in weapons crafting', defaultItemName: 'Weapon Component', defaultItemType: 'Component', defaultItemDescription: 'Used in weapons crafting', isStackable: true, maxStackSize: 5, baseValue_Credits: 400 },
-  ancient_relic: { id: 'ancient_relic', baseItemId: 'ancient_relic', name: 'Ancient Relic', type: 'artifact', icon: 'ancient_relic', value: 5000, description: 'A mysterious artifact of unknown origin', defaultItemName: 'Ancient Relic', defaultItemType: 'Artifact', defaultItemDescription: 'A mysterious artifact of unknown origin', isStackable: false, baseValue_Credits: 5000, rarity: 'legendary', defaultLoreText: 'This mysterious artifact appears to be of ancient origin. Its purpose remains unknown, but it radiates a strange energy.' }
+  ancient_relic: { id: 'ancient_relic', baseItemId: 'ancient_relic', name: 'Ancient Relic', type: 'artifact', icon: 'ancient_relic', value: 5000, description: 'A mysterious artifact of unknown origin', defaultItemName: 'Ancient Relic', defaultItemType: 'Artifact', defaultItemDescription: 'A mysterious artifact of unknown origin', isStackable: false, baseValue_Credits: 5000, rarity: ItemRarity.Legendary, defaultLoreText: 'This mysterious artifact appears to be of ancient origin. Its purpose remains unknown, but it radiates a strange energy.' }
 };
 
 // Create the inventory context
@@ -147,7 +148,11 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children }
 
   // Modified setFilter function to accept string type
   const handleSetFilter = (newFilter: ItemType | null | string) => {
-    setFilter(newFilter as ItemType | null);
+    if (typeof newFilter === 'string') {
+      setFilter(newFilter as ItemType);
+    } else {
+      setFilter(newFilter);
+    }
   };
 
   // Modified setSort function to accept string type

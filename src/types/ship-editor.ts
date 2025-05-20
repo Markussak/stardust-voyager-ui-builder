@@ -1,3 +1,4 @@
+
 import { Vector2D } from './galaxy';
 import { BaseItemData, ItemRarity } from './inventory';
 
@@ -30,15 +31,7 @@ export type ShipSlotType =
   'Cosmetic_Paint' | 
   'Cosmetic_Decal';
 
-// Add a BaseItemData interface if it doesn't exist
-export interface BaseItemData {
-  id: string;
-  name: string;
-  type: string;
-  description?: string;
-  rarity?: ItemRarity;
-  value?: number;
-}
+// Removing duplicate BaseItemData interface as it's now imported from inventory.ts
 
 export interface ShipModuleData extends BaseItemData {
   moduleType: ShipModuleType;
@@ -60,6 +53,12 @@ export interface ShipModuleData extends BaseItemData {
   defaultItemName?: string;
   defaultItemDescription?: string;
   baseValue_Credits?: number;
+  // Adding properties that were causing errors in ShipEditorContext.tsx
+  itemDescriptionKey?: string;
+  itemIconKey?: string;
+  itemTypeKey?: string;
+  defaultItemType?: string;
+  weightPerUnit?: number;
 }
 
 export interface ShipHardpointDefinition {

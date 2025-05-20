@@ -7,10 +7,13 @@ import { ItemRarity } from '@/types/inventory';
 // Mock ship modules data
 const mockShipModules: Record<string, ShipModuleData> = {
   'laser_cannon_mk1': {
+    id: 'laser_cannon_mk1',
+    name: 'Laserový kanon Mk1',
     itemId: 'laser_cannon_mk1',
     defaultItemName: 'Laserový kanon Mk1',
-    itemDescriptionKey: 'modules.laser_cannon_mk1.description',
     defaultItemDescription: 'Standardní laserový kanón pro menší lodě. Spolehlivý a s přiměřeným výkonem.',
+    description: 'Standardní laserový kanón pro menší lodě. Spolehlivý a s přiměřeným výkonem.',
+    type: 'module',
     itemIconKey: 'module_weapon_laser_mk1',
     itemTypeKey: 'item.type.ship_module',
     defaultItemType: 'Lodní modul',
@@ -28,10 +31,13 @@ const mockShipModules: Record<string, ShipModuleData> = {
     installationCost_Credits: 150
   },
   'shield_generator_basic': {
+    id: 'shield_generator_basic',
+    name: 'Základní generátor štítu',
     itemId: 'shield_generator_basic',
     defaultItemName: 'Základní generátor štítu',
-    itemDescriptionKey: 'modules.shield_generator_basic.description',
     defaultItemDescription: 'Vytváří energetické pole, které chrání loď před poškozením.',
+    description: 'Vytváří energetické pole, které chrání loď před poškozením.',
+    type: 'module',
     itemIconKey: 'module_defense_shield_basic',
     itemTypeKey: 'item.type.ship_module',
     defaultItemType: 'Lodní modul',
@@ -50,10 +56,13 @@ const mockShipModules: Record<string, ShipModuleData> = {
     installationCost_Credits: 220
   },
   'engine_basic': {
+    id: 'engine_basic',
+    name: 'Základní motor',
     itemId: 'engine_basic',
     defaultItemName: 'Základní motor',
-    itemDescriptionKey: 'modules.engine_basic.description',
     defaultItemDescription: 'Standardní pohonná jednotka s průměrným výkonem a spolehlivostí.',
+    description: 'Standardní pohonná jednotka s průměrným výkonem a spolehlivostí.',
+    type: 'module',
     itemIconKey: 'module_system_engine_basic',
     itemTypeKey: 'item.type.ship_module',
     defaultItemType: 'Lodní modul',
@@ -72,10 +81,13 @@ const mockShipModules: Record<string, ShipModuleData> = {
     installationCost_Credits: 180
   },
   'reactor_mk1': {
+    id: 'reactor_mk1',
+    name: 'Reaktor Mk1',
     itemId: 'reactor_mk1',
     defaultItemName: 'Reaktor Mk1',
-    itemDescriptionKey: 'modules.reactor_mk1.description',
     defaultItemDescription: 'Základní energetický reaktor pro napájení systémů lodi.',
+    description: 'Základní energetický reaktor pro napájení systémů lodi.',
+    type: 'module',
     itemIconKey: 'module_system_reactor_mk1',
     itemTypeKey: 'item.type.ship_module',
     defaultItemType: 'Lodní modul',
@@ -92,10 +104,13 @@ const mockShipModules: Record<string, ShipModuleData> = {
     installationCost_Credits: 250
   },
   'armor_plating_basic': {
+    id: 'armor_plating_basic',
+    name: 'Základní pancéřování',
     itemId: 'armor_plating_basic',
     defaultItemName: 'Základní pancéřování',
-    itemDescriptionKey: 'modules.armor_plating_basic.description',
     defaultItemDescription: 'Přidává další vrstvu ochrany trupu lodi.',
+    description: 'Přidává další vrstvu ochrany trupu lodi.',
+    type: 'module',
     itemIconKey: 'module_defense_armor_basic',
     itemTypeKey: 'item.type.ship_module',
     defaultItemType: 'Lodní modul',
