@@ -30,6 +30,16 @@ const InventoryFilters = () => {
     return false;
   };
   
+  // Ensure that filter type is always a string or null
+  const handleFilterClick = (filterType: ItemType | null) => {
+    setFilter(filterType); // setFilter accepts ItemType | null | string
+  };
+
+  // Ensure that sort value is always a string
+  const handleSortChange = (value: string) => {
+    setSort(value);
+  };
+  
   return (
     <div className="bg-space-dark bg-opacity-80 border border-space-buttons-border rounded-lg p-3">
       <div className="flex flex-wrap gap-3 items-center">
@@ -40,7 +50,7 @@ const InventoryFilters = () => {
             <Button 
               size="sm" 
               variant={!inventory.filterType ? "default" : "outline"}
-              onClick={() => setFilter(null)}
+              onClick={() => handleFilterClick(null)}
               className="text-xs py-1 h-auto"
             >
               Vše
@@ -48,7 +58,7 @@ const InventoryFilters = () => {
             <Button 
               size="sm" 
               variant={isFilterType(inventory.filterType, ItemType.Resource) ? "default" : "outline"}
-              onClick={() => setFilter(ItemType.Resource)}
+              onClick={() => handleFilterClick(ItemType.Resource)}
               className="text-xs py-1 h-auto"
             >
               Suroviny
@@ -56,7 +66,7 @@ const InventoryFilters = () => {
             <Button 
               size="sm" 
               variant={isFilterType(inventory.filterType, ItemType.Component) ? "default" : "outline"}
-              onClick={() => setFilter(ItemType.Component)}
+              onClick={() => handleFilterClick(ItemType.Component)}
               className="text-xs py-1 h-auto"
             >
               Komponenty
@@ -64,7 +74,7 @@ const InventoryFilters = () => {
             <Button 
               size="sm" 
               variant={isFilterType(inventory.filterType, ItemType.Module) ? "default" : "outline"}
-              onClick={() => setFilter(ItemType.Module)}
+              onClick={() => handleFilterClick(ItemType.Module)}
               className="text-xs py-1 h-auto"
             >
               Moduly
@@ -72,7 +82,7 @@ const InventoryFilters = () => {
             <Button 
               size="sm" 
               variant={isFilterType(inventory.filterType, ItemType.Special) ? "default" : "outline"}
-              onClick={() => setFilter(ItemType.Special)}
+              onClick={() => handleFilterClick(ItemType.Special)}
               className="text-xs py-1 h-auto"
             >
               Misijní
@@ -87,7 +97,7 @@ const InventoryFilters = () => {
         <div className="flex items-center">
           <Label htmlFor="sort-select" className="mr-2 text-xs">Třídit dle:</Label>
           <Select 
-            onValueChange={(value: string) => setSort(value)}
+            onValueChange={handleSortChange}
             defaultValue={typeof inventory.sortKey === 'string' ? inventory.sortKey : "name"}
           >
             <SelectTrigger className="w-[140px] h-8 text-xs" id="sort-select">

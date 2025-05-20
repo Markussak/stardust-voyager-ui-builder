@@ -4,6 +4,7 @@ import ProgressBar from './ProgressBar';
 import NotificationArea from './NotificationArea';
 import MiniMap from './MiniMap';
 import StatusBars from './StatusBars';
+import CombatHUD from '../combat/CombatHUD';
 
 // Base HUD layout for the star system view
 const GameHUD = () => {
@@ -23,6 +24,9 @@ const GameHUD = () => {
       <div className="absolute bottom-4 left-4">
         <StatusBars />
       </div>
+      
+      {/* Combat HUD (will only render when in combat) */}
+      <CombatHUD />
     </div>
   );
 };

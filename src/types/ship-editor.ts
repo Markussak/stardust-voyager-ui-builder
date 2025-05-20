@@ -31,8 +31,6 @@ export type ShipSlotType =
   'Cosmetic_Paint' | 
   'Cosmetic_Decal';
 
-// Removing duplicate BaseItemData interface as it's now imported from inventory.ts
-
 export interface ShipModuleData extends BaseItemData {
   moduleType: ShipModuleType;
   slotTypeRequired: ShipSlotType;
@@ -48,17 +46,17 @@ export interface ShipModuleData extends BaseItemData {
   blueprintRequired_ToCraft?: string;
   installationCost_Credits?: number;
   installationCost_Materials?: Array<{ resourceId: string; quantity: number; }>;
-  // Adding these properties for compatibility
+  // Adding properties for compatibility
   itemId?: string;
   defaultItemName?: string;
   defaultItemDescription?: string;
   baseValue_Credits?: number;
-  // Adding properties that were causing errors in ShipEditorContext.tsx
   itemDescriptionKey?: string;
   itemIconKey?: string;
   itemTypeKey?: string;
   defaultItemType?: string;
   weightPerUnit?: number;
+  isStackable?: boolean;
 }
 
 export interface ShipHardpointDefinition {
