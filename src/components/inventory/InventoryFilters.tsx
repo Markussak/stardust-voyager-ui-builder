@@ -12,11 +12,11 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Filter, Package, Search } from "lucide-react";
+import { Filter, Search } from "lucide-react";
 
 const InventoryFilters = () => {
   const { setFilter, setSort, setSearchText, inventory } = useInventory();
-  const [searchValue, setSearchValue] = useState(inventory.searchText || "");
+  const [searchValue, setSearchValue] = useState<string>(inventory.searchText?.toString() || "");
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
