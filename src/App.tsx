@@ -10,6 +10,7 @@ import { DiplomacyProvider } from "./contexts/DiplomacyContext";
 import { CodexProvider } from "./contexts/CodexContext";
 import { MissionsProvider } from "./contexts/MissionsContext";
 import { CombatSystemProvider } from "./contexts/CombatSystemContext";
+import { ShipMovementProvider } from "./contexts/ShipMovementContext";
 import Index from "./pages/Index";
 import GalaxyMapScreen from "./pages/GalaxyMapScreen";
 import NotFound from "./pages/NotFound";
@@ -35,31 +36,33 @@ const App = () => (
         <DiplomacyProvider>
           <CodexProvider>
             <MissionsProvider>
-              <CombatSystemProvider>
-                <TooltipProvider>
-                  <Toaster />
-                  <Sonner />
-                  <BrowserRouter>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/galaxy-map" element={<GalaxyMapScreen />} />
-                      <Route path="/ship-details" element={<ShipDetailsScreen />} />
-                      <Route path="/system/:systemId" element={<StarSystemScreen />} />
-                      <Route path="/settings" element={<SettingsScreen />} />
-                      <Route path="/inventory" element={<InventoryScreen />} />
-                      <Route path="/ship-editor" element={<ShipEditorScreen />} />
-                      <Route path="/research" element={<ResearchTreeScreen />} />
-                      <Route path="/trade" element={<TradeScreen />} />
-                      <Route path="/diplomacy" element={<DiplomacyScreen />} />
-                      <Route path="/knowledge-library" element={<KnowledgeLibraryScreen />} />
-                      <Route path="/mission-log" element={<MissionLogScreen />} />
-                      <Route path="/ship-test" element={<ShipTestScreen />} />
-                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </BrowserRouter>
-                </TooltipProvider>
-              </CombatSystemProvider>
+              <ShipMovementProvider>
+                <CombatSystemProvider>
+                  <TooltipProvider>
+                    <Toaster />
+                    <Sonner />
+                    <BrowserRouter>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/galaxy-map" element={<GalaxyMapScreen />} />
+                        <Route path="/ship-details" element={<ShipDetailsScreen />} />
+                        <Route path="/system/:systemId" element={<StarSystemScreen />} />
+                        <Route path="/settings" element={<SettingsScreen />} />
+                        <Route path="/inventory" element={<InventoryScreen />} />
+                        <Route path="/ship-editor" element={<ShipEditorScreen />} />
+                        <Route path="/research" element={<ResearchTreeScreen />} />
+                        <Route path="/trade" element={<TradeScreen />} />
+                        <Route path="/diplomacy" element={<DiplomacyScreen />} />
+                        <Route path="/knowledge-library" element={<KnowledgeLibraryScreen />} />
+                        <Route path="/mission-log" element={<MissionLogScreen />} />
+                        <Route path="/ship-test" element={<ShipTestScreen />} />
+                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </BrowserRouter>
+                  </TooltipProvider>
+                </CombatSystemProvider>
+              </ShipMovementProvider>
             </MissionsProvider>
           </CodexProvider>
         </DiplomacyProvider>
