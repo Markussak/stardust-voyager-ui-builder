@@ -17,7 +17,7 @@ const getRarityColor = (rarity: ItemRarity): string => {
     case ItemRarity.Rare: return "border-blue-500";
     case ItemRarity.Epic: return "border-purple-500";
     case ItemRarity.Legendary: return "border-amber-500";
-    case ItemRarity.Artifact: return "border-yellow-400";
+    case ItemRarity.Unique: return "border-yellow-400";
     default: return "border-neutral-400";
   }
 };
@@ -29,7 +29,7 @@ const getRarityGlow = (rarity: ItemRarity): string => {
     case ItemRarity.Rare: return "shadow-md shadow-blue-500/50";
     case ItemRarity.Epic: return "shadow-md shadow-purple-500/50";
     case ItemRarity.Legendary: return "shadow-lg shadow-amber-500/50";
-    case ItemRarity.Artifact: return "shadow-lg shadow-yellow-400/50 animate-pulse";
+    case ItemRarity.Unique: return "shadow-lg shadow-yellow-400/50 animate-pulse";
     default: return "";
   }
 };
@@ -38,12 +38,15 @@ const InventorySlotComponent: React.FC<InventorySlotProps> = ({ slot, className 
   const { itemDatabase, selectItem } = useInventory();
   const { containedItem, isLocked } = slot;
   
-  const baseItem = containedItem ? itemDatabase[containedItem.baseItemId] : undefined;
-  const rarityClass = baseItem ? getRarityColor(baseItem.rarity) : "";
-  const glowClass = baseItem ? getRarityGlow(baseItem.rarity) : "";
+  const baseItem = containedItem && typeof containedItem === 'object' && containedItem.baseItemId ? 
+    itemDatabase[containedItem.baseItemId] : 
+    undefined;
+    
+  const rarityClass = baseItem?.rarity ? getRarityColor(baseItem.rarity) : "";
+  const glowClass = baseItem?.rarity ? getRarityGlow(baseItem.rarity) : "";
   
   const handleClick = () => {
-    if (containedItem && !isLocked) {
+    if (containedItem && !isLocked && typeof containedItem === 'object' && containedItem.itemInstanceId) {
       selectItem(containedItem.itemInstanceId);
     }
   };
@@ -52,10 +55,11 @@ const InventorySlotComponent: React.FC<InventorySlotProps> = ({ slot, className 
   const getIconPlaceholder = (itemId: string) => {
     const colors: Record<string, string> = {
       'iron_ore': 'bg-gray-400',
+      'titanium': 'bg-sky-300',
       'titanium_alloy': 'bg-sky-300',
       'quantum_processor': 'bg-purple-500',
       'laser_cannon_mk2': 'bg-red-500',
-      'ancient_datapad': 'bg-yellow-400',
+      'ancient_relic': 'bg-yellow-400',
     };
     
     return colors[itemId] || 'bg-gray-500';
@@ -91,12 +95,14 @@ const InventorySlotComponent: React.FC<InventorySlotProps> = ({ slot, className 
             )}
             onClick={handleClick}
           >
-            {containedItem ? (
+            {containedItem && typeof containedItem === 'object' && containedItem.baseItemId ? (
               <div className="h-full w-full p-1 flex flex-col">
                 <div className={`flex-1 ${getIconPlaceholder(containedItem.baseItemId)} flex items-center justify-center`}>
-                  <span className="text-xs font-pixel text-black">{baseItem?.defaultItemName.substring(0, 3)}</span>
+                  <span className="text-xs font-pixel text-black">
+                    {baseItem?.defaultItemName?.substring(0, 3) || baseItem?.name?.substring(0, 3) || '???'}
+                  </span>
                 </div>
-                {baseItem?.isStackable && containedItem.quantity > 1 && (
+                {baseItem?.isStackable && containedItem.quantity && containedItem.quantity > 1 && (
                   <div className="text-right text-xs font-pixel pt-1">
                     {containedItem.quantity}
                   </div>
@@ -108,12 +114,12 @@ const InventorySlotComponent: React.FC<InventorySlotProps> = ({ slot, className 
         {baseItem && (
           <TooltipContent side="top" className="bg-space-dark border-space-buttons-border">
             <div>
-              <p className="text-sm font-pixel">{baseItem.defaultItemName}</p>
-              <p className="text-xs text-gray-400">{baseItem.defaultItemType}</p>
-              {baseItem.isStackable && containedItem && (
+              <p className="text-sm font-pixel">{baseItem.defaultItemName || baseItem.name}</p>
+              <p className="text-xs text-gray-400">{baseItem.defaultItemType || baseItem.type}</p>
+              {baseItem.isStackable && containedItem && typeof containedItem === 'object' && containedItem.quantity && (
                 <p className="text-xs">Množství: {containedItem.quantity}</p>
               )}
-              <p className="text-xs text-space-ui-text">{baseItem.baseValue_Credits} kreditů</p>
+              <p className="text-xs text-space-ui-text">{baseItem.baseValue_Credits || baseItem.value} kreditů</p>
             </div>
           </TooltipContent>
         )}

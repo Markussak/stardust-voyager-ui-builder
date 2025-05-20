@@ -1,5 +1,5 @@
-
 import React, { createContext, useContext, useState } from 'react';
+import { DiplomaticStatus, Faction, Treaty, DiplomacyContextType } from '@/types/diplomacy';
 
 // Define the FactionId enum from the prompt
 export enum FactionId {
@@ -12,58 +12,11 @@ export enum FactionId {
   Guardians_AncientAI = "guardians_ancient_ai",
 }
 
-// Define the DiplomaticStatus enum from the prompt
-export enum DiplomaticStatus {
-  War = "War",
-  Hostile = "Hostile",
-  Neutral = "Neutral",
-  Amity_NonAggressionPact = "Amity_NonAggressionPact", // Přátelství / Pakt o neútočení
-  Friendly_TradeAgreement = "Friendly_TradeAgreement", // Přátelský / Obchodní dohoda
-  Ally_DefensivePact = "Ally_DefensivePact", // Spojenec / Obranný pakt
-  Vassal = "Vassal", // Vazal
-  Overlord = "Overlord" // Nadvládce
-}
-
-export interface Treaty {
-  id: string;
-  name: string;
-  description: string;
-  effectDescription: string;
-  duration: number; // In turns or -1 for permanent
-  icon: string;
-}
-
 export interface FactionRelation {
   factionId: FactionId;
   status: DiplomaticStatus;
   relationValue: number; // -100 to +100
   treaties: Treaty[];
-}
-
-export interface Faction {
-  id: FactionId;
-  name: string;
-  governmentType: string;
-  description: string;
-  color: string;
-  leaderName?: string;
-  leaderPortrait?: string;
-  discovered: boolean;
-  powerLevel: {
-    military: number;
-    economy: number;
-    technology: number;
-  };
-}
-
-export interface DiplomacyContextType {
-  diplomacyState: {
-    factions: Record<FactionId, Faction>;
-    playerRelations: Record<FactionId, FactionRelation>;
-    selectedFactionId: FactionId | null;
-  };
-  selectFaction: (factionId: FactionId) => void;
-  // Additional methods will be added as needed
 }
 
 // Create the context
@@ -77,99 +30,134 @@ const mockFactions: Record<FactionId, Faction> = {
     governmentType: "Player Faction",
     description: "Your faction of intrepid explorers and traders.",
     color: "#33AAFF",
+    government: "Player Faction",
+    primaryColor: "#33AAFF",
+    secondaryColor: "#1177CC",
+    logoUrl: "assets/images/factions/player_logo.png",
     discovered: true,
-    powerLevel: {
+    power: {
       military: 50,
-      economy: 50,
-      technology: 50
+      economic: 50,
+      tech: 50,
+      technological: 50
     }
   },
   [FactionId.SolarConfederacy]: {
     id: FactionId.SolarConfederacy,
     name: "Solární Konfederace",
     governmentType: "Democratic Alliance",
+    government: "Democratic Alliance",
     description: "A coalition of democratic planets promoting peace and trade.",
     color: "#3366FF",
+    primaryColor: "#3366FF",
+    secondaryColor: "#2255DD",
+    logoUrl: "assets/images/factions/solar_confederacy_logo.png",
     leaderName: "Prezident Aaren Solus",
-    leaderPortrait: "assets/images/factions/portraits/solar_confederacy_leader_01.png",
+    leaderPortraitUrl: "assets/images/factions/portraits/solar_confederacy_leader_01.png",
     discovered: true,
-    powerLevel: {
+    power: {
       military: 70,
-      economy: 80,
-      technology: 75
+      economic: 80,
+      tech: 75,
+      technological: 75
     }
   },
   [FactionId.KrallEmpire]: {
     id: FactionId.KrallEmpire,
     name: "Impérium Krall",
     governmentType: "Militaristic Empire",
+    government: "Militaristic Empire",
     description: "A warrior empire focused on conquest and honor.",
     color: "#CC3333",
+    primaryColor: "#CC3333",
+    secondaryColor: "#992222",
+    logoUrl: "assets/images/factions/krall_empire_logo.png",
     leaderName: "Imperátor Drakk III",
-    leaderPortrait: "assets/images/factions/portraits/krall_empire_leader_01.png",
+    leaderPortraitUrl: "assets/images/factions/portraits/krall_empire_leader_01.png",
     discovered: true,
-    powerLevel: {
+    power: {
       military: 90,
-      economy: 60,
-      technology: 65
+      economic: 60,
+      tech: 65,
+      technological: 65
     }
   },
   [FactionId.CultOfTheNexus]: {
     id: FactionId.CultOfTheNexus,
     name: "Kult Nexusu",
     governmentType: "Theocratic Order",
+    government: "Theocratic Order",
     description: "Mysterious cult worshipping ancient technology and cosmic entities.",
     color: "#9933CC",
+    primaryColor: "#9933CC",
+    secondaryColor: "#772299",
+    logoUrl: "assets/images/factions/cult_nexus_logo.png",
     leaderName: "Velký Hierarcha Zorak",
-    leaderPortrait: "assets/images/factions/portraits/cult_nexus_leader_01.png",
+    leaderPortraitUrl: "assets/images/factions/portraits/cult_nexus_leader_01.png",
     discovered: true,
-    powerLevel: {
+    power: {
       military: 60,
-      economy: 50,
-      technology: 85
+      economic: 50,
+      tech: 85,
+      technological: 85
     }
   },
   [FactionId.FreeTradersSyndicate]: {
     id: FactionId.FreeTradersSyndicate,
     name: "Syndikát Volných Obchodníků",
     governmentType: "Mercantile Network",
+    government: "Mercantile Network",
     description: "An alliance of traders and merchants controlling key trade routes.",
     color: "#FFCC33",
+    primaryColor: "#FFCC33",
+    secondaryColor: "#DDAA22",
+    logoUrl: "assets/images/factions/free_traders_logo.png",
     leaderName: "Velkoobchodník Sylla",
-    leaderPortrait: "assets/images/factions/portraits/free_traders_leader_01.png",
+    leaderPortraitUrl: "assets/images/factions/portraits/free_traders_leader_01.png",
     discovered: true,
-    powerLevel: {
+    power: {
       military: 40,
-      economy: 95,
-      technology: 65
+      economic: 95,
+      tech: 65,
+      technological: 65
     }
   },
   [FactionId.PirateClan_RedMasks]: {
     id: FactionId.PirateClan_RedMasks,
     name: "Klan Červených Masek",
     governmentType: "Pirate Collective",
+    government: "Pirate Collective",
     description: "Notorious pirates preying on trade routes and isolated colonies.",
     color: "#CC0000",
+    primaryColor: "#CC0000",
+    secondaryColor: "#990000",
+    logoUrl: "assets/images/factions/red_masks_logo.png",
     leaderName: "Kapitán Bloodclaw",
-    leaderPortrait: "assets/images/factions/portraits/red_masks_leader_01.png",
+    leaderPortraitUrl: "assets/images/factions/portraits/red_masks_leader_01.png",
     discovered: false,
-    powerLevel: {
+    power: {
       military: 55,
-      economy: 40,
-      technology: 30
+      economic: 40,
+      tech: 30,
+      technological: 30
     }
   },
   [FactionId.Guardians_AncientAI]: {
     id: FactionId.Guardians_AncientAI,
     name: "Strážci",
     governmentType: "Advanced AI Collective",
+    government: "Advanced AI Collective",
     description: "Ancient AI entities guarding remnants of a long-lost civilization.",
     color: "#00CCAA",
+    primaryColor: "#00CCAA",
+    secondaryColor: "#009988",
+    logoUrl: "assets/images/factions/guardians_logo.png",
     discovered: false,
-    powerLevel: {
+    power: {
       military: 85,
-      economy: 20,
-      technology: 100
+      economic: 20,
+      tech: 100,
+      technological: 100
     }
   }
 };
@@ -229,13 +217,45 @@ export const DiplomacyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setSelectedFactionId(factionId);
   };
 
+  // Function to get relation with player
+  const getRelationWithPlayer = (factionId: string): DiplomaticStatus => {
+    const relation = mockPlayerRelations[factionId as FactionId];
+    return relation ? relation.status : DiplomaticStatus.Neutral;
+  };
+
+  // Function to update relation
+  const updateRelation = (factionId: string, newStatus: DiplomaticStatus, relationChange: number = 0) => {
+    console.log(`Updating relation with ${factionId} to ${newStatus} with change ${relationChange}`);
+    // In a real implementation, we would update the relations here
+  };
+
+  // Function to add treaty
+  const addTreaty = (factionId: string, treaty: any) => {
+    console.log(`Adding treaty to ${factionId}:`, treaty);
+    // In a real implementation, we would add the treaty here
+  };
+
+  // Function to get faction by ID
+  const getFactionById = (factionId: string): Faction | undefined => {
+    return mockFactions[factionId as FactionId];
+  };
+
+  // Convert record format to array for compatibility with original DiplomacyContextType
+  const factionsArray = Object.values(mockFactions);
+
   const value: DiplomacyContextType = {
+    factions: factionsArray,
+    selectedFactionId,
+    selectFaction,
+    getRelationWithPlayer,
+    updateRelation,
+    addTreaty,
+    getFactionById,
     diplomacyState: {
       factions: mockFactions,
       playerRelations: mockPlayerRelations,
       selectedFactionId
-    },
-    selectFaction
+    }
   };
 
   return (

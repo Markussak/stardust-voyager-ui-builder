@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useInventory } from "@/contexts/InventoryContext";
+import { ItemType } from "@/types/inventory";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,39 +33,39 @@ const InventoryFilters = () => {
             <Button 
               size="sm" 
               variant={!inventory.filterType ? "default" : "outline"}
-              onClick={() => setFilter(undefined)}
+              onClick={() => setFilter(null)}
               className="text-xs py-1 h-auto"
             >
               Vše
             </Button>
             <Button 
               size="sm" 
-              variant={inventory.filterType === 'item.type.resource' ? "default" : "outline"}
-              onClick={() => setFilter('item.type.resource')}
+              variant={inventory.filterType === ItemType.Resource ? "default" : "outline"}
+              onClick={() => setFilter(ItemType.Resource)}
               className="text-xs py-1 h-auto"
             >
               Suroviny
             </Button>
             <Button 
               size="sm" 
-              variant={inventory.filterType === 'item.type.component' ? "default" : "outline"}
-              onClick={() => setFilter('item.type.component')}
+              variant={inventory.filterType === ItemType.Component ? "default" : "outline"}
+              onClick={() => setFilter(ItemType.Component)}
               className="text-xs py-1 h-auto"
             >
               Komponenty
             </Button>
             <Button 
               size="sm" 
-              variant={inventory.filterType === 'item.type.ship_module' ? "default" : "outline"}
-              onClick={() => setFilter('item.type.ship_module')}
+              variant={inventory.filterType === ItemType.Module ? "default" : "outline"}
+              onClick={() => setFilter(ItemType.Module)}
               className="text-xs py-1 h-auto"
             >
               Moduly
             </Button>
             <Button 
               size="sm" 
-              variant={inventory.filterType === 'item.type.quest_item' ? "default" : "outline"}
-              onClick={() => setFilter('item.type.quest_item')}
+              variant={inventory.filterType === ItemType.Special ? "default" : "outline"}
+              onClick={() => setFilter(ItemType.Special)}
               className="text-xs py-1 h-auto"
             >
               Misijní
@@ -80,17 +81,17 @@ const InventoryFilters = () => {
           <Label htmlFor="sort-select" className="mr-2 text-xs">Třídit dle:</Label>
           <Select 
             onValueChange={(value) => setSort(value)}
-            defaultValue={inventory.sortKey || "Name_AZ"}
+            defaultValue={inventory.sortKey || "name"}
           >
             <SelectTrigger className="w-[140px] h-8 text-xs" id="sort-select">
               <SelectValue placeholder="Název A-Z" />
             </SelectTrigger>
             <SelectContent className="bg-space-dark border-space-buttons-border text-space-ui-text">
-              <SelectItem value="Name_AZ" className="text-xs">Název A-Z</SelectItem>
-              <SelectItem value="Type" className="text-xs">Typ</SelectItem>
-              <SelectItem value="Value_Desc" className="text-xs">Hodnota ▼</SelectItem>
-              <SelectItem value="Value_Asc" className="text-xs">Hodnota ▲</SelectItem>
-              <SelectItem value="Rarity_Desc" className="text-xs">Vzácnost ▼</SelectItem>
+              <SelectItem value="name" className="text-xs">Název A-Z</SelectItem>
+              <SelectItem value="type" className="text-xs">Typ</SelectItem>
+              <SelectItem value="value_desc" className="text-xs">Hodnota ▼</SelectItem>
+              <SelectItem value="value_asc" className="text-xs">Hodnota ▲</SelectItem>
+              <SelectItem value="rarity_desc" className="text-xs">Vzácnost ▼</SelectItem>
             </SelectContent>
           </Select>
         </div>

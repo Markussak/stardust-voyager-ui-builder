@@ -23,10 +23,10 @@ interface DiplomaticAction {
 const DiplomaticActionsPanel: React.FC = () => {
   const { diplomacyState, updateRelation, addTreaty } = useDiplomacy();
   const { toast } = useToast();
-  const { selectedFactionId, factions, playerRelations } = diplomacyState;
+  const { selectedFactionId, factions, playerRelations } = diplomacyState || {};
   const [isExecutingAction, setIsExecutingAction] = useState(false);
 
-  if (!selectedFactionId || !factions[selectedFactionId]) {
+  if (!selectedFactionId || !factions || !factions[selectedFactionId]) {
     return (
       <div className="bg-space-dark/70 border border-space-buttons-border rounded-md p-5 flex items-center justify-center h-full">
         <p className="font-pixel text-space-ui-subtext">Vyberte frakci pro zobrazení diplomatických akcí</p>
@@ -35,7 +35,15 @@ const DiplomaticActionsPanel: React.FC = () => {
   }
 
   const faction = factions[selectedFactionId];
-  const relation = playerRelations[selectedFactionId];
+  const relation = playerRelations?.[selectedFactionId];
+
+  if (!relation) {
+    return (
+      <div className="bg-space-dark/70 border border-space-buttons-border rounded-md p-5 flex items-center justify-center h-full">
+        <p className="font-pixel text-space-ui-subtext">Vztah s touto frakcí nebyl nalezen</p>
+      </div>
+    );
+  }
 
   // Generate available diplomatic actions based on current relationship
   const generateActions = (): DiplomaticAction[] => {

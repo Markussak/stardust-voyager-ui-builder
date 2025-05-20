@@ -12,7 +12,7 @@ export enum DiplomaticStatus {
 
 export interface Treaty {
   id: string;
-  type: string;
+  type: string;  // Adding this field for compatibility
   name: string;
   description: string;
   startDate: number;
@@ -34,6 +34,7 @@ export interface Faction {
     military: number;
     economic: number;
     tech: number;
+    technological?: number;  // Adding this for compatibility
   };
   homeSystemId?: string;
   controlledSystems?: string[];
@@ -42,6 +43,8 @@ export interface Faction {
     status: DiplomaticStatus;
     treaties: Treaty[];
   };
+  color?: string; // Adding this field for compatibility
+  governmentType?: string; // Adding this field for compatibility
 }
 
 export interface DiplomacyContextType {
@@ -49,7 +52,12 @@ export interface DiplomacyContextType {
   selectedFactionId: string | null;
   selectFaction: (factionId: string | null) => void;
   getRelationWithPlayer: (factionId: string) => DiplomaticStatus;
-  updateRelation: (factionId: string, newStatus: DiplomaticStatus) => void;
-  addTreaty: (factionId: string, treatyType: string) => void;
+  updateRelation: (factionId: string, newStatus: DiplomaticStatus, relationChange?: number) => void; // Added for compatibility
+  addTreaty: (factionId: string, treaty: any) => void; // Added for compatibility
   getFactionById: (factionId: string) => Faction | undefined;
+  diplomacyState?: {  // Added for compatibility
+    factions: Record<string, Faction>;
+    playerRelations: Record<string, any>;
+    selectedFactionId: string | null;
+  };
 }

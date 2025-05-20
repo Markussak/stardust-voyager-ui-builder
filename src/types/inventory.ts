@@ -11,7 +11,14 @@ export enum ItemType {
 export enum SpecializedStorageType {
   Resources = "resources",
   Components = "components",
-  Artifacts = "artifacts"
+  Artifacts = "artifacts",
+  // Adding these for compatibility
+  RawMaterials = "RawMaterials",
+  CraftingComponents = "CraftingComponents", 
+  ShipModules_Unequipped = "ShipModules_Unequipped",
+  TradeGoods_Commodities = "TradeGoods_Commodities",
+  QuestItems_KeyItems = "QuestItems_KeyItems",
+  Artifacts_UniqueDiscoveries = "Artifacts_UniqueDiscoveries"
 }
 
 export enum ItemRarity {
@@ -20,7 +27,8 @@ export enum ItemRarity {
   Rare = "rare",
   Epic = "epic",
   Legendary = "legendary",
-  Unique = "unique"
+  Unique = "unique",
+  Artifact = "artifact"  // Added for compatibility
 }
 
 export interface InventoryItem {
@@ -32,17 +40,24 @@ export interface InventoryItem {
   value: number;
   description: string;
   rarity?: ItemRarity;
-  defaultItemName?: string;
-  defaultItemType?: string;
+  defaultItemName?: string; // Added for compatibility
+  defaultItemType?: string; // Added for compatibility
   isStackable?: boolean;
   baseValue_Credits?: number;
+  defaultItemDescription?: string; // Added for compatibility
+  maxStackSize?: number; // Added for compatibility
+  weightPerUnit?: number; // Added for compatibility
+  defaultLoreText?: string; // Added for compatibility
+  baseItemId?: string; // Added for compatibility
+  itemInstanceId?: string; // Added for compatibility
 }
 
 export interface InventorySlot {
   itemId: string | null;
   quantity: number;
-  containedItem?: string;
+  containedItem?: string | any; // Modified for compatibility
   isLocked?: boolean;
+  slotId?: string; // Added for compatibility
 }
 
 export interface SpecializedStorage {
@@ -54,7 +69,13 @@ export interface SpecializedStorage {
 }
 
 export interface InventoryContextType {
-  inventory: Record<string, SpecializedStorage>;
+  inventory: Record<string, SpecializedStorage> | {
+    cargoHold?: { slots: InventorySlot[], totalCapacity: number, usedCapacity: number },
+    specializedStorage?: Record<string, { items: any[] }>,
+    searchText?: string,
+    filterType?: string,
+    sortKey?: string
+  };
   selectedItemId: string | null;
   selectItem: (itemId: string | null) => void;
   findItem: (itemId: string) => InventoryItem | null;
@@ -64,9 +85,9 @@ export interface InventoryContextType {
   removeItem: (itemId: string, quantity: number) => void;
   itemDatabase: Record<string, Omit<InventoryItem, 'quantity'>>;
   filter: ItemType | null;
-  setFilter: (filter: ItemType | null) => void;
+  setFilter: (filter: ItemType | null | string) => void; // Modified for compatibility
   sort: 'name' | 'quantity' | 'value';
-  setSort: (sort: 'name' | 'quantity' | 'value') => void;
+  setSort: (sort: 'name' | 'quantity' | 'value' | string) => void; // Modified for compatibility
   searchText: string;
   setSearchText: (text: string) => void;
   getItemById?: (itemId: string) => InventoryItem | null;

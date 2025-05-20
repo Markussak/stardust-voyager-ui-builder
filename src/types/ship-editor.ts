@@ -1,4 +1,3 @@
-
 import { Vector2D } from './galaxy';
 import { BaseItemData, ItemRarity } from './inventory';
 
@@ -31,6 +30,16 @@ export type ShipSlotType =
   'Cosmetic_Paint' | 
   'Cosmetic_Decal';
 
+// Add a BaseItemData interface if it doesn't exist
+export interface BaseItemData {
+  id: string;
+  name: string;
+  type: string;
+  description?: string;
+  rarity?: ItemRarity;
+  value?: number;
+}
+
 export interface ShipModuleData extends BaseItemData {
   moduleType: ShipModuleType;
   slotTypeRequired: ShipSlotType;
@@ -46,6 +55,11 @@ export interface ShipModuleData extends BaseItemData {
   blueprintRequired_ToCraft?: string;
   installationCost_Credits?: number;
   installationCost_Materials?: Array<{ resourceId: string; quantity: number; }>;
+  // Adding these properties for compatibility
+  itemId?: string;
+  defaultItemName?: string;
+  defaultItemDescription?: string;
+  baseValue_Credits?: number;
 }
 
 export interface ShipHardpointDefinition {

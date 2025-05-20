@@ -6,9 +6,12 @@ import InventorySlotComponent from './InventorySlot';
 const CargoHold = () => {
   const { inventory } = useInventory();
   
+  // Ensure cargoHold exists and has slots
+  const cargoHold = inventory.cargoHold || { slots: [] };
+  
   // Calculate grid dimensions (6 columns, 4 rows)
   const columns = 6;
-  const rows = Math.ceil(inventory.cargoHold.slots.length / columns);
+  const rows = Math.ceil(cargoHold.slots.length / columns);
 
   return (
     <div className="flex-1 flex flex-col">
@@ -19,9 +22,9 @@ const CargoHold = () => {
           gridTemplateRows: `repeat(${rows}, 1fr)`
         }}
       >
-        {inventory.cargoHold.slots.map((slot) => (
+        {cargoHold.slots.map((slot) => (
           <InventorySlotComponent 
-            key={slot.slotId} 
+            key={slot.slotId || `slot-${Math.random()}`} 
             slot={slot} 
             className="aspect-square"
           />
