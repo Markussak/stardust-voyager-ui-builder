@@ -28,14 +28,14 @@ const getRelationColor = (status: DiplomaticStatus): string => {
 
 const FactionListPanel: React.FC = () => {
   const { diplomacyState, selectFaction } = useDiplomacy();
-  const { factions, playerRelations, selectedFactionId } = diplomacyState;
+  const { factions, playerRelations, selectedFactionId } = diplomacyState || {};
 
-  const handleFactionSelect = (factionId: FactionId) => {
+  const handleFactionSelect = (factionId: string) => {
     selectFaction(factionId);
   };
 
   // Get discovered factions and filter out the player faction
-  const discoveredFactions = Object.values(factions)
+  const discoveredFactions = Object.values(factions || {})
     .filter(faction => faction.discovered && faction.id !== FactionId.Player);
 
   const getStatusText = (status: DiplomaticStatus): string => {
@@ -56,12 +56,15 @@ const FactionListPanel: React.FC = () => {
     <div className="bg-space-dark/70 border border-space-buttons-border rounded-md p-3">
       <h2 className="font-pixel text-space-ui-text text-lg mb-4">Známé Frakce</h2>
       
-      {discoveredFactions.length === 0 ? (
+      {(!discoveredFactions || discoveredFactions.length === 0) ? (
         <p className="text-space-ui-subtext text-center py-4">Nebyly objeveny žádné frakce.</p>
       ) : (
         <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
           {discoveredFactions.map(faction => {
-            const relation = playerRelations[faction.id];
+            const relation = playerRelations?.[faction.id];
+            
+            if (!relation) return null;
+            
             const relationColor = getRelationColor(relation.status);
             
             return (

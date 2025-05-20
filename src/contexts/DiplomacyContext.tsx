@@ -24,7 +24,7 @@ const initialFactions: Faction[] = [
     diplomacy: {
       attitudeTowardsPlayer: 0,
       status: DiplomaticStatus.Neutral,
-      treaties: []
+      treaties: [] // Ensure treaties is always an array
     }
   },
   {
@@ -48,7 +48,7 @@ const initialFactions: Faction[] = [
     diplomacy: {
       attitudeTowardsPlayer: -50,
       status: DiplomaticStatus.Hostile,
-      treaties: []
+      treaties: [] // Ensure treaties is always an array
     }
   },
   {
@@ -72,7 +72,7 @@ const initialFactions: Faction[] = [
     diplomacy: {
       attitudeTowardsPlayer: -20,
       status: DiplomaticStatus.Neutral,
-      treaties: []
+      treaties: [] // Ensure treaties is always an array
     }
   },
   {
@@ -96,7 +96,7 @@ const initialFactions: Faction[] = [
     diplomacy: {
       attitudeTowardsPlayer: 30,
       status: DiplomaticStatus.Neutral,
-      treaties: []
+      treaties: [] // Ensure treaties is always an array
     }
   },
   {
@@ -120,7 +120,7 @@ const initialFactions: Faction[] = [
     diplomacy: {
       attitudeTowardsPlayer: -70,
       status: DiplomaticStatus.Hostile,
-      treaties: []
+      treaties: [] // Ensure treaties is always an array
     }
   },
   {
@@ -144,7 +144,7 @@ const initialFactions: Faction[] = [
     diplomacy: {
       attitudeTowardsPlayer: 0,
       status: DiplomaticStatus.Neutral,
-      treaties: []
+      treaties: [] // Ensure treaties is always an array
     }
   },
   {
@@ -166,7 +166,7 @@ const initialFactions: Faction[] = [
     diplomacy: {
       attitudeTowardsPlayer: 100,
       status: DiplomaticStatus.Ally_DefensivePact,
-      treaties: []
+      treaties: [] // Ensure treaties is always an array
     }
   },
 ];
@@ -198,7 +198,7 @@ export const DiplomacyProvider: React.FC<React.PropsWithChildren<{}>> = ({ child
     return faction ? faction.diplomacy.status : DiplomaticStatus.Neutral;
   };
 
-  // Added to make compatibility with components
+  // Update relation function with proper type safety
   const updateRelation = (factionId: string, newStatus: DiplomaticStatus, relationChange?: number) => {
     setFactions(prevFactions => 
       prevFactions.map(faction => 
@@ -218,7 +218,7 @@ export const DiplomacyProvider: React.FC<React.PropsWithChildren<{}>> = ({ child
     );
   };
 
-  // Added to make compatibility with components
+  // Add treaty function with proper Treaty type
   const addTreaty = (factionId: string, treaty: Treaty) => {
     setFactions(prevFactions => 
       prevFactions.map(faction => 
@@ -227,12 +227,35 @@ export const DiplomacyProvider: React.FC<React.PropsWithChildren<{}>> = ({ child
               ...faction, 
               diplomacy: { 
                 ...faction.diplomacy, 
-                treaties: [...faction.diplomacy.treaties, treaty]
+                treaties: [...(faction.diplomacy.treaties || []), treaty] // Ensure treaties exists
               } 
             } 
           : faction
       )
     );
+  };
+
+  // Create a more robust diplomacy state object
+  const createDiplomacyState = () => {
+    const factionsMap = factions.reduce((acc, faction) => {
+      acc[faction.id] = faction;
+      return acc;
+    }, {} as Record<string, Faction>);
+    
+    const relationsMap = factions.reduce((acc, faction) => {
+      acc[faction.id] = {
+        status: faction.diplomacy.status,
+        relationValue: faction.diplomacy.attitudeTowardsPlayer,
+        treaties: faction.diplomacy.treaties || [] // Ensure treaties exists
+      };
+      return acc;
+    }, {} as Record<string, any>);
+    
+    return {
+      factions: factionsMap,
+      playerRelations: relationsMap,
+      selectedFactionId
+    };
   };
 
   const value: DiplomacyContextType = {
@@ -243,18 +266,7 @@ export const DiplomacyProvider: React.FC<React.PropsWithChildren<{}>> = ({ child
     updateRelation,
     addTreaty,
     getFactionById,
-    // Add this for compatibility with components
-    diplomacyState: {
-      factions: factions.reduce((acc, faction) => {
-        acc[faction.id] = faction;
-        return acc;
-      }, {} as Record<string, Faction>),
-      playerRelations: factions.reduce((acc, faction) => {
-        acc[faction.id] = faction.diplomacy.status;
-        return acc;
-      }, {} as Record<string, DiplomaticStatus>),
-      selectedFactionId
-    }
+    diplomacyState: createDiplomacyState()
   };
 
   return (

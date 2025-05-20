@@ -30,20 +30,20 @@ export interface Faction {
   logoUrl: string;
   leaderName?: string;
   leaderPortraitUrl?: string;
-  discovered?: boolean;  // Add this property
+  discovered: boolean;  // Make this required
   power: {
     military: number;
     economic: number;
     tech: number;
     technological?: number;  // For compatibility
-    economy?: number;  // Add this for compatibility
+    economy?: number;  // For compatibility
   };
   homeSystemId?: string;
   controlledSystems?: string[];
   diplomacy: {
     attitudeTowardsPlayer: number; // -100 to +100
     status: DiplomaticStatus;
-    treaties: Treaty[];
+    treaties: Treaty[];  // Make sure this is always defined
   };
   color?: string; // For compatibility
   governmentType?: string; // For compatibility
@@ -54,10 +54,10 @@ export interface DiplomacyContextType {
   selectedFactionId: string | null;
   selectFaction: (factionId: string | null) => void;
   getRelationWithPlayer: (factionId: string) => DiplomaticStatus;
-  updateRelation: (factionId: string, newStatus: DiplomaticStatus, relationChange?: number) => void; // Added for compatibility
-  addTreaty: (factionId: string, treaty: any) => void; // Added for compatibility
+  updateRelation: (factionId: string, newStatus: DiplomaticStatus, relationChange?: number) => void;
+  addTreaty: (factionId: string, treaty: Treaty) => void;
   getFactionById: (factionId: string) => Faction | undefined;
-  diplomacyState?: {  // Added for compatibility
+  diplomacyState?: {
     factions: Record<string, Faction>;
     playerRelations: Record<string, any>;
     selectedFactionId: string | null;

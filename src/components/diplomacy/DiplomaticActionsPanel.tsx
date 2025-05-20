@@ -6,8 +6,9 @@ import {
   DiplomaticStatus 
 } from '@/contexts/DiplomacyContext';
 import { Button } from '@/components/ui/button';
-import { Shield, Swords, GlassWater, HandshakeIcon, Flag } from 'lucide-react';
+import { Shield, Swords, GlassWater, HandshakeIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Treaty } from '@/types/diplomacy';
 
 interface DiplomaticAction {
   id: string;
@@ -48,9 +49,12 @@ const DiplomaticActionsPanel: React.FC = () => {
   // Generate available diplomatic actions based on current relationship
   const generateActions = (): DiplomaticAction[] => {
     const actions: DiplomaticAction[] = [];
-    const hasTradeTreaty = relation.treaties.some(t => t.type === 'trade_agreement');
-    const hasNonAggressionPact = relation.treaties.some(t => t.type === 'non_aggression_pact');
-    const hasDefensiveAlliance = relation.treaties.some(t => t.type === 'defensive_alliance');
+    
+    // Make sure treaties exists and is an array before using array methods
+    const treaties = relation.treaties || [];
+    const hasTradeTreaty = treaties.some(t => t.type === 'trade_agreement');
+    const hasNonAggressionPact = treaties.some(t => t.type === 'non_aggression_pact');
+    const hasDefensiveAlliance = treaties.some(t => t.type === 'defensive_alliance');
 
     // Trade Agreement
     actions.push({
@@ -144,12 +148,16 @@ const DiplomaticActionsPanel: React.FC = () => {
       
       // Add treaty if applicable
       if (action.treatyType) {
-        addTreaty(selectedFactionId, {
+        const newTreaty: Treaty = {
+          id: `${action.treatyType}_${Date.now()}`,
           type: action.treatyType,
-          startTurn: 1, // Current turn
-          duration: -1, // Indefinite
-          iconAsset: '/placeholder.svg'
-        });
+          name: action.label,
+          description: action.tooltip,
+          startDate: Date.now(),
+          effects: []
+        };
+        
+        addTreaty(selectedFactionId, newTreaty);
       }
       
       toast({
