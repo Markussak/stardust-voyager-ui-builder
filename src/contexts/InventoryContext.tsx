@@ -64,7 +64,7 @@ const mockInventory = {
   searchText: ''
 };
 
-// Define the item database with proper types
+// Define the item database with proper types - Remove quantity from database items since it's not part of Omit<InventoryItem, "quantity">
 const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
   titanium: { 
     id: 'titanium', 
@@ -79,8 +79,7 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'A strong, lightweight metal', 
     isStackable: true, 
     maxStackSize: 999, 
-    baseValue_Credits: 50,
-    quantity: 0  // Adding quantity with default value
+    baseValue_Credits: 50
   },
   crystal: { 
     id: 'crystal', 
@@ -95,8 +94,7 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'An energy-focusing crystal', 
     isStackable: true, 
     maxStackSize: 999, 
-    baseValue_Credits: 100,
-    quantity: 0
+    baseValue_Credits: 100
   },
   fuel: { 
     id: 'fuel', 
@@ -111,8 +109,7 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'Spacecraft propellant', 
     isStackable: true, 
     maxStackSize: 999, 
-    baseValue_Credits: 30,
-    quantity: 0
+    baseValue_Credits: 30
   },
   organic: { 
     id: 'organic', 
@@ -127,8 +124,7 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'Biological compounds', 
     isStackable: true, 
     maxStackSize: 999, 
-    baseValue_Credits: 20,
-    quantity: 0
+    baseValue_Credits: 20
   },
   engine_part: { 
     id: 'engine_part', 
@@ -143,8 +139,7 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'Used for ship repairs and upgrades', 
     isStackable: true, 
     maxStackSize: 10, 
-    baseValue_Credits: 300,
-    quantity: 0
+    baseValue_Credits: 300
   },
   circuit: { 
     id: 'circuit', 
@@ -159,8 +154,7 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'Electronic component', 
     isStackable: true, 
     maxStackSize: 20, 
-    baseValue_Credits: 200,
-    quantity: 0
+    baseValue_Credits: 200
   },
   weapon_part: { 
     id: 'weapon_part', 
@@ -175,8 +169,7 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'Used in weapons crafting', 
     isStackable: true, 
     maxStackSize: 5, 
-    baseValue_Credits: 400,
-    quantity: 0
+    baseValue_Credits: 400
   },
   ancient_relic: { 
     id: 'ancient_relic', 
@@ -192,8 +185,7 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     isStackable: false, 
     baseValue_Credits: 5000, 
     rarity: ItemRarity.Legendary, 
-    defaultLoreText: 'This mysterious artifact appears to be of ancient origin. Its purpose remains unknown, but it radiates a strange energy.',
-    quantity: 0
+    defaultLoreText: 'This mysterious artifact appears to be of ancient origin. Its purpose remains unknown, but it radiates a strange energy.'
   }
 };
 
@@ -231,7 +223,14 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children }
 
   // Function to get an item by its ID
   const getItemById = (itemId: string): InventoryItem | null => {
-    return itemDatabase[itemId] || null;
+    const baseItem = itemDatabase[itemId];
+    if (!baseItem) return null;
+    
+    // Add a default quantity when returning from database
+    return {
+      ...baseItem,
+      quantity: 0
+    } as InventoryItem;
   };
 
   // Get the total cargo capacity and used capacity

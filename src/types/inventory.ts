@@ -1,3 +1,4 @@
+
 export enum ItemType {
   Resource = "resource",
   Component = "component",
@@ -77,6 +78,7 @@ export interface SpecializedStorage {
   totalCapacity?: number;
 }
 
+// Modified this interface to make filter accept string | ItemType | null
 export interface InventoryContextType {
   inventory: Record<string, SpecializedStorage> | {
     cargoHold?: { slots: InventorySlot[], totalCapacity: number, usedCapacity: number },
@@ -93,7 +95,7 @@ export interface InventoryContextType {
   getUsedCapacity: () => number;
   addItem: (itemId: string, quantity: number, storageType: SpecializedStorageType) => void;
   removeItem: (itemId: string, quantity: number) => void;
-  itemDatabase: Record<string, Omit<InventoryItem, 'quantity'>>;
+  itemDatabase: Record<string, Omit<InventoryItem, 'quantity'>>; // Keep this as is
   filter: ItemType | null;
   setFilter: (filter: ItemType | null | string) => void; // Modified for compatibility
   sort: 'name' | 'quantity' | 'value';
@@ -123,4 +125,3 @@ export interface TraderInventoryItemSlot {
   stockQuantity: number;
   marketDemandIndicator: string;
 }
-
