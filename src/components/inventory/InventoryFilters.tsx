@@ -32,7 +32,8 @@ const InventoryFilters = () => {
   
   // Ensure that filter type is always a string or null
   const handleFilterClick = (filterType: ItemType | null) => {
-    setFilter(filterType); // setFilter accepts ItemType | null | string
+    // Cast to string explicitly for type safety
+    setFilter(filterType);
   };
 
   // Ensure that sort value is always a string

@@ -64,7 +64,7 @@ const mockInventory = {
   searchText: ''
 };
 
-// Define the item database with proper types - fixed to include quantity with default value
+// Define the item database with proper types
 const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
   titanium: { 
     id: 'titanium', 
@@ -79,7 +79,8 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'A strong, lightweight metal', 
     isStackable: true, 
     maxStackSize: 999, 
-    baseValue_Credits: 50 
+    baseValue_Credits: 50,
+    quantity: 0  // Adding quantity with default value
   },
   crystal: { 
     id: 'crystal', 
@@ -94,7 +95,8 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'An energy-focusing crystal', 
     isStackable: true, 
     maxStackSize: 999, 
-    baseValue_Credits: 100 
+    baseValue_Credits: 100,
+    quantity: 0
   },
   fuel: { 
     id: 'fuel', 
@@ -109,7 +111,8 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'Spacecraft propellant', 
     isStackable: true, 
     maxStackSize: 999, 
-    baseValue_Credits: 30 
+    baseValue_Credits: 30,
+    quantity: 0
   },
   organic: { 
     id: 'organic', 
@@ -124,7 +127,8 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'Biological compounds', 
     isStackable: true, 
     maxStackSize: 999, 
-    baseValue_Credits: 20 
+    baseValue_Credits: 20,
+    quantity: 0
   },
   engine_part: { 
     id: 'engine_part', 
@@ -139,7 +143,8 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'Used for ship repairs and upgrades', 
     isStackable: true, 
     maxStackSize: 10, 
-    baseValue_Credits: 300 
+    baseValue_Credits: 300,
+    quantity: 0
   },
   circuit: { 
     id: 'circuit', 
@@ -154,7 +159,8 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'Electronic component', 
     isStackable: true, 
     maxStackSize: 20, 
-    baseValue_Credits: 200 
+    baseValue_Credits: 200,
+    quantity: 0
   },
   weapon_part: { 
     id: 'weapon_part', 
@@ -169,7 +175,8 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     defaultItemDescription: 'Used in weapons crafting', 
     isStackable: true, 
     maxStackSize: 5, 
-    baseValue_Credits: 400 
+    baseValue_Credits: 400,
+    quantity: 0
   },
   ancient_relic: { 
     id: 'ancient_relic', 
@@ -185,7 +192,8 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     isStackable: false, 
     baseValue_Credits: 5000, 
     rarity: ItemRarity.Legendary, 
-    defaultLoreText: 'This mysterious artifact appears to be of ancient origin. Its purpose remains unknown, but it radiates a strange energy.' 
+    defaultLoreText: 'This mysterious artifact appears to be of ancient origin. Its purpose remains unknown, but it radiates a strange energy.',
+    quantity: 0
   }
 };
 

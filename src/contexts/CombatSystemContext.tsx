@@ -4,21 +4,13 @@ import {
   DamageInstance, 
   DamageType, 
   WeaponModuleDefinition,
-  CombatComponent
+  CombatComponent,
+  FactionId
 } from '@/types/combat';
 import { toast } from "sonner";
 import { useShipMovement } from './ShipMovementContext';
 import { ShipModuleData, ShipModuleType } from '@/types/ship-editor';
 import { ItemRarity } from '@/types/inventory';
-
-// Define enum for FactionId since it's being used but not found in the types
-enum FactionId {
-  Player = "player",
-  Pirates = "pirates",
-  Syndicate = "syndicate",
-  Federation = "federation",
-  Empire = "empire"
-}
 
 // Default combat system configuration
 const defaultCombatSystemConfig: CombatSystemConfig = {
@@ -178,7 +170,7 @@ const initialPlayerCombatState: CombatComponent = {
   shield_RechargeDelaySec: 3,
   armor_Rating: 10,
   isHostileToPlayer: false,
-  factionId: FactionId.Player,
+  factionId: "player" as FactionId,
   equippedWeaponSlots: [
     { slotId: "weapon_slot_front_small_01", weaponModuleId: "weapon_laser_pulse_mk1", currentHeat: 0 }
   ],
@@ -430,7 +422,7 @@ export const CombatSystemProvider: React.FC<CombatSystemProviderProps> = ({ chil
       shield_Max: 40,
       shield_RegenRatePerSec: 0.5,
       isHostileToPlayer: true,
-      factionId: FactionId.Pirates,
+      factionId: "pirates" as FactionId,
       equippedWeaponSlots: [
         { slotId: "weapon_slot_front_small_01", weaponModuleId: "weapon_laser_pulse_mk1" }
       ],

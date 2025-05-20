@@ -1,6 +1,6 @@
 
-import { FactionId } from "./diplomacy";
 import { ShipModuleData } from "./ship-editor";
+import { ItemRarity } from "./inventory";
 
 // Basic combat types
 export enum DamageType {
@@ -14,6 +14,9 @@ export enum DamageType {
   Acid_Corrosive = "Acid_Corrosive", // For some exotic weapons/environments
   Psionic_Mental = "Psionic_Mental"  // For Nexus Cult or unique entities
 }
+
+// Define the FactionId type for combat system
+export type FactionId = "player" | "pirates" | "syndicate" | "federation" | "empire";
 
 export interface DamageInstance {
   amount: number;
@@ -47,7 +50,7 @@ export interface CombatComponent {
   armor_Rating?: number; // Absolute damage reduction or % reduction
   targetEntityId?: string; // Currently targeted entity
   isHostileToPlayer: boolean;
-  factionId: FactionId; // From Prompt 12
+  factionId: FactionId; // Using our defined FactionId type
   // References to equipped weapons and defense systems (will be defined as modules)
   equippedWeaponSlots: Array<{ 
     slotId: string; 

@@ -1,5 +1,3 @@
-
-
 export enum ItemType {
   Resource = "resource",
   Component = "component",
@@ -125,3 +123,4 @@ export interface TraderInventoryItemSlot {
   stockQuantity: number;
   marketDemandIndicator: string;
 }
+
