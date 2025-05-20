@@ -64,7 +64,7 @@ export interface DiplomacyContextType {
   };
 }
 
-// Export FactionId for use across the application
+// Export FactionId enum explicitly
 export enum FactionId {
   Player = "player",
   SolarConfederacy = "solar_confederacy",

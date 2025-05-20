@@ -34,7 +34,16 @@ export enum MissionType {
   Mining = "Mining",
   Salvage = "Salvage",
   Diplomacy = "Diplomacy",
-  Tutorial = "Tutorial"
+  Tutorial = "Tutorial",
+  // Add the missing mission types that are used in components
+  MainStory_Nexus = "MainStory_Nexus",
+  FactionStory_Major = "FactionStory_Major",
+  BountyHunt = "BountyHunt",
+  Exploration_Survey = "Exploration_Survey",
+  Delivery_Transport = "Delivery_Transport",
+  Mining_ResourceCollection = "Mining_ResourceCollection",
+  PersonalCrewQuest = "PersonalCrewQuest",
+  SideQuest_Generic = "SideQuest_Generic"
 }
 
 export interface MissionRequirement {
@@ -90,4 +99,73 @@ export enum RequirementType {
   DeclareWar = "DeclareWar",
   SignTreaty = "SignTreaty",
   DeliverCargo = "DeliverCargo"
+}
+
+// Add the missing MissionStatus enum needed by the components
+export enum MissionStatus {
+  Available_NotAccepted = "Available_NotAccepted",
+  Active_InProgress = "Active_InProgress",
+  Active_TrackedByPlayer = "Active_TrackedByPlayer",
+  Completed_Success = "Completed_Success",
+  Completed_Failed = "Completed_Failed",
+  Completed_Expired = "Completed_Expired"
+}
+
+// Add the MissionObjective interface that's used in MissionDetails.tsx
+export interface MissionObjective {
+  objectiveId: string;
+  descriptionKey?: string;
+  defaultDescription: string;
+  status: 'Pending' | 'InProgress' | 'Completed';
+  targetLocation_SystemId?: string;
+  targetLocation_CelestialBodyId?: string;
+  targetLocation_Coordinates?: Vector2D;
+  targetNPC_Id?: string;
+  targetItem_Id?: string;
+  isHiddenUntilPreviousCompleted?: boolean;
+  isOptional?: boolean;
+  showOnMap_Button_Enabled?: boolean;
+  quantityRequired?: number;
+  quantityCurrent?: number;
+}
+
+// Add MissionData interface that's used in the contexts and components
+export interface MissionData {
+  missionId: string;
+  missionTitleKey?: string;
+  defaultMissionTitle: string;
+  missionType: MissionType;
+  status: MissionStatus;
+  missionGiver_NPC_Id_Or_FactionId?: string;
+  missionGiver_DisplayNameKey?: string;
+  defaultMissionGiver_DisplayName?: string;
+  missionGiver_PortraitAsset?: string;
+  briefingDialog_Key?: string;
+  defaultBriefingDialog?: string;
+  fullDescription_Lore_Key?: string;
+  defaultFullDescription_Lore?: string;
+  objectives: MissionObjective[];
+  rewards_OnFinalCompletion: any[];
+  suggestedPlayerLevel_Or_ShipTier?: number;
+  timeLimit_GameDays?: number;
+  chainQuest_NextMissionId?: string;
+}
+
+// Update MissionsContextType to match implementation in MissionsContext.tsx
+export interface MissionsContextType {
+  activeMissions: MissionData[];
+  completedMissions: MissionData[];
+  selectedMissionId: string | null;
+  trackedMissionId: string | null;
+  selectMission: (missionId: string) => void;
+  trackMission: (missionId: string | null) => void;
+  getMissionById: (missionId: string) => MissionData | null;
+  completeObjective: (missionId: string, objectiveId: string) => void;
+  completeMission: (missionId: string, success: boolean) => void;
+  addMission: (mission: MissionData) => void;
+  abandonMission: (missionId: string) => void;
+  filterMissionType: MissionType | null;
+  setFilterMissionType: (type: MissionType | null) => void;
+  sortOption: string;
+  setSortOption: (option: string) => void;
 }
