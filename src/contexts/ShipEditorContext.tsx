@@ -8,7 +8,6 @@ import { ItemRarity } from '@/types/inventory';
 const mockShipModules: Record<string, ShipModuleData> = {
   'laser_cannon_mk1': {
     itemId: 'laser_cannon_mk1',
-    itemNameKey: 'modules.laser_cannon_mk1.name',
     defaultItemName: 'Laserový kanon Mk1',
     itemDescriptionKey: 'modules.laser_cannon_mk1.description',
     defaultItemDescription: 'Standardní laserový kanón pro menší lodě. Spolehlivý a s přiměřeným výkonem.',
@@ -30,7 +29,6 @@ const mockShipModules: Record<string, ShipModuleData> = {
   },
   'shield_generator_basic': {
     itemId: 'shield_generator_basic',
-    itemNameKey: 'modules.shield_generator_basic.name',
     defaultItemName: 'Základní generátor štítu',
     itemDescriptionKey: 'modules.shield_generator_basic.description',
     defaultItemDescription: 'Vytváří energetické pole, které chrání loď před poškozením.',
@@ -53,7 +51,6 @@ const mockShipModules: Record<string, ShipModuleData> = {
   },
   'engine_basic': {
     itemId: 'engine_basic',
-    itemNameKey: 'modules.engine_basic.name',
     defaultItemName: 'Základní motor',
     itemDescriptionKey: 'modules.engine_basic.description',
     defaultItemDescription: 'Standardní pohonná jednotka s průměrným výkonem a spolehlivostí.',
@@ -76,7 +73,6 @@ const mockShipModules: Record<string, ShipModuleData> = {
   },
   'reactor_mk1': {
     itemId: 'reactor_mk1',
-    itemNameKey: 'modules.reactor_mk1.name',
     defaultItemName: 'Reaktor Mk1',
     itemDescriptionKey: 'modules.reactor_mk1.description',
     defaultItemDescription: 'Základní energetický reaktor pro napájení systémů lodi.',
@@ -97,7 +93,6 @@ const mockShipModules: Record<string, ShipModuleData> = {
   },
   'armor_plating_basic': {
     itemId: 'armor_plating_basic',
-    itemNameKey: 'modules.armor_plating_basic.name',
     defaultItemName: 'Základní pancéřování',
     itemDescriptionKey: 'modules.armor_plating_basic.description',
     defaultItemDescription: 'Přidává další vrstvu ochrany trupu lodi.',

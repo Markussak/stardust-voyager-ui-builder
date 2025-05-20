@@ -1,4 +1,5 @@
 
+
 export enum ItemType {
   Resource = "resource",
   Component = "component",
@@ -29,6 +30,16 @@ export enum ItemRarity {
   Legendary = "legendary",
   Unique = "unique",
   Artifact = "artifact"  // Added for compatibility
+}
+
+// Add this for ship modules
+export interface BaseItemData {
+  id: string;
+  name: string;
+  type: string;
+  description?: string;
+  rarity?: ItemRarity;
+  value?: number;
 }
 
 export interface InventoryItem {
@@ -74,7 +85,8 @@ export interface InventoryContextType {
     specializedStorage?: Record<string, { items: any[] }>,
     searchText?: string,
     filterType?: string,
-    sortKey?: string
+    sortKey?: string,
+    selectedItemId?: string | null  // Add this property
   };
   selectedItemId: string | null;
   selectItem: (itemId: string | null) => void;
@@ -91,4 +103,25 @@ export interface InventoryContextType {
   searchText: string;
   setSearchText: (text: string) => void;
   getItemById?: (itemId: string) => InventoryItem | null;
+}
+
+// Add these interfaces for TradeContext
+export interface ItemInstance {
+  itemInstanceId: string;
+  baseItemId: string;
+  quantity: number;
+}
+
+export interface TradeableItemData extends BaseItemData {
+  currentPrice: number;
+  availability: number;
+  marketDemand: number;
+}
+
+export interface TraderInventoryItemSlot {
+  itemId: string;
+  itemInstance: ItemInstance;
+  buyPrice_ForPlayer: number;
+  stockQuantity: number;
+  marketDemandIndicator: string;
 }

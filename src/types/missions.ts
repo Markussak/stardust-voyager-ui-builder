@@ -1,102 +1,92 @@
+import { Vector2D } from './galaxy';
+import { FactionId } from './diplomacy';
 
-import { Vector2D } from "./galaxy";
-import { FactionId } from "./diplomacy";
+export interface Mission {
+  id: string;
+  title: string;
+  description: string;
+  type: MissionType;
+  factionId?: FactionId;
+  reward: {
+    credits?: number;
+    items?: { itemId: string; quantity: number; }[];
+    xp?: number;
+    reputation?: number;
+  };
+  requirements: MissionRequirement[];
+  progress: number;
+  isCompleted: boolean;
+  location?: Vector2D;
+  timeLimit?: number;
+  startDate?: number;
+  endDate?: number;
+  isFailed?: boolean;
+  failureReason?: string;
+}
 
 export enum MissionType {
-  MainStory_Nexus = "MainStory_Nexus",
-  FactionStory_Major = "FactionStory_Major",
-  SideQuest_Generic = "SideQuest_Generic",
-  BountyHunt = "BountyHunt",
-  Exploration_Survey = "Exploration_Survey",
-  Delivery_Transport = "Delivery_Transport",
-  Mining_ResourceCollection = "Mining_ResourceCollection",
-  PersonalCrewQuest = "PersonalCrewQuest"
+  Story = "Story",
+  Faction = "Faction",
+  Exploration = "Exploration",
+  Combat = "Combat",
+  Delivery = "Delivery",
+  Mining = "Mining",
+  Salvage = "Salvage",
+  Diplomacy = "Diplomacy",
+  Tutorial = "Tutorial"
 }
 
-export enum MissionStatus {
-  Inactive_NotYetAvailable = "Inactive_NotYetAvailable",
-  Available_NotAccepted = "Available_NotAccepted",
-  Active_InProgress = "Active_InProgress",
-  Active_TrackedByPlayer = "Active_TrackedByPlayer",
-  Completed_Success = "Completed_Success",
-  Completed_Failed = "Completed_Failed",
-  Completed_Expired = "Completed_Expired"
-}
-
-export interface MissionObjective {
-  objectiveId: string;
-  descriptionKey: string;
-  defaultDescription: string;
-  status: 'Pending' | 'InProgress' | 'Completed' | 'Failed';
-  targetLocation_SystemId?: string;
-  targetLocation_CelestialBodyId?: string;
-  targetLocation_Coordinates?: Vector2D;
-  targetItem_Id?: string;
-  targetNPC_Id?: string;
-  quantityRequired?: number;
-  quantityCurrent?: number;
-  isHiddenUntilPreviousCompleted?: boolean;
-  isOptional?: boolean;
-  rewardOnCompletion?: MissionReward[];
-  showOnMap_Button_Enabled: boolean;
-}
-
-export interface MissionReward {
-  type: 'Credits' | 'ExperiencePoints_Player' | 'ResearchPoints_SpecificType' | 'Item_Specific' | 'Item_RandomFromLootTable' | 'ReputationChange_Faction' | 'Unlock_CodexEntry' | 'Unlock_NewLocation';
-  itemId_Or_LootTableKey?: string;
-  researchPointType?: string;
+export interface MissionRequirement {
+  type: RequirementType;
+  target: string;
   quantity?: number;
-  factionId_ForReputation?: FactionId;
-  reputationChangeAmount?: number;
-  codexEntryId_ToUnlock?: string;
-  descriptionKey: string;
-  defaultDescription: string;
-  iconAsset: string;
+  isCompleted: boolean;
 }
 
-export interface MissionData {
-  missionId: string;
-  missionTitleKey: string;
-  defaultMissionTitle: string;
-  missionType: MissionType;
-  status: MissionStatus;
-  missionGiver_NPC_Id_Or_FactionId?: string;
-  missionGiver_DisplayNameKey?: string;
-  defaultMissionGiver_DisplayName?: string;
-  missionGiver_PortraitAsset?: string;
-  briefingDialog_Key?: string;
-  defaultBriefingDialog?: string;
-  fullDescription_Lore_Key?: string;
-  defaultFullDescription_Lore?: string;
-  objectives: MissionObjective[];
-  rewards_OnFinalCompletion: MissionReward[];
-  suggestedPlayerLevel_Or_ShipTier?: number;
-  timeLimit_GameDays?: number;
-  isRepeatable?: boolean;
-  failureConditions_DescriptionKey?: string;
-  defaultFailureConditions?: string;
-  completionDialog_Key?: string;
-  defaultCompletionDialog?: string;
-  turnInLocation_DescriptionKey?: string;
-  defaultTurnInLocation?: string;
-  isHiddenUntilTriggered?: boolean;
-  chainQuest_NextMissionId?: string;
-}
-
-export interface MissionsContextType {
-  activeMissions: MissionData[];
-  completedMissions: MissionData[];
-  selectedMissionId: string | null;
-  trackedMissionId: string | null;
-  selectMission: (missionId: string) => void;
-  trackMission: (missionId: string | null) => void;
-  getMissionById: (missionId: string) => MissionData | null;
-  completeObjective: (missionId: string, objectiveId: string) => void;
-  completeMission: (missionId: string, success: boolean) => void;
-  addMission: (mission: MissionData) => void;
-  abandonMission: (missionId: string) => void;
-  setFilterMissionType: (type: MissionType | null) => void;
-  filterMissionType: MissionType | null;
-  setSortOption: (option: string) => void;
-  sortOption: string;
+export enum RequirementType {
+  VisitStarSystem = "VisitStarSystem",
+  CollectItem = "CollectItem",
+  DefeatEnemies = "DefeatEnemies",
+  DeliverItem = "DeliverItem",
+  Reach определённаяReputation = "Reach определённаяReputation",
+  ScanObject = "ScanObject",
+  TalkToNPC = "TalkToNPC",
+  CompleteMissions = "CompleteMissions",
+  ExploreLocation = "ExploreLocation",
+  CraftItem = "CraftItem",
+  UpgradeShipModule = "UpgradeShipModule",
+  BuildStructure = "BuildStructure",
+  ResearchTechnology = "ResearchTechnology",
+  EstablishTradeRoute = "EstablishTradeRoute",
+  FormAlliance = "FormAlliance",
+  InfiltrateBase = "InfiltrateBase",
+  SabotageOperation = "SabotageOperation",
+  RescuePersonnel = "RescuePersonnel",
+  EscortConvoy = "EscortConvoy",
+  SurveyPlanet = "SurveyPlanet",
+  NegotiateTreaty = "NegotiateTreaty",
+  WinRace = "WinRace",
+  SurviveEncounter = "SurviveEncounter",
+  ActivateArtifact = "ActivateArtifact",
+  SolvePuzzle = "SolvePuzzle",
+  FindTreasure = "FindTreasure",
+  ClearAsteroidField = "ClearAsteroidField",
+  DisableSecuritySystem = "DisableSecuritySystem",
+  RepairDamagedComponent = "RepairDamagedComponent",
+  EvadePatrols = "EvadePatrols",
+  CaptureOutpost = "CaptureOutpost",
+  DefendBase = "DefendBase",
+  EliminateTarget = "EliminateTarget",
+  GatherIntel = "GatherIntel",
+  SecureArea = "SecureArea",
+  ExtractResources = "ExtractResources",
+  InvestigateAnomaly = "InvestigateAnomaly",
+  EstablishColony = "EstablishColony",
+  DiplomaticMeeting = "DiplomaticMeeting",
+  TradeAgreement = "TradeAgreement",
+  NonAggressionPact = "NonAggressionPact",
+  DefensiveAlliance = "DefensiveAlliance",
+  DeclareWar = "DeclareWar",
+  SignTreaty = "SignTreaty",
+  DeliverCargo = "DeliverCargo",
 }

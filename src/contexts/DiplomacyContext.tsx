@@ -1,17 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
-import { DiplomaticStatus, Faction, Treaty, DiplomacyContextType } from '@/types/diplomacy';
+import { DiplomaticStatus, Faction, Treaty, DiplomacyContextType, FactionId } from '@/types/diplomacy';
 
-// Define the FactionId enum from the prompt
-export enum FactionId {
-  Player = "player",
-  SolarConfederacy = "solar_confederacy",
-  KrallEmpire = "krall_empire",
-  CultOfTheNexus = "cult_of_the_nexus",
-  FreeTradersSyndicate = "free_traders_syndicate",
-  PirateClan_RedMasks = "pirate_clan_red_masks",
-  Guardians_AncientAI = "guardians_ancient_ai",
-}
-
+// Define the FactionRelation interface
 export interface FactionRelation {
   factionId: FactionId;
   status: DiplomaticStatus;
@@ -39,7 +29,8 @@ const mockFactions: Record<FactionId, Faction> = {
       military: 50,
       economic: 50,
       tech: 50,
-      technological: 50
+      technological: 50,
+      economy: 50
     }
   },
   [FactionId.SolarConfederacy]: {
@@ -58,6 +49,7 @@ const mockFactions: Record<FactionId, Faction> = {
     power: {
       military: 70,
       economic: 80,
+      economy: 80,
       tech: 75,
       technological: 75
     }
@@ -78,6 +70,7 @@ const mockFactions: Record<FactionId, Faction> = {
     power: {
       military: 90,
       economic: 60,
+      economy: 60,
       tech: 65,
       technological: 65
     }
@@ -98,6 +91,7 @@ const mockFactions: Record<FactionId, Faction> = {
     power: {
       military: 60,
       economic: 50,
+      economy: 50,
       tech: 85,
       technological: 85
     }
@@ -118,6 +112,7 @@ const mockFactions: Record<FactionId, Faction> = {
     power: {
       military: 40,
       economic: 95,
+      economy: 95,
       tech: 65,
       technological: 65
     }
@@ -138,6 +133,7 @@ const mockFactions: Record<FactionId, Faction> = {
     power: {
       military: 55,
       economic: 40,
+      economy: 40,
       tech: 30,
       technological: 30
     }
@@ -156,6 +152,7 @@ const mockFactions: Record<FactionId, Faction> = {
     power: {
       military: 85,
       economic: 20,
+      economy: 20,
       tech: 100,
       technological: 100
     }

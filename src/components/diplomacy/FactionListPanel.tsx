@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { useDiplomacy, FactionId, DiplomaticStatus } from '@/contexts/DiplomacyContext';
+import { useDiplomacy } from '@/contexts/DiplomacyContext';
+import { FactionId, DiplomaticStatus } from '@/types/diplomacy';
 import { cn } from '@/lib/utils';
 
 const getRelationColor = (status: DiplomaticStatus): string => {

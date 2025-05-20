@@ -80,7 +80,7 @@ const InventoryFilters = () => {
         <div className="flex items-center">
           <Label htmlFor="sort-select" className="mr-2 text-xs">Třídit dle:</Label>
           <Select 
-            onValueChange={(value) => setSort(value)}
+            onValueChange={(value: string) => setSort(value)}
             defaultValue={inventory.sortKey || "name"}
           >
             <SelectTrigger className="w-[140px] h-8 text-xs" id="sort-select">

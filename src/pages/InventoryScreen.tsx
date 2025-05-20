@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInventory } from "@/contexts/InventoryContext";
@@ -14,7 +13,7 @@ import { ArrowLeft } from "lucide-react";
 
 const InventoryScreen = () => {
   const navigate = useNavigate();
-  const { inventory, selectItem } = useInventory();
+  const { inventory, selectItem, selectedItemId } = useInventory();
   const [activeStorageTab, setActiveStorageTab] = useState('RawMaterials');
 
   const handleBack = () => {
@@ -71,8 +70,8 @@ const InventoryScreen = () => {
             
             {/* Item details panel */}
             <div className="bg-space-dark bg-opacity-80 border border-space-buttons-border rounded-lg p-4 h-1/2 overflow-auto">
-              {inventory.selectedItemId ? (
-                <ItemDetailsPanel itemInstanceId={inventory.selectedItemId} />
+              {selectedItemId ? (
+                <ItemDetailsPanel itemInstanceId={selectedItemId} />
               ) : (
                 <div className="h-full flex items-center justify-center text-space-ui-subtext">
                   <p>Vyberte předmět pro zobrazení detailů</p>

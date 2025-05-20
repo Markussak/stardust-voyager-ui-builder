@@ -12,7 +12,7 @@ export enum DiplomaticStatus {
 
 export interface Treaty {
   id: string;
-  type: string;  // Adding this field for compatibility
+  type: string;  // This field is needed by the components
   name: string;
   description: string;
   startDate: number;
@@ -30,11 +30,13 @@ export interface Faction {
   logoUrl: string;
   leaderName?: string;
   leaderPortraitUrl?: string;
+  discovered?: boolean;  // Add this property
   power: {
     military: number;
     economic: number;
     tech: number;
-    technological?: number;  // Adding this for compatibility
+    technological?: number;  // For compatibility
+    economy?: number;  // Add this for compatibility
   };
   homeSystemId?: string;
   controlledSystems?: string[];
@@ -43,8 +45,8 @@ export interface Faction {
     status: DiplomaticStatus;
     treaties: Treaty[];
   };
-  color?: string; // Adding this field for compatibility
-  governmentType?: string; // Adding this field for compatibility
+  color?: string; // For compatibility
+  governmentType?: string; // For compatibility
 }
 
 export interface DiplomacyContextType {
@@ -60,4 +62,15 @@ export interface DiplomacyContextType {
     playerRelations: Record<string, any>;
     selectedFactionId: string | null;
   };
+}
+
+// Export FactionId for use across the application
+export enum FactionId {
+  Player = "player",
+  SolarConfederacy = "solar_confederacy",
+  KrallEmpire = "krall_empire",
+  CultOfTheNexus = "cult_of_the_nexus",
+  FreeTradersSyndicate = "free_traders_syndicate",
+  PirateClan_RedMasks = "pirate_clan_red_masks",
+  Guardians_AncientAI = "guardians_ancient_ai"
 }

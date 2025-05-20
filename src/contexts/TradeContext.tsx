@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useInventory } from './InventoryContext';
-import { ItemInstance, TradeableItemData, TraderInventoryItemSlot } from '../types/inventory';
+import { ItemInstance, TradeableItemData, TraderInventoryItemSlot } from '@/types/inventory';
 import { toast } from 'sonner';
 
 interface TradeState {
