@@ -1,5 +1,6 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { toast } from 'sonner';
 import { 
   MinableResourceData, 
   MiningSystemConfig,
@@ -18,6 +19,7 @@ interface MiningSystemContextType {
   stopMining: () => void;
   getMiningToolById: (toolId: string) => MiningToolTypeDefinition | null;
   getResourceById: (resourceId: string) => MinableResourceData | null;
+  availableResources: Record<string, MinableResourceData>;
 }
 
 const MiningSystemContext = createContext<MiningSystemContextType | undefined>(undefined);
@@ -27,6 +29,7 @@ export const MiningSystemProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [isActivelyMining, setIsActivelyMining] = useState(false);
   const [targetResourceId, setTargetResourceId] = useState<string | null>(null);
   const [miningProgress, setMiningProgress] = useState(0);
+  const [miningInterval, setMiningInterval] = useState<NodeJS.Timeout | null>(null);
 
   // Mock mining tools data - in a real implementation, this would be loaded from a config file
   const miningTools: MiningToolTypeDefinition[] = [
@@ -77,7 +80,7 @@ export const MiningSystemProvider: React.FC<{ children: ReactNode }> = ({ childr
       id: "IronOre",
       name: "Železná Ruda",
       type: "resource",
-      description: "Bežná ruda obsahujúca železo, základný stavebný materiál.",
+      description: "Běžná ruda obsahující železo, základní stavební materiál.",
       // Removed icon property as it's not in the MinableResourceData interface
       value: 5,
       rarity: "Common" as any,
@@ -92,15 +95,52 @@ export const MiningSystemProvider: React.FC<{ children: ReactNode }> = ({ childr
       id: "Helium3Gas",
       name: "Hélium-3",
       type: "resource",
-      description: "Vzácny izotop hélia, používaný ako palivo pre pokročilé fúzne reaktory.",
+      description: "Vzácný izotop hélia, používaný jako palivo pro pokročilé fúzní reaktory.",
       // Removed icon property as it's not in the MinableResourceData interface
       value: 25,
       rarity: "Uncommon" as any,
       resourceCategory: ResourceCategory.Gas_Fuel,
       miningDifficultyFactor: 1.2,
       isSolid: false
+    },
+    "CopperOre": {
+      id: "CopperOre",
+      name: "Měděná Ruda",
+      type: "resource",
+      description: "Běžná ruda obsahující měď, důležitá pro elektroniku.",
+      value: 8,
+      rarity: "Common" as any,
+      resourceCategory: ResourceCategory.Metal_Common,
+      miningDifficultyFactor: 0.9,
+      isSolid: true,
+      refiningRequired: true,
+      refinedTo_ItemId: "CopperIngot",
+      refiningRatio: 2
+    },
+    "TitaniumOre": {
+      id: "TitaniumOre",
+      name: "Titanová Ruda",
+      type: "resource",
+      description: "Vzácná ruda obsahující titan, vysoce odolný kov.",
+      value: 20,
+      rarity: "Uncommon" as any,
+      resourceCategory: ResourceCategory.Metal_Rare,
+      miningDifficultyFactor: 1.4,
+      isSolid: true,
+      refiningRequired: true,
+      refinedTo_ItemId: "TitaniumIngot",
+      refiningRatio: 3
     }
   };
+
+  // Clean up interval on component unmount
+  useEffect(() => {
+    return () => {
+      if (miningInterval) {
+        clearInterval(miningInterval);
+      }
+    };
+  }, [miningInterval]);
 
   const getMiningToolById = (toolId: string): MiningToolTypeDefinition | null => {
     return miningTools.find(tool => tool.toolModuleId_Base === toolId) || null;
@@ -112,21 +152,21 @@ export const MiningSystemProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   const startMining = (targetId: string) => {
     if (!activeTool) {
-      console.log("No mining tool selected");
+      toast.error("Žádný těžební nástroj není vybraný");
       return;
     }
 
     // Check if target resource exists
     const resource = getResourceById(targetId);
     if (!resource) {
-      console.log("Invalid resource target");
+      toast.error("Neplatný cíl těžby");
       return;
     }
 
     // Check if the active tool can mine this resource type
     const tool = getMiningToolById(activeTool);
     if (!tool) {
-      console.log("Invalid mining tool");
+      toast.error("Neplatný těžební nástroj");
       return;
     }
 
@@ -135,7 +175,7 @@ export const MiningSystemProvider: React.FC<{ children: ReactNode }> = ({ childr
       (tool.targetResourceType.includes("Gas") && !resource.isSolid);
       
     if (!canMine) {
-      console.log("This tool cannot mine this resource type");
+      toast.error("Tento nástroj nemůže těžit tento typ suroviny");
       return;
     }
 
@@ -143,15 +183,46 @@ export const MiningSystemProvider: React.FC<{ children: ReactNode }> = ({ childr
     setIsActivelyMining(true);
     setMiningProgress(0);
     
-    // In a real implementation, we would start a mining progress timer/loop here
-    console.log(`Started mining ${resource.name} with ${tool.toolModuleId_Base}`);
+    // Start mining progress loop
+    const interval = setInterval(() => {
+      setMiningProgress((prev) => {
+        const newProgress = prev + (tool.baseMiningRate_UnitsPerSec / 10) / (resource.miningDifficultyFactor || 1);
+        
+        if (newProgress >= 1) {
+          // Mining completed
+          clearInterval(interval);
+          setMiningInterval(null);
+          setIsActivelyMining(false);
+          setMiningProgress(0);
+          
+          // Inform the player
+          toast.success(`Těžba dokončena: získáno ${resource.name}`);
+          
+          // In a real implementation, we would add the resource to player's inventory here
+          
+          return 0;
+        }
+        
+        return newProgress;
+      });
+    }, 100); // Update every 100ms
+    
+    setMiningInterval(interval);
+    
+    console.log(`Začala těžba ${resource.name} s ${tool.toolModuleId_Base}`);
+    toast.info(`Těžím: ${resource.name}`);
   };
 
   const stopMining = () => {
+    if (miningInterval) {
+      clearInterval(miningInterval);
+      setMiningInterval(null);
+    }
     setIsActivelyMining(false);
     setTargetResourceId(null);
     setMiningProgress(0);
-    console.log("Mining stopped");
+    console.log("Těžba zastavena");
+    toast.info("Těžba zastavena");
   };
 
   const value = {
@@ -163,7 +234,8 @@ export const MiningSystemProvider: React.FC<{ children: ReactNode }> = ({ childr
     startMining,
     stopMining,
     getMiningToolById,
-    getResourceById
+    getResourceById,
+    availableResources: minableResources
   };
 
   return (

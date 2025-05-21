@@ -1,80 +1,90 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { GameProvider } from "./contexts/GameContext";
-import { InventoryProvider } from "./contexts/InventoryContext";
-import { DiplomacyProvider } from "./contexts/DiplomacyContext";
-import { CodexProvider } from "./contexts/CodexContext";
-import { MissionsProvider } from "./contexts/MissionsContext";
-import { CombatSystemProvider } from "./contexts/CombatSystemContext";
-import { ShipMovementProvider } from "./contexts/ShipMovementContext";
-import { MiningSystemProvider } from "./contexts/MiningSystemContext";
-import { TradeProvider } from "./contexts/TradeContext";
-import Index from "./pages/Index";
-import GalaxyMapScreen from "./pages/GalaxyMapScreen";
-import NotFound from "./pages/NotFound";
-import ShipDetailsScreen from "./pages/ShipDetailsScreen";
-import StarSystemScreen from "./pages/StarSystemScreen";
-import SettingsScreen from "./pages/SettingsScreen";
-import InventoryScreen from "./pages/InventoryScreen";
-import ShipEditorScreen from "./pages/ShipEditorScreen";
-import ResearchTreeScreen from "./pages/ResearchTreeScreen";
-import TradeScreen from "./pages/TradeScreen";
-import DiplomacyScreen from "./pages/DiplomacyScreen";
-import KnowledgeLibraryScreen from "./pages/KnowledgeLibraryScreen";
-import MissionLogScreen from "./pages/MissionLogScreen";
-import ShipTestScreen from "./pages/ShipTestScreen";
-import "./App.css";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import { CombatSystemProvider } from './contexts/CombatSystemContext';
+import { DiplomacyProvider } from './contexts/DiplomacyContext';
+import { GalaxyProvider } from './contexts/GalaxyContext';
+import { GameProvider } from './contexts/GameContext';
+import { InventoryProvider } from './contexts/InventoryContext';
+import { MiningSystemProvider } from './contexts/MiningSystemContext';
+import { MissionsProvider } from './contexts/MissionsContext';
+import { ResearchProvider } from './contexts/ResearchContext';
+import { ShipEditorProvider } from './contexts/ShipEditorContext';
+import { ShipMovementProvider } from './contexts/ShipMovementContext';
+import { TradeProvider } from './contexts/TradeContext';
+import { CodexProvider } from './contexts/CodexContext';
+import { CraftingProvider } from './contexts/CraftingContext';
 
-const queryClient = new QueryClient();
+import CombatTestScreen from './pages/CombatTestScreen';
+import DiplomacyScreen from './pages/DiplomacyScreen';
+import GalaxyMapScreen from './pages/GalaxyMapScreen';
+import Index from './pages/Index';
+import InventoryScreen from './pages/InventoryScreen';
+import KnowledgeLibraryScreen from './pages/KnowledgeLibraryScreen';
+import MissionLogScreen from './pages/MissionLogScreen';
+import NotFound from './pages/NotFound';
+import ResearchTreeScreen from './pages/ResearchTreeScreen';
+import SettingsScreen from './pages/SettingsScreen';
+import ShipDetailsScreen from './pages/ShipDetailsScreen';
+import ShipTestScreen from './pages/ShipTestScreen';
+import StarSystemScreen from './pages/StarSystemScreen';
+import ShipEditorScreen from './pages/ShipEditorScreen';
+import TradeScreen from './pages/TradeScreen';
+import CraftingScreen from './pages/CraftingScreen';
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+import './App.css';
+
+function App() {
+  return (
     <GameProvider>
-      <InventoryProvider>
-        <DiplomacyProvider>
-          <CodexProvider>
-            <MissionsProvider>
-              <ShipMovementProvider>
-                <CombatSystemProvider>
-                  <MiningSystemProvider>
-                    <TradeProvider>
-                      <TooltipProvider>
-                        <Toaster />
-                        <Sonner />
-                        <BrowserRouter>
-                          <Routes>
-                            <Route path="/" element={<Index />} />
-                            <Route path="/galaxy-map" element={<GalaxyMapScreen />} />
-                            <Route path="/ship-details" element={<ShipDetailsScreen />} />
-                            <Route path="/system/:systemId" element={<StarSystemScreen />} />
-                            <Route path="/settings" element={<SettingsScreen />} />
-                            <Route path="/inventory" element={<InventoryScreen />} />
-                            <Route path="/ship-editor" element={<ShipEditorScreen />} />
-                            <Route path="/research" element={<ResearchTreeScreen />} />
-                            <Route path="/trade" element={<TradeScreen />} />
-                            <Route path="/diplomacy" element={<DiplomacyScreen />} />
-                            <Route path="/knowledge-library" element={<KnowledgeLibraryScreen />} />
-                            <Route path="/mission-log" element={<MissionLogScreen />} />
-                            <Route path="/ship-test" element={<ShipTestScreen />} />
-                            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                            <Route path="*" element={<NotFound />} />
-                          </Routes>
-                        </BrowserRouter>
-                      </TooltipProvider>
-                    </TradeProvider>
-                  </MiningSystemProvider>
-                </CombatSystemProvider>
-              </ShipMovementProvider>
-            </MissionsProvider>
-          </CodexProvider>
-        </DiplomacyProvider>
-      </InventoryProvider>
+      <ShipMovementProvider>
+        <CombatSystemProvider>
+          <GalaxyProvider>
+            <MiningSystemProvider>
+              <InventoryProvider>
+                <ResearchProvider>
+                  <MissionsProvider>
+                    <DiplomacyProvider>
+                      <ShipEditorProvider>
+                        <TradeProvider>
+                          <CodexProvider>
+                            <CraftingProvider>
+                              <Router>
+                                <Routes>
+                                  <Route path="/" element={<Index />} />
+                                  <Route path="/galaxy-map" element={<GalaxyMapScreen />} />
+                                  <Route path="/star-system/:systemId" element={<StarSystemScreen />} />
+                                  <Route path="/ship-details" element={<ShipDetailsScreen />} />
+                                  <Route path="/ship-editor" element={<ShipEditorScreen />} />
+                                  <Route path="/inventory" element={<InventoryScreen />} />
+                                  <Route path="/research" element={<ResearchTreeScreen />} />
+                                  <Route path="/mission-log" element={<MissionLogScreen />} />
+                                  <Route path="/knowledge-library" element={<KnowledgeLibraryScreen />} />
+                                  <Route path="/diplomacy" element={<DiplomacyScreen />} />
+                                  <Route path="/trade" element={<TradeScreen />} />
+                                  <Route path="/settings" element={<SettingsScreen />} />
+                                  <Route path="/ship-test" element={<ShipTestScreen />} />
+                                  <Route path="/combat-test" element={<CombatTestScreen />} />
+                                  <Route path="/crafting" element={<CraftingScreen />} />
+                                  <Route path="*" element={<NotFound />} />
+                                </Routes>
+                              </Router>
+                              <Toaster position="top-right" />
+                            </CraftingProvider>
+                          </CodexProvider>
+                        </TradeProvider>
+                      </ShipEditorProvider>
+                    </DiplomacyProvider>
+                  </MissionsProvider>
+                </ResearchProvider>
+              </InventoryProvider>
+            </MiningSystemProvider>
+          </GalaxyProvider>
+        </CombatSystemProvider>
+      </ShipMovementProvider>
     </GameProvider>
-  </QueryClientProvider>
-);
+  );
+}
 
 export default App;

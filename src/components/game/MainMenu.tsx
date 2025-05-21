@@ -30,11 +30,15 @@ const MainMenu: React.FC = () => {
               </MenuButton>
               
               <MenuButton onClick={() => navigate('/mission-log')}>
-                Misijní Log
+                Misijní Deník
               </MenuButton>
               
               <MenuButton onClick={() => navigate('/inventory')}>
                 Inventář
+              </MenuButton>
+              
+              <MenuButton onClick={() => navigate('/crafting')}>
+                Výroba
               </MenuButton>
               
               <MenuButton onClick={() => navigate('/research')}>

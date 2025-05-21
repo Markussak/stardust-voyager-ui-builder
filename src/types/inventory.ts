@@ -103,6 +103,7 @@ export interface InventoryContextType {
   searchText: string;
   setSearchText: (text: string) => void;
   getItemById?: (itemId: string) => InventoryItem | null;
+  inventoryItems?: InventoryItem[]; // Add this property for easier access to all items
 }
 
 // Add these interfaces for TradeContext

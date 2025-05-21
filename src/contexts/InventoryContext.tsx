@@ -16,26 +16,30 @@ interface InventoryProviderProps {
 const mockInventory = {
   resources: {
     items: [
-      { id: 'titanium', itemInstanceId: 'titanium_1', baseItemId: 'titanium', name: 'Titanium', quantity: 150, type: 'resource', icon: 'titanium', value: 50, description: 'A strong, lightweight metal', defaultItemName: 'Titanium', defaultItemType: 'Resource' },
-      { id: 'crystal', itemInstanceId: 'crystal_1', baseItemId: 'crystal', name: 'Crystal', quantity: 75, type: 'resource', icon: 'crystal', value: 100, description: 'An energy-focusing crystal', defaultItemName: 'Crystal', defaultItemType: 'Resource' },
-      { id: 'fuel', itemInstanceId: 'fuel_1', baseItemId: 'fuel', name: 'Fuel', quantity: 200, type: 'resource', icon: 'fuel', value: 30, description: 'Spacecraft propellant', defaultItemName: 'Fuel', defaultItemType: 'Resource' },
-      { id: 'organic', itemInstanceId: 'organic_1', baseItemId: 'organic', name: 'Organic Matter', quantity: 120, type: 'resource', icon: 'organic', value: 20, description: 'Biological compounds', defaultItemName: 'Organic Matter', defaultItemType: 'Resource' }
+      { id: 'titanium', itemInstanceId: 'titanium_1', baseItemId: 'titanium', name: 'Titan', quantity: 150, type: 'resource', icon: 'titanium', value: 50, description: 'Lehký, silný kov', defaultItemName: 'Titan', defaultItemType: 'Zdroj' },
+      { id: 'crystal', itemInstanceId: 'crystal_1', baseItemId: 'crystal', name: 'Krystal', quantity: 75, type: 'resource', icon: 'crystal', value: 100, description: 'Energeticky fokusující krystal', defaultItemName: 'Krystal', defaultItemType: 'Zdroj' },
+      { id: 'fuel', itemInstanceId: 'fuel_1', baseItemId: 'fuel', name: 'Palivo', quantity: 200, type: 'resource', icon: 'fuel', value: 30, description: 'Pohonná hmota pro vesmírné lodě', defaultItemName: 'Palivo', defaultItemType: 'Zdroj' },
+      { id: 'organic', itemInstanceId: 'organic_1', baseItemId: 'organic', name: 'Organická Hmota', quantity: 120, type: 'resource', icon: 'organic', value: 20, description: 'Biologické sloučeniny', defaultItemName: 'Organická Hmota', defaultItemType: 'Zdroj' },
+      { id: 'IronOre', itemInstanceId: 'iron_ore_1', baseItemId: 'IronOre', name: 'Železná Ruda', quantity: 100, type: 'resource', icon: 'iron_ore', value: 5, description: 'Běžná ruda obsahující železo', defaultItemName: 'Železná Ruda', defaultItemType: 'Zdroj' },
+      { id: 'CopperOre', itemInstanceId: 'copper_ore_1', baseItemId: 'CopperOre', name: 'Měděná Ruda', quantity: 80, type: 'resource', icon: 'copper_ore', value: 8, description: 'Běžná ruda obsahující měď', defaultItemName: 'Měděná Ruda', defaultItemType: 'Zdroj' },
+      { id: 'TitaniumOre', itemInstanceId: 'titanium_ore_1', baseItemId: 'TitaniumOre', name: 'Titanová Ruda', quantity: 40, type: 'resource', icon: 'titanium_ore', value: 20, description: 'Vzácná ruda obsahující titan', defaultItemName: 'Titanová Ruda', defaultItemType: 'Zdroj' },
+      { id: 'Helium3Gas', itemInstanceId: 'helium3_gas_1', baseItemId: 'Helium3Gas', name: 'Hélium-3', quantity: 30, type: 'resource', icon: 'helium3_gas', value: 25, description: 'Vzácný izotop hélia', defaultItemName: 'Hélium-3', defaultItemType: 'Zdroj' }
     ],
     maxCapacity: 1000,
     usedCapacity: 545
   },
   components: {
     items: [
-      { id: 'engine_part', itemInstanceId: 'engine_part_1', baseItemId: 'engine_part', name: 'Engine Component', quantity: 5, type: 'component', icon: 'engine_part', value: 300, description: 'Used for ship repairs and upgrades', defaultItemName: 'Engine Component', defaultItemType: 'Component' },
-      { id: 'circuit', itemInstanceId: 'circuit_1', baseItemId: 'circuit', name: 'Circuit Board', quantity: 12, type: 'component', icon: 'circuit', value: 200, description: 'Electronic component', defaultItemName: 'Circuit Board', defaultItemType: 'Component' },
-      { id: 'weapon_part', itemInstanceId: 'weapon_part_1', baseItemId: 'weapon_part', name: 'Weapon Component', quantity: 3, type: 'component', icon: 'weapon_part', value: 400, description: 'Used in weapons crafting', defaultItemName: 'Weapon Component', defaultItemType: 'Component' }
+      { id: 'engine_part', itemInstanceId: 'engine_part_1', baseItemId: 'engine_part', name: 'Součást Motoru', quantity: 5, type: 'component', icon: 'engine_part', value: 300, description: 'Používá se pro opravy a vylepšení lodí', defaultItemName: 'Součást Motoru', defaultItemType: 'Komponenta' },
+      { id: 'circuit', itemInstanceId: 'circuit_1', baseItemId: 'circuit', name: 'Obvodová Deska', quantity: 12, type: 'component', icon: 'circuit', value: 200, description: 'Elektronická komponenta', defaultItemName: 'Obvodová Deska', defaultItemType: 'Komponenta' },
+      { id: 'weapon_part', itemInstanceId: 'weapon_part_1', baseItemId: 'weapon_part', name: 'Součást Zbraně', quantity: 3, type: 'component', icon: 'weapon_part', value: 400, description: 'Používá se při výrobě zbraní', defaultItemName: 'Součást Zbraně', defaultItemType: 'Komponenta' }
     ],
     maxCapacity: 100,
     usedCapacity: 20
   },
   artifacts: {
     items: [
-      { id: 'ancient_relic', itemInstanceId: 'ancient_relic_1', baseItemId: 'ancient_relic', name: 'Ancient Relic', quantity: 1, type: 'artifact', icon: 'ancient_relic', value: 5000, description: 'A mysterious artifact of unknown origin', defaultItemName: 'Ancient Relic', defaultItemType: 'Artifact' }
+      { id: 'ancient_relic', itemInstanceId: 'ancient_relic_1', baseItemId: 'ancient_relic', name: 'Starobylá Relikvie', quantity: 1, type: 'artifact', icon: 'ancient_relic', value: 5000, description: 'Tajemný artefakt neznámého původu', defaultItemName: 'Starobylá Relikvie', defaultItemType: 'Artefakt' }
     ],
     maxCapacity: 20,
     usedCapacity: 1
@@ -186,8 +190,118 @@ const mockItemDatabase: Record<string, Omit<InventoryItem, 'quantity'>> = {
     baseValue_Credits: 5000, 
     rarity: ItemRarity.Legendary, 
     defaultLoreText: 'This mysterious artifact appears to be of ancient origin. Its purpose remains unknown, but it radiates a strange energy.'
+  },
+  IronOre: { 
+    id: 'IronOre', 
+    baseItemId: 'IronOre', 
+    name: 'Železná Ruda', 
+    type: 'resource', 
+    icon: 'iron_ore', 
+    value: 5, 
+    description: 'Běžná ruda obsahující železo, základní stavební materiál', 
+    defaultItemName: 'Železná Ruda', 
+    defaultItemType: 'Zdroj', 
+    defaultItemDescription: 'Běžná ruda obsahující železo, základní stavební materiál', 
+    isStackable: true, 
+    maxStackSize: 999, 
+    baseValue_Credits: 5
+  },
+  CopperOre: { 
+    id: 'CopperOre', 
+    baseItemId: 'CopperOre', 
+    name: 'Měděná Ruda', 
+    type: 'resource', 
+    icon: 'copper_ore', 
+    value: 8, 
+    description: 'Běžná ruda obsahující měď, důležitá pro elektroniku', 
+    defaultItemName: 'Měděná Ruda', 
+    defaultItemType: 'Zdroj', 
+    defaultItemDescription: 'Běžná ruda obsahující měď, důležitá pro elektroniku', 
+    isStackable: true, 
+    maxStackSize: 999, 
+    baseValue_Credits: 8
+  },
+  TitaniumOre: { 
+    id: 'TitaniumOre', 
+    baseItemId: 'TitaniumOre', 
+    name: 'Titanová Ruda', 
+    type: 'resource', 
+    icon: 'titanium_ore', 
+    value: 20, 
+    description: 'Vzácná ruda obsahující titan, vysoce odolný kov', 
+    defaultItemName: 'Titanová Ruda', 
+    defaultItemType: 'Zdroj', 
+    defaultItemDescription: 'Vzácná ruda obsahující titan, vysoce odolný kov', 
+    isStackable: true, 
+    maxStackSize: 999, 
+    baseValue_Credits: 20
+  },
+  Helium3Gas: { 
+    id: 'Helium3Gas', 
+    baseItemId: 'Helium3Gas', 
+    name: 'Hélium-3', 
+    type: 'resource', 
+    icon: 'helium3_gas', 
+    value: 25, 
+    description: 'Vzácný izotop hélia, používaný jako palivo pro pokročilé fúzní reaktory', 
+    defaultItemName: 'Hélium-3', 
+    defaultItemType: 'Zdroj', 
+    defaultItemDescription: 'Vzácný izotop hélia, používaný jako palivo pro pokročilé fúzní reaktory', 
+    isStackable: true, 
+    maxStackSize: 999, 
+    baseValue_Credits: 25
+  },
+  laser_pulse_mk1_red: {
+    id: 'laser_pulse_mk1_red',
+    baseItemId: 'laser_pulse_mk1_red',
+    name: 'Pulzní Laser Mk.I',
+    type: 'module',
+    icon: 'weapon_laser_mk1',
+    value: 1000,
+    description: 'Základní pulzní laser pro malé lodě. Efektivní proti štítům.',
+    defaultItemName: 'Pulzní Laser Mk.I',
+    defaultItemType: 'Modul',
+    defaultItemDescription: 'Základní pulzní laser pro malé lodě. Efektivní proti štítům.',
+    isStackable: false,
+    baseValue_Credits: 1000
+  },
+  shield_generator_basic: {
+    id: 'shield_generator_basic',
+    baseItemId: 'shield_generator_basic',
+    name: 'Základní Štítový Generátor',
+    type: 'module',
+    icon: 'shield_generator_basic',
+    value: 1500,
+    description: 'Generátor pro vytvoření základní energetické bariéry kolem vaší lodi.',
+    defaultItemName: 'Základní Štítový Generátor',
+    defaultItemType: 'Modul',
+    defaultItemDescription: 'Generátor pro vytvoření základní energetické bariéry kolem vaší lodi.',
+    isStackable: false,
+    baseValue_Credits: 1500
+  },
+  repair_kit_small: {
+    id: 'repair_kit_small',
+    baseItemId: 'repair_kit_small',
+    name: 'Malá Opravná Sada',
+    type: 'consumable',
+    icon: 'repair_kit_small',
+    value: 100,
+    description: 'Základní sada nástrojů pro rychlé opravy poškození trupu lodi.',
+    defaultItemName: 'Malá Opravná Sada',
+    defaultItemType: 'Spotřební',
+    defaultItemDescription: 'Základní sada nástrojů pro rychlé opravy poškození trupu lodi.',
+    isStackable: true,
+    maxStackSize: 10,
+    baseValue_Credits: 100
   }
 };
+
+// All the InventoryItems in an array for easier searching
+const inventoryItems = [
+  ...mockInventory.resources.items,
+  ...mockInventory.components.items,
+  ...mockInventory.artifacts.items
+];
 
 // Create the inventory context
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
@@ -200,7 +314,6 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children }
   const [searchText, setSearchText] = useState<string>('');
 
   const inventory = mockInventory;
-  const itemDatabase = mockItemDatabase;
   
   // Function to select an item
   const selectItem = (itemId: string | null) => {
@@ -223,7 +336,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children }
 
   // Function to get an item by its ID
   const getItemById = (itemId: string): InventoryItem | null => {
-    const baseItem = itemDatabase[itemId];
+    const baseItem = mockItemDatabase[itemId];
     if (!baseItem) return null;
     
     // Add a default quantity when returning from database
@@ -256,13 +369,13 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children }
 
   // Function to add an item to inventory
   const addItem = (itemId: string, quantity: number, storageType: SpecializedStorageType) => {
-    console.log(`Adding ${quantity} of ${itemId} to ${storageType}`);
+    console.log(`Přidávám ${quantity} kusů ${itemId} do ${storageType}`);
     // In a real implementation, we would update the inventory here
   };
 
   // Function to remove an item from inventory
   const removeItem = (itemId: string, quantity: number) => {
-    console.log(`Removing ${quantity} of ${itemId}`);
+    console.log(`Odebírám ${quantity} kusů ${itemId}`);
     // In a real implementation, we would update the inventory here
   };
 
@@ -290,14 +403,15 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children }
     getUsedCapacity,
     addItem,
     removeItem,
-    itemDatabase,
+    itemDatabase: mockItemDatabase,
     filter,
     setFilter: handleSetFilter,
     sort,
     setSort: handleSetSort,
     searchText,
     setSearchText,
-    getItemById
+    getItemById,
+    inventoryItems // Add the combined array of inventory items
   };
 
   return (
