@@ -10,6 +10,9 @@ import { PlayerShipConfig_Nomad, ShipClassDefinition } from '@/types/ships-exten
 import CockpitOverlay from '@/components/game/CockpitOverlay';
 import { Button } from '@/components/ui/button';
 import ShipVisualizer from '@/components/ship/ShipVisualizer';
+import { alienShipClasses, getAlienShipById } from '@/data/alienShips';
+import AlienPortraitDisplay from '@/components/aliens/AlienPortraitDisplay';
+import { getAlienRaceById } from '@/data/alienRaces';
 
 // Function to convert a ship class to a player ship configuration
 const convertShipClassToConfig = (shipClass: ShipClassDefinition): PlayerShipConfig_Nomad => {
@@ -71,26 +74,53 @@ const convertShipClassToConfig = (shipClass: ShipClassDefinition): PlayerShipCon
   };
 };
 
+// Check if a ship is an alien ship
+const isAlienShip = (shipClassId: string): boolean => {
+  return alienShipClasses.some(ship => ship.classId === shipClassId);
+};
+
+// Get the alien race ID for a ship
+const getAlienRaceForShip = (shipClassId: string): string | null => {
+  if (!isAlienShip(shipClassId)) return null;
+  
+  // Extract race ID from ship class ID (e.g., "sylvan_seedling_fighter" -> "sylvans_flora_based")
+  const prefix = shipClassId.split('_')[0];
+  
+  if (prefix === 'sylvan') return 'sylvans_flora_based';
+  if (prefix === 'shard') return 'shard_collective_crystalline';
+  if (prefix === 'krall') return 'krall_hegemony_insectoid';
+  
+  return null;
+};
+
 const ShipDetailsScreen = () => {
   const navigate = useNavigate();
   const [selectedShipClassId, setSelectedShipClassId] = useState<string>("explorer_scout_nomad");
   const [shipConfig, setShipConfig] = useState<PlayerShipConfig_Nomad | null>(null);
   const [showSelector, setShowSelector] = useState<boolean>(true);
+  const [alienRaceId, setAlienRaceId] = useState<string | null>(null);
 
   // Find the selected ship class and convert to ship configuration
   useEffect(() => {
-    const selectedClass = shipClasses.find(ship => ship.classId === selectedShipClassId);
+    let selectedClass = shipClasses.find(ship => ship.classId === selectedShipClassId);
+    
+    // If not found in regular ships, check alien ships
+    if (!selectedClass) {
+      selectedClass = getAlienShipById(selectedShipClassId);
+    }
+    
     if (selectedClass) {
       setShipConfig(convertShipClassToConfig(selectedClass));
+      
+      // Check if it's an alien ship and set the race ID
+      const raceId = getAlienRaceForShip(selectedShipClassId);
+      setAlienRaceId(raceId);
     }
   }, [selectedShipClassId]);
 
   if (!shipConfig) {
     return <div className="flex items-center justify-center h-screen">Načítání...</div>;
   }
-
-  // Create a placeholder ship image URL if the actual ship sprite is not available
-  const fallbackShipImage = "/assets/ships/nomad_ship.png";
   
   return (
     <div className="h-screen w-screen overflow-hidden bg-space-dark text-space-ui-text font-pixel-mono relative">
@@ -115,6 +145,17 @@ const ShipDetailsScreen = () => {
               size="lg" 
               showDetails={false} 
             />
+            
+            {/* If it's an alien ship, show the alien race portrait */}
+            {alienRaceId && (
+              <div className="absolute top-2 right-2">
+                <AlienPortraitDisplay 
+                  raceId={alienRaceId}
+                  size="sm"
+                  showName={false}
+                />
+              </div>
+            )}
           </div>
           
           <Button
@@ -134,13 +175,39 @@ const ShipDetailsScreen = () => {
               <ShipTypeSelector 
                 onSelectShip={setSelectedShipClassId}
                 currentShipClassId={selectedShipClassId}
+                includeAlienShips={true}
               />
             </div>
           ) : (
             <>
               <h1 className="text-2xl mb-6 text-space-buttons-glow font-bold">
-                {shipConfig.className} - {shipConfig.role}
+                {shipConfig.className}
+                {alienRaceId && (
+                  <span className="ml-3 text-sm px-2 py-0.5 bg-purple-800 rounded-full">
+                    Mimozemská loď
+                  </span>
+                )}
               </h1>
+              
+              {/* If it's an alien ship, show info about the alien race */}
+              {alienRaceId && (
+                <div className="mb-6 bg-space-dark bg-opacity-50 p-4 rounded-lg border border-purple-900">
+                  <div className="flex items-center gap-4 mb-3">
+                    <AlienPortraitDisplay raceId={alienRaceId} size="sm" />
+                    <div>
+                      <h3 className="text-lg font-bold text-space-ui-text">
+                        {getAlienRaceById(alienRaceId)?.raceName || 'Neznámá rasa'}
+                      </h3>
+                      <p className="text-xs text-space-ui-subtext">
+                        {getAlienRaceById(alienRaceId)?.aiBehavior.diplomaticProfile.baseEthos.split('_').join(' ')}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm italic text-space-ui-subtext">
+                    {getAlienRaceById(alienRaceId)?.techAndStyle.shipDesignLanguage.split('_').join(' ')}
+                  </p>
+                </div>
+              )}
 
               <div className="mb-6">
                 <h2 className="text-xl mb-2 border-b border-space-buttons-border">Technické specifikace</h2>
@@ -155,6 +222,24 @@ const ShipDetailsScreen = () => {
                 </ul>
               </div>
               
+              {/* For alien ships, show special section about their technology */}
+              {alienRaceId && getAlienRaceById(alienRaceId) && (
+                <div className="mb-6">
+                  <h2 className="text-xl mb-2 border-b border-space-buttons-border">Mimozemská technologie</h2>
+                  <ul className="space-y-2">
+                    <li><span className="text-purple-400">Tech úroveň:</span> {getAlienRaceById(alienRaceId)?.techAndStyle.overallTechLevel.split('_').join(' ')}</li>
+                    <li>
+                      <span className="text-purple-400">Preferované zbraně:</span> {' '}
+                      {getAlienRaceById(alienRaceId)?.techAndStyle.preferredWeaponTypes?.slice(0, 2).join(', ')}
+                    </li>
+                    <li>
+                      <span className="text-purple-400">Preferovaná obrana:</span> {' '} 
+                      {getAlienRaceById(alienRaceId)?.techAndStyle.preferredDefenseTypes?.slice(0, 1).join(', ')}
+                    </li>
+                  </ul>
+                </div>
+              )}
+              
               <div className="mb-6">
                 <h2 className="text-xl mb-2 border-b border-space-buttons-border">Vnitřní uspořádání</h2>
                 <ul className="list-disc pl-5 space-y-1">
@@ -167,7 +252,8 @@ const ShipDetailsScreen = () => {
               <div className="mb-6">
                 <h2 className="text-xl mb-2 border-b border-space-buttons-border">Designové prvky</h2>
                 <ul className="list-disc pl-5 space-y-1">
-                  {shipClasses.find(ship => ship.classId === selectedShipClassId)?.visualDesignCues.map((cue, index) => (
+                  {(shipClasses.find(ship => ship.classId === selectedShipClassId) || 
+                   alienShipClasses.find(ship => ship.classId === selectedShipClassId))?.visualDesignCues.map((cue, index) => (
                     <li key={index}>{cue}</li>
                   ))}
                 </ul>

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useShipMovement } from '../../contexts/ShipMovementContext';
 import { shipClasses } from '@/data/shipClasses';
+import { getAlienShipById } from '@/data/alienShips';
 
 interface PlayerShipVisualProps {
   shipImageUrl?: string;
@@ -16,10 +17,24 @@ const PlayerShipVisual: React.FC<PlayerShipVisualProps> = ({
   const { position, rotation, thrusting, boosting, strafingLeft, strafingRight } = currentMovementState;
   
   const [shipData, setShipData] = useState<any>(null);
+  const [isAlienShip, setIsAlienShip] = useState<boolean>(false);
   
   useEffect(() => {
-    // Find ship data from shipClasses
-    const ship = shipClasses.find(s => s.classId === shipClassId);
+    // Find ship data from shipClasses first
+    let ship = shipClasses.find(s => s.classId === shipClassId);
+    
+    // If not found, check if it's an alien ship
+    if (!ship) {
+      ship = getAlienShipById(shipClassId);
+      if (ship) {
+        setIsAlienShip(true);
+      } else {
+        setIsAlienShip(false);
+      }
+    } else {
+      setIsAlienShip(false);
+    }
+    
     if (ship) {
       setShipData(ship);
     }
@@ -29,7 +44,21 @@ const PlayerShipVisual: React.FC<PlayerShipVisualProps> = ({
   const getEngineColor = () => {
     if (!shipData) return boosting ? 'bg-blue-500' : 'bg-orange-500';
     
-    // Different ship types can have different engine colors
+    // For alien ships
+    if (isAlienShip) {
+      if (shipClassId.includes('sylvan')) {
+        return boosting ? 'bg-green-400' : 'bg-lime-500';
+      } else if (shipClassId.includes('shard')) {
+        return boosting ? 'bg-cyan-300' : 'bg-blue-500';
+      } else if (shipClassId.includes('krall')) {
+        return boosting ? 'bg-red-400' : 'bg-orange-600';
+      }
+      
+      // Default alien engine color
+      return boosting ? 'bg-purple-400' : 'bg-fuchsia-600';
+    }
+    
+    // For human ships - different ship types can have different engine colors
     switch (shipData.category) {
       case 'Combat_Fighter':
       case 'Combat_Corvette':
@@ -45,7 +74,22 @@ const PlayerShipVisual: React.FC<PlayerShipVisualProps> = ({
   };
   
   const engineColor = getEngineColor();
-  const engineSize = shipData?.category?.includes('Combat') ? 'h-[30%]' : 'h-[40%]';
+  const engineSize = isAlienShip ? 'h-[45%]' : (shipData?.category?.includes('Combat') ? 'h-[30%]' : 'h-[40%]');
+  
+  // Add a glow effect for alien ships
+  const getGlowEffect = () => {
+    if (!isAlienShip) return '';
+    
+    if (shipClassId.includes('sylvan')) {
+      return 'shadow-sm shadow-green-500/40';
+    } else if (shipClassId.includes('shard')) {
+      return 'shadow-sm shadow-blue-500/40';
+    } else if (shipClassId.includes('krall')) {
+      return 'shadow-sm shadow-red-500/40';
+    }
+    
+    return 'shadow-sm shadow-purple-500/40';
+  };
   
   return (
     <div 
@@ -58,7 +102,7 @@ const PlayerShipVisual: React.FC<PlayerShipVisualProps> = ({
     >
       {/* Main ship sprite */}
       <div 
-        className="relative w-32 h-32 bg-contain bg-center bg-no-repeat"
+        className={`relative w-32 h-32 bg-contain bg-center bg-no-repeat ${getGlowEffect()}`}
         style={{
           backgroundImage: `url(${shipImageUrl})`
         }}
@@ -75,7 +119,7 @@ const PlayerShipVisual: React.FC<PlayerShipVisualProps> = ({
         {/* Left strafe thruster */}
         {strafingRight && (
           <div 
-            className="absolute top-[50%] left-0 w-[20%] h-[10%] bg-cyan-500 rounded-full animate-pulse opacity-60"
+            className={`absolute top-[50%] left-0 w-[20%] h-[10%] ${engineColor.replace('bg-', 'bg-opacity-80 bg-')} rounded-full animate-pulse opacity-60`}
           >
             <div className="w-full h-full animate-ping opacity-40 rounded-full bg-cyan-500"></div>
           </div>
@@ -84,14 +128,33 @@ const PlayerShipVisual: React.FC<PlayerShipVisualProps> = ({
         {/* Right strafe thruster */}
         {strafingLeft && (
           <div 
-            className="absolute top-[50%] right-0 w-[20%] h-[10%] bg-cyan-500 rounded-full animate-pulse opacity-60"
+            className={`absolute top-[50%] right-0 w-[20%] h-[10%] ${engineColor.replace('bg-', 'bg-opacity-80 bg-')} rounded-full animate-pulse opacity-60`}
           >
             <div className="w-full h-full animate-ping opacity-40 rounded-full bg-cyan-500"></div>
           </div>
         )}
         
+        {/* Special effects for different ship types */}
+        {thrusting && isAlienShip && (
+          <div className="absolute top-[80%] left-[40%] w-[20%] h-[20%]">
+            {shipClassId.includes('sylvan') && (
+              <div className={`absolute top-0 left-[5%] w-[90%] h-[100%] ${engineColor} rounded-full blur-md opacity-30`}></div>
+            )}
+            {shipClassId.includes('shard') && (
+              <>
+                <div className={`absolute top-0 left-[10%] w-[20%] h-[80%] ${engineColor} rounded-full blur-sm opacity-40`}></div>
+                <div className={`absolute top-0 right-[10%] w-[20%] h-[80%] ${engineColor} rounded-full blur-sm opacity-40`}></div>
+                <div className={`absolute top-0 left-[35%] w-[30%] h-[90%] ${engineColor} rounded-full blur-sm opacity-30`}></div>
+              </>
+            )}
+            {shipClassId.includes('krall') && (
+              <div className={`absolute top-0 left-[15%] w-[70%] h-[80%] ${engineColor} rounded-full blur-lg opacity-50`}></div>
+            )}
+          </div>
+        )}
+        
         {/* Additional engine effects for some ship classes */}
-        {thrusting && shipData?.category?.includes('Combat') && (
+        {thrusting && !isAlienShip && shipData?.category?.includes('Combat') && (
           <div className="absolute top-[80%] left-[40%] w-[20%] h-[20%]">
             <div className={`absolute top-0 left-[5%] w-[40%] h-[100%] ${engineColor} rounded-full blur-sm opacity-40`}></div>
             <div className={`absolute top-0 right-[5%] w-[40%] h-[100%] ${engineColor} rounded-full blur-sm opacity-40`}></div>
@@ -100,7 +163,7 @@ const PlayerShipVisual: React.FC<PlayerShipVisualProps> = ({
         
         {/* Shield effect for ships with shields */}
         {shipData && shipData.baseStats.shieldPoints_Base_Range[1] > 100 && (
-          <div className="absolute inset-[-5%] rounded-full border border-blue-400 border-opacity-20 pointer-events-none"></div>
+          <div className={`absolute inset-[-5%] rounded-full border ${isAlienShip ? 'border-purple-400' : 'border-blue-400'} border-opacity-20 pointer-events-none`}></div>
         )}
       </div>
     </div>

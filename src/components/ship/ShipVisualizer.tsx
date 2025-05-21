@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShipClassDefinition } from '@/types/ships-extended';
 import { shipClasses } from '@/data/shipClasses';
+import { getAlienShipById } from '@/data/alienShips';
 
 interface ShipVisualizerProps {
   shipClassId: string;
@@ -16,15 +17,32 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
   showDetails = false,
   showStats = false
 }) => {
-  const shipClass = shipClasses.find(s => s.classId === shipClassId);
+  const [shipClass, setShipClass] = useState<ShipClassDefinition | undefined>();
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [isAlienShip, setIsAlienShip] = useState<boolean>(false);
   
   useEffect(() => {
-    if (!shipClass) return;
+    // First check if it's a regular ship
+    let foundShip = shipClasses.find(s => s.classId === shipClassId);
+    
+    // If not found, check if it's an alien ship
+    if (!foundShip) {
+      foundShip = getAlienShipById(shipClassId);
+      if (foundShip) {
+        setIsAlienShip(true);
+      }
+    } else {
+      setIsAlienShip(false);
+    }
+    
+    setShipClass(foundShip);
+    
+    if (!foundShip) return;
     
     // Generate ship image URL and ensure it uses the correct format
-    const baseSprite = shipClass.baseSprite_AssetPath_Template.replace('{variant}', '1');
+    const variant = 1; // Default variant
+    const baseSprite = foundShip.baseSprite_AssetPath_Template.replace('{variant}', variant.toString());
     
     // Create a temp image to check if the ship asset exists
     const tempImg = new Image();
@@ -35,7 +53,9 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
     tempImg.onerror = () => {
       // If the specific ship asset doesn't exist, use a fallback
       console.log(`Failed to load ship image: ${baseSprite}, using fallback`);
-      setImageUrl('/assets/ships/nomad_ship.png');
+      setImageUrl(isAlienShip 
+        ? '/assets/ships/aliens/unknown_alien_ship.png'
+        : '/assets/ships/nomad_ship.png');
       setImageLoaded(true);
     };
     tempImg.src = baseSprite;
@@ -44,7 +64,7 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
       tempImg.onload = null;
       tempImg.onerror = null;
     };
-  }, [shipClass]);
+  }, [shipClassId]);
   
   if (!shipClass) {
     return <div className="text-space-ui-subtext">Loď nenalezena</div>;
@@ -58,6 +78,22 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
       default: return 'w-48 h-48';
     }
   };
+  
+  // Add a glow effect for alien ships
+  const getGlowEffect = () => {
+    if (!isAlienShip) return '';
+    
+    // Different glow effects based on the ship class id
+    if (shipClassId.includes('sylvan')) {
+      return 'shadow-lg shadow-green-500/50';
+    } else if (shipClassId.includes('shard')) {
+      return 'shadow-lg shadow-blue-500/50';
+    } else if (shipClassId.includes('krall')) {
+      return 'shadow-lg shadow-red-500/50';
+    }
+    
+    return 'shadow-lg shadow-purple-500/50';
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -68,7 +104,7 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
         )}
         {imageLoaded && (
           <div 
-            className="w-full h-full bg-contain bg-center bg-no-repeat" 
+            className={`w-full h-full bg-contain bg-center bg-no-repeat ${getGlowEffect()}`} 
             style={{ backgroundImage: `url(${imageUrl})` }}
           />
         )}
@@ -80,6 +116,7 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
       {/* Ship category */}
       <div className="text-space-ui-subtext text-sm mb-3">
         {shipClass.category.split('_').join(' ')}
+        {isAlienShip && <span className="ml-2 text-xs px-2 py-0.5 bg-purple-800 rounded-full">Alien</span>}
       </div>
       
       {/* Details section */}
