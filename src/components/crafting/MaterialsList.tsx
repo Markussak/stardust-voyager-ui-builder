@@ -50,10 +50,10 @@ const MaterialsList: React.FC = () => {
             >
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-space-dark rounded flex items-center justify-center mr-3 overflow-hidden">
-                  {item?.iconAsset ? (
+                  {item?.icon ? (
                     <div 
                       className="w-full h-full bg-contain bg-center bg-no-repeat"
-                      style={{ backgroundImage: `url(${item.iconAsset})` }} 
+                      style={{ backgroundImage: `url(${item.icon})` }} 
                     />
                   ) : (
                     <div className="text-xs text-center">

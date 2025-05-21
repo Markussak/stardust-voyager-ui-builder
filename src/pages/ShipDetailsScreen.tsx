@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MenuButton from '../components/game/MenuButton';
@@ -8,6 +7,7 @@ import { shipClasses } from '../data/shipClasses';
 import ShipTypeSelector from '@/components/ship/ShipTypeSelector';
 import { PlayerShipConfig_Nomad, ShipClassDefinition } from '@/types/ships-extended';
 import CockpitOverlay from '@/components/game/CockpitOverlay';
+import { Button } from '@/components/ui/button';
 
 // Function to convert a ship class to a player ship configuration
 const convertShipClassToConfig = (shipClass: ShipClassDefinition): PlayerShipConfig_Nomad => {
