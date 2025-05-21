@@ -18,6 +18,22 @@ export enum StarType {
   TrinarySystem = "TrinarySystem"
 }
 
+export enum PlanetType {
+  EarthLike = "EarthLike",
+  Desert = "Desert",
+  Barren = "Barren",
+  Savannah = "Savannah",
+  Jungle = "Jungle",
+  Ocean = "Ocean",
+  Alpine = "Alpine",
+  AridRocky = "AridRocky",
+  Volcanic = "Volcanic",
+  IceWorld = "IceWorld",
+  GasGiant = "GasGiant",
+  ToxicWorld = "ToxicWorld",
+  GaiaWorld = "GaiaWorld"
+}
+
 export interface Vector2D {
   x: number;
   y: number;
