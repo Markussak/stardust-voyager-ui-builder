@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { shipClasses } from '@/data/shipClasses';
 import { Button } from '@/components/ui/button';
+import ShipVisualizer from './ShipVisualizer';
 
 interface ShipTypeSelectorProps {
   onSelectShip: (shipClassId: string) => void;
@@ -35,28 +36,35 @@ const ShipTypeSelector: React.FC<ShipTypeSelectorProps> = ({ onSelectShip, curre
         ))}
       </div>
       
-      <div className="space-y-2">
-        {filteredShips.map((ship) => (
-          <div 
-            key={ship.classId}
-            className={`p-2 border rounded cursor-pointer ${
-              currentShipClassId === ship.classId 
-                ? 'bg-space-buttons border-space-buttons-glow text-space-ui-text' 
-                : 'bg-space-dark border-space-buttons-border text-space-ui-subtext hover:bg-space-buttons hover:bg-opacity-20'
-            }`}
-            onClick={() => onSelectShip(ship.classId)}
-          >
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-space-dark rounded-sm flex items-center justify-center mr-3 text-xs">
-                {ship.defaultClassName.substring(0, 2).toUpperCase()}
-              </div>
-              <div className="flex-1">
-                <div className="text-sm font-medium">{ship.defaultClassName}</div>
-                <div className="text-xs opacity-70">{ship.category.replace('_', ' ')}</div>
+      <div className="grid grid-cols-1 gap-3">
+        {filteredShips.map((ship) => {
+          const shortId = ship.classId.split('_').pop()?.substring(0, 2).toUpperCase() || ship.defaultClassName.substring(0, 2).toUpperCase();
+          return (
+            <div 
+              key={ship.classId}
+              className={`p-3 border rounded cursor-pointer transition-all ${
+                currentShipClassId === ship.classId 
+                  ? 'bg-space-buttons border-space-buttons-glow text-space-ui-text' 
+                  : 'bg-space-dark border-space-buttons-border text-space-ui-subtext hover:bg-space-buttons hover:bg-opacity-20'
+              }`}
+              onClick={() => onSelectShip(ship.classId)}
+            >
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-space-dark rounded-sm flex items-center justify-center mr-3 text-xs overflow-hidden">
+                  {currentShipClassId === ship.classId ? (
+                    <div className="text-space-buttons-glow text-lg font-bold">{shortId}</div>
+                  ) : (
+                    <div>{shortId}</div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-medium">{ship.defaultClassName}</div>
+                  <div className="text-xs opacity-70">{ship.category.replace(/_/g, ' ')}</div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

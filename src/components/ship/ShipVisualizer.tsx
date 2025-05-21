@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShipClassDefinition } from '@/types/ships-extended';
 import { shipClasses } from '@/data/shipClasses';
 
@@ -17,6 +17,34 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
   showStats = false
 }) => {
   const shipClass = shipClasses.find(s => s.classId === shipClassId);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+  const [imageUrl, setImageUrl] = useState<string>("");
+  
+  useEffect(() => {
+    if (!shipClass) return;
+    
+    // Generate ship image URL and ensure it uses the correct format
+    const baseSprite = shipClass.baseSprite_AssetPath_Template.replace('{variant}', '1');
+    
+    // Create a temp image to check if the ship asset exists
+    const tempImg = new Image();
+    tempImg.onload = () => {
+      setImageUrl(baseSprite);
+      setImageLoaded(true);
+    };
+    tempImg.onerror = () => {
+      // If the specific ship asset doesn't exist, use a fallback
+      console.log(`Failed to load ship image: ${baseSprite}, using fallback`);
+      setImageUrl('/assets/ships/nomad_ship.png');
+      setImageLoaded(true);
+    };
+    tempImg.src = baseSprite;
+    
+    return () => {
+      tempImg.onload = null;
+      tempImg.onerror = null;
+    };
+  }, [shipClass]);
   
   if (!shipClass) {
     return <div className="text-space-ui-subtext">Loď nenalezena</div>;
@@ -24,29 +52,34 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
   
   const getSizeClass = () => {
     switch (size) {
-      case 'sm': return 'w-24 h-24';
-      case 'lg': return 'w-64 h-64';
+      case 'sm': return 'w-28 h-28';
+      case 'lg': return 'w-80 h-80';
       case 'md':
-      default: return 'w-40 h-40';
+      default: return 'w-48 h-48';
     }
   };
-  
-  const baseSprite = shipClass.baseSprite_AssetPath_Template.replace('{variant}', '1');
-  
+
   return (
     <div className="flex flex-col items-center">
-      {/* Ship image */}
-      <div className={`relative ${getSizeClass()} bg-contain bg-center bg-no-repeat mb-3`}
-           style={{ backgroundImage: `url(${baseSprite})` }}>
-        {/* Optional overlays could be added here */}
+      {/* Ship image with loading state and fallback */}
+      <div className={`relative ${getSizeClass()} flex items-center justify-center`}>
+        {!imageLoaded && (
+          <div className="animate-pulse text-space-ui-subtext">Načítání...</div>
+        )}
+        {imageLoaded && (
+          <div 
+            className="w-full h-full bg-contain bg-center bg-no-repeat" 
+            style={{ backgroundImage: `url(${imageUrl})` }}
+          />
+        )}
       </div>
       
       {/* Ship name */}
-      <div className="text-space-ui-text text-lg font-pixel mb-1">{shipClass.defaultClassName}</div>
+      <div className="text-space-ui-text text-lg font-pixel mt-2 mb-1">{shipClass.defaultClassName}</div>
       
       {/* Ship category */}
       <div className="text-space-ui-subtext text-sm mb-3">
-        {shipClass.category.replace('_', ' ')}
+        {shipClass.category.split('_').join(' ')}
       </div>
       
       {/* Details section */}

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MenuButton from '../components/game/MenuButton';
@@ -8,6 +9,7 @@ import ShipTypeSelector from '@/components/ship/ShipTypeSelector';
 import { PlayerShipConfig_Nomad, ShipClassDefinition } from '@/types/ships-extended';
 import CockpitOverlay from '@/components/game/CockpitOverlay';
 import { Button } from '@/components/ui/button';
+import ShipVisualizer from '@/components/ship/ShipVisualizer';
 
 // Function to convert a ship class to a player ship configuration
 const convertShipClassToConfig = (shipClass: ShipClassDefinition): PlayerShipConfig_Nomad => {
@@ -73,7 +75,7 @@ const ShipDetailsScreen = () => {
   const navigate = useNavigate();
   const [selectedShipClassId, setSelectedShipClassId] = useState<string>("explorer_scout_nomad");
   const [shipConfig, setShipConfig] = useState<PlayerShipConfig_Nomad | null>(null);
-  const [showSelector, setShowSelector] = useState<boolean>(false);
+  const [showSelector, setShowSelector] = useState<boolean>(true);
 
   // Find the selected ship class and convert to ship configuration
   useEffect(() => {
@@ -87,6 +89,9 @@ const ShipDetailsScreen = () => {
     return <div className="flex items-center justify-center h-screen">Načítání...</div>;
   }
 
+  // Create a placeholder ship image URL if the actual ship sprite is not available
+  const fallbackShipImage = "/assets/ships/nomad_ship.png";
+  
   return (
     <div className="h-screen w-screen overflow-hidden bg-space-dark text-space-ui-text font-pixel-mono relative">
       <SpaceBackground />
@@ -103,18 +108,19 @@ const ShipDetailsScreen = () => {
       <div className="flex h-full p-4 z-10 relative">
         {/* Ship visualization */}
         <div className="w-1/2 h-full flex flex-col items-center justify-center">
-          <div className="relative mb-4">
-            <img 
-              src={shipConfig.baseSpriteAsset} 
-              alt={shipConfig.className}
-              className="max-w-full max-h-80vh object-contain"
+          <div className="relative mb-4 flex items-center justify-center">
+            {/* Use ShipVisualizer component with fallback logic */}
+            <ShipVisualizer 
+              shipClassId={selectedShipClassId} 
+              size="lg" 
+              showDetails={false} 
             />
           </div>
           
           <Button
             onClick={() => setShowSelector(!showSelector)}
             variant="outline"
-            className="border border-space-buttons-border hover:bg-space-buttons-hover text-space-ui-text"
+            className="border border-space-buttons-border hover:bg-space-buttons-hover text-space-ui-text mt-4"
           >
             {showSelector ? "Skrýt výběr lodí" : "Zobrazit výběr lodí"}
           </Button>
