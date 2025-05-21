@@ -28,7 +28,7 @@ const UpgradeList: React.FC = () => {
           <p>Žádná dostupná vylepšení</p>
         </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {availableUpgrades.map((upgrade) => {
             const canUpgrade = hasMaterials(upgrade.requiredMaterials);
             const isSelected = selectedUpgradeId === upgrade.baseItemId;
@@ -37,7 +37,7 @@ const UpgradeList: React.FC = () => {
               <li 
                 key={upgrade.baseItemId}
                 className={`
-                  p-3 rounded cursor-pointer flex items-center
+                  p-3 rounded cursor-pointer flex items-center transition-colors
                   ${isSelected 
                     ? 'bg-purple-900 bg-opacity-60 border border-purple-400' 
                     : canUpgrade 
@@ -54,10 +54,12 @@ const UpgradeList: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <div className="text-sm font-medium text-space-ui-text">{upgrade.defaultUpgradeName}</div>
-                  <div className="text-xs text-space-ui-subtext">{upgrade.cost_Credits ? `${upgrade.cost_Credits} kreditů` : 'Bez kreditových nákladů'}</div>
+                  <div className="text-xs text-space-ui-subtext">
+                    {upgrade.cost_Credits ? `${upgrade.cost_Credits} kreditů` : 'Bez kreditových nákladů'}
+                  </div>
                 </div>
                 {!canUpgrade && (
-                  <div className="text-xs text-red-400 ml-2">
+                  <div className="ml-2 text-xs py-1 px-2 bg-red-900 bg-opacity-40 rounded border border-red-700 border-opacity-30">
                     Nedostatek materiálů
                   </div>
                 )}
