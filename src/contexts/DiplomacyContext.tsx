@@ -1,7 +1,27 @@
-import React, { createContext, useContext, useState } from 'react';
-import { DiplomaticStatus, Faction, FactionId, DiplomacyContextType, Treaty } from '../types/diplomacy';
 
-// Initial factions setup
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { DiplomaticStatus, Faction, FactionId, Treaty } from '../types/diplomacy';
+import { getFactionById, getMajorFactions, getInitialFactionRelations } from '../data/factions';
+import { FactionDefinition } from '@/types/factions';
+
+// Define the context type including both base and extended faction data
+export interface DiplomacyContextType {
+  factions: Faction[];
+  selectedFactionId: string | null;
+  selectFaction: (factionId: string | null) => void;
+  getRelationWithPlayer: (factionId: string) => DiplomaticStatus;
+  updateRelation: (factionId: string, newStatus: DiplomaticStatus, relationChange?: number) => void;
+  addTreaty: (factionId: string, treaty: Treaty) => void;
+  getFactionById: (factionId: string) => Faction | undefined;
+  diplomacyState?: {
+    factions: Record<string, Faction>;
+    playerRelations: Record<string, any>;
+    selectedFactionId: string | null;
+  };
+  extendedFactions?: FactionDefinition[];
+}
+
+// Initial factions setup - baseline data
 const initialFactions: Faction[] = [
   {
     id: FactionId.SolarConfederacy,
@@ -12,7 +32,7 @@ const initialFactions: Faction[] = [
     government: "Republika",
     primaryColor: "#0077CC",
     secondaryColor: "#003366",
-    logoUrl: "/assets/factions/solar_confederacy_logo.png",
+    logoUrl: "/assets/factions/logos/solar_confederacy_logo.png",
     discovered: true,
     power: {
       military: 80,
@@ -36,7 +56,7 @@ const initialFactions: Faction[] = [
     government: "Diktatura",
     primaryColor: "#CC0000",
     secondaryColor: "#660000",
-    logoUrl: "/assets/factions/krall_empire_logo.png",
+    logoUrl: "/assets/factions/logos/krall_empire_logo.png",
     discovered: true,
     power: {
       military: 95,
@@ -60,7 +80,7 @@ const initialFactions: Faction[] = [
     government: "Theokracie",
     primaryColor: "#663399",
     secondaryColor: "#331A4D",
-    logoUrl: "/assets/factions/cult_of_nexus_logo.png",
+    logoUrl: "/assets/factions/logos/cult_of_nexus_logo.png",
     discovered: false,
     power: {
       military: 60,
@@ -84,7 +104,7 @@ const initialFactions: Faction[] = [
     government: "Korporátní",
     primaryColor: "#FF9933",
     secondaryColor: "#995C1A",
-    logoUrl: "/assets/factions/free_traders_logo.png",
+    logoUrl: "/assets/factions/logos/free_traders_logo.png",
     discovered: true,
     power: {
       military: 40,
@@ -108,7 +128,7 @@ const initialFactions: Faction[] = [
     government: "Anarchie",
     primaryColor: "#990000",
     secondaryColor: "#4D0000",
-    logoUrl: "/assets/factions/pirate_clan_logo.png",
+    logoUrl: "/assets/factions/logos/pirate_clan_logo.png",
     discovered: true,
     power: {
       military: 70,
@@ -132,7 +152,7 @@ const initialFactions: Faction[] = [
     government: "Technokracie",
     primaryColor: "#009999",
     secondaryColor: "#004D4D",
-    logoUrl: "/assets/factions/ancient_ai_logo.png",
+    logoUrl: "/assets/factions/logos/ancient_ai_logo.png",
     discovered: false,
     power: {
       military: 85,
@@ -156,7 +176,7 @@ const initialFactions: Faction[] = [
     government: "Nezávislý",
     primaryColor: "#00FF00",
     secondaryColor: "#004400",
-    logoUrl: "/assets/factions/player_logo.png",
+    logoUrl: "/assets/factions/logos/player_logo.png",
     discovered: true,
     power: {
       military: 10,
@@ -184,6 +204,32 @@ const DiplomacyContext = createContext<DiplomacyContextType>({
 export const DiplomacyProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [factions, setFactions] = useState<Faction[]>(initialFactions);
   const [selectedFactionId, setSelectedFactionId] = useState<string | null>(null);
+  const [extendedFactions, setExtendedFactions] = useState<FactionDefinition[]>([]);
+
+  useEffect(() => {
+    // Load the extended faction data when the component mounts
+    const majorFactions = getMajorFactions();
+    setExtendedFactions(majorFactions);
+    
+    // Enhance the basic factions with extended data where available
+    const enhancedFactions = factions.map(faction => {
+      const extendedData = majorFactions.find(f => f.factionId === faction.id);
+      if (extendedData) {
+        // Update basic faction with extended data
+        return {
+          ...faction,
+          name: extendedData.defaultFactionName,
+          description: extendedData.defaultFactionDescription_Short,
+          primaryColor: extendedData.visualIdentity.primaryColor,
+          secondaryColor: extendedData.visualIdentity.secondaryColor || faction.secondaryColor,
+          logoUrl: extendedData.visualIdentity.logo.assetUrl_Small
+        };
+      }
+      return faction;
+    });
+    
+    setFactions(enhancedFactions);
+  }, []);
 
   const selectFaction = (factionId: string | null) => {
     setSelectedFactionId(factionId);
@@ -209,7 +255,7 @@ export const DiplomacyProvider: React.FC<React.PropsWithChildren<{}>> = ({ child
                 ...faction.diplomacy, 
                 status: newStatus,
                 attitudeTowardsPlayer: relationChange !== undefined 
-                  ? faction.diplomacy.attitudeTowardsPlayer + relationChange 
+                  ? Math.min(Math.max(faction.diplomacy.attitudeTowardsPlayer + relationChange, -100), 100) 
                   : faction.diplomacy.attitudeTowardsPlayer
               } 
             } 
@@ -266,7 +312,8 @@ export const DiplomacyProvider: React.FC<React.PropsWithChildren<{}>> = ({ child
     updateRelation,
     addTreaty,
     getFactionById,
-    diplomacyState: createDiplomacyState()
+    diplomacyState: createDiplomacyState(),
+    extendedFactions
   };
 
   return (
