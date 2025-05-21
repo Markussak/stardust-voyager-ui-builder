@@ -78,7 +78,7 @@ export const MiningSystemProvider: React.FC<{ children: ReactNode }> = ({ childr
       name: "Železná Ruda",
       type: "resource",
       description: "Bežná ruda obsahujúca železo, základný stavebný materiál.",
-      icon: "resource_iron_ore",
+      // Removed icon property as it's not in the MinableResourceData interface
       value: 5,
       rarity: "Common" as any,
       resourceCategory: ResourceCategory.Metal_Common,
@@ -93,7 +93,7 @@ export const MiningSystemProvider: React.FC<{ children: ReactNode }> = ({ childr
       name: "Hélium-3",
       type: "resource",
       description: "Vzácny izotop hélia, používaný ako palivo pre pokročilé fúzne reaktory.",
-      icon: "resource_helium3_gas",
+      // Removed icon property as it's not in the MinableResourceData interface
       value: 25,
       rarity: "Uncommon" as any,
       resourceCategory: ResourceCategory.Gas_Fuel,

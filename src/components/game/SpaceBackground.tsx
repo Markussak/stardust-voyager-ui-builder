@@ -73,8 +73,9 @@ const SpaceBackground = () => {
         />
       </div>
 
-      {/* Add specific styling for space dust in App.css for the float animation */}
-      <style jsx>{`
+      {/* Add specific styling for space dust using standard style element without jsx property */}
+      <style>
+        {`
         .space-dust {
           position: absolute;
           background-color: rgba(255, 255, 255, 0.8);
@@ -88,7 +89,8 @@ const SpaceBackground = () => {
           75% { transform: translateY(10px) translateX(5px); }
           100% { transform: translateY(0) translateX(0); }
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
