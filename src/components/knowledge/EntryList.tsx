@@ -1,39 +1,62 @@
 
 import React from 'react';
 import { useCodex } from '@/contexts/CodexContext';
-import { cn } from "@/lib/utils";
+import { useProceduralLore } from '@/contexts/ProceduralLoreContext';
+import { Badge } from '@/components/ui/badge';
 
 const EntryList: React.FC = () => {
   const { filteredEntries, selectedEntry, selectEntry } = useCodex();
-
-  if (filteredEntries.length === 0) {
+  const { generatedLoreFragments, recentlyGeneratedLoreIds } = useProceduralLore();
+  
+  // Combine codex entries with procedural lore fragments
+  const combinedEntries = [
+    ...filteredEntries,
+    ...generatedLoreFragments.map(fragment => ({
+      entryId: fragment.id,
+      entryTitle: fragment.title,
+      categoryKey: 'PROCEDURAL_LORE',
+      isUnlocked: true,
+      isNew: recentlyGeneratedLoreIds.includes(fragment.id),
+      isProceduralLore: true, // Flag to identify procedural lore entries
+      contentElements: []
+    }))
+  ];
+  
+  if (combinedEntries.length === 0) {
     return (
-      <div className="flex justify-center items-center h-[200px] text-space-ui-subtext font-pixel">
-        Žádné záznamy k zobrazení
+      <div className="p-2 text-space-ui-subtext text-sm italic">
+        Žádné záznamy v této kategorii
       </div>
     );
   }
 
   return (
     <div className="space-y-1">
-      {filteredEntries.map(entry => (
-        <button 
+      {combinedEntries.map((entry) => (
+        <div
           key={entry.entryId}
+          className={`p-2 cursor-pointer rounded ${
+            selectedEntry === entry.entryId
+              ? 'bg-space-buttons/30 border border-space-buttons-border'
+              : 'hover:bg-space-dark/50'
+          }`}
           onClick={() => selectEntry(entry.entryId)}
-          className={cn(
-            "w-full text-left p-2 rounded flex items-center transition-colors",
-            selectedEntry === entry.entryId 
-              ? "bg-space-buttons/80 border border-space-buttons-border" 
-              : "bg-space-dark/60 hover:bg-space-dark/40 border border-transparent"
-          )}
         >
-          <span className="font-pixel text-sm text-space-ui-text truncate flex-grow">
-            {entry.entryTitle}
-          </span>
-          {entry.isNew && (
-            <div className="ml-2 text-yellow-400 font-pixel text-xs">NOVÉ</div>
-          )}
-        </button>
+          <div className="flex items-center justify-between">
+            <span className={`font-pixel text-sm ${selectedEntry === entry.entryId ? 'text-space-ui-text' : 'text-space-ui-subtext'}`}>
+              {entry.entryTitle}
+            </span>
+            
+            {entry.isNew && (
+              <Badge 
+                variant="outline" 
+                className="text-[0.6rem] h-5 bg-blue-900/30 border-blue-700 text-blue-200"
+              >
+                NOVÉ
+              </Badge>
+            )}
+          </div>
+        </div>
       ))}
     </div>
   );

@@ -1,10 +1,13 @@
 
 import React from 'react';
 import { useCodex } from '@/contexts/CodexContext';
+import { useProceduralLore } from '@/contexts/ProceduralLoreContext';
 import { Button } from '@/components/ui/button';
+import LoreFragmentView from './LoreFragmentView';
 
 const EntryDetailView: React.FC = () => {
   const { entries, selectedEntry, selectEntry } = useCodex();
+  const { generatedLoreFragments } = useProceduralLore();
   
   if (!selectedEntry) {
     return (
@@ -12,6 +15,11 @@ const EntryDetailView: React.FC = () => {
         <p className="font-pixel text-center mb-4">Vyberte záznam ze seznamu</p>
       </div>
     );
+  }
+  
+  // Check if this is a procedural lore fragment
+  if (selectedEntry.startsWith('lore_')) {
+    return <LoreFragmentView fragmentId={selectedEntry} />;
   }
 
   const entry = entries.find(e => e.entryId === selectedEntry);

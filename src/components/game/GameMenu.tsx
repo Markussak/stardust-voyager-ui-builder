@@ -24,6 +24,7 @@ const GameMenu = () => {
         <MenuButton to="/diplomacy">Diplomacie</MenuButton>
         <MenuButton to="/trade">Obchod</MenuButton>
         <MenuButton to="/crafting">Výroba</MenuButton>
+        <MenuButton to="/dynamic-events-test">Testování Událostí</MenuButton>
         <MenuButton to="/settings">Nastavení</MenuButton>
         <MenuButton to="/ship-editor">Editor Lodi</MenuButton>
       </div>
