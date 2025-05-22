@@ -20,6 +20,7 @@ const MainMenu = () => {
         <MenuButton to="/mission-log">Misijní Log</MenuButton>
         <MenuButton to="/knowledge-library">Knihovna Znalostí</MenuButton>
         <MenuButton to="/crew">Posádka</MenuButton>
+        <MenuButton to="/planetary">Planetární Interakce</MenuButton>
         <MenuButton to="/diplomacy">Diplomacie</MenuButton>
         <MenuButton to="/trade">Obchod</MenuButton>
         <MenuButton to="/crafting">Výroba</MenuButton>
