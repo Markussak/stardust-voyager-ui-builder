@@ -3,7 +3,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useGame } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
-import { Map, Package, Book, ChevronRight, Users, FileText, LogOut, Tool, Settings, ShoppingCart, Globe, Flask, Sword, Ship } from 'lucide-react';
+import { Map, Package, Book, ChevronRight, Users, FileText, LogOut, Settings, ShoppingCart, Globe, Sword, Ship, 
+         Wrench, FlaskConical } from 'lucide-react';
 
 const GameNavigation: React.FC = () => {
   const { isGameStarted, exitGame } = useGame();
@@ -56,7 +57,7 @@ const GameNavigation: React.FC = () => {
             asChild
           >
             <Link to="/research">
-              <Flask className="h-4 w-4 mr-1" />
+              <FlaskConical className="h-4 w-4 mr-1" />
               Výzkum
             </Link>
           </Button>
@@ -111,7 +112,7 @@ const GameNavigation: React.FC = () => {
             asChild
           >
             <Link to="/crafting">
-              <Tool className="h-4 w-4 mr-1" />
+              <Wrench className="h-4 w-4 mr-1" />
               Výroba
             </Link>
           </Button>
