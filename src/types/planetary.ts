@@ -1,7 +1,6 @@
-
 import { CrewSkillId } from "./crew";
-import { CraftingMaterialCost } from "./crafting";
-import { FactionId } from "./factions";
+import { CraftingMaterial } from "./crafting";
+import { FactionId } from "./diplomacy";
 import { Vector2D } from "./game";
 
 export enum PlanetarySurfaceInteractionType {
@@ -117,7 +116,7 @@ export interface PlanetaryBaseModuleDefinition {
     moduleDescriptionKey: string;
     defaultDescription: string;
     iconAsset: string;
-    constructionCost_Materials: CraftingMaterialCost[];
+    constructionCost_Materials: CraftingMaterial[];
     constructionTime_GameHours: number;
     powerConsumption_MW?: number;
     powerGeneration_MW?: number;
@@ -134,7 +133,7 @@ export interface PlanetaryBaseModuleDefinition {
     visualSprite_OnBaseMap_AssetPath_Template?: string;
     upgradeLevels?: Array<{
         level: number;
-        upgradeCost_Materials: CraftingMaterialCost[];
+        upgradeCost_Materials: CraftingMaterial[];
         upgradeTime_GameHours: number;
         newVisualSprite_AssetPath?: string;
     }>;
@@ -151,7 +150,7 @@ export interface PlanetaryBaseDefinition {
         allowedPlanetTypes: PlanetType[];
         minPlanetSize?: number;
         factionPermissionRequired_FromControllingFaction?: boolean;
-        initialResourceCost_ToEstablish: CraftingMaterialCost[];
+        initialResourceCost_ToEstablish: CraftingMaterial[];
         initialTechRequirement_TechId?: string;
     };
     maxModules_Initial: number;

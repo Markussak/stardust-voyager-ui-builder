@@ -3,7 +3,7 @@ import React from 'react';
 import { usePlanetary } from '@/contexts/PlanetaryContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlanetaryPOI } from '@/types/planetary';
+import { PlanetaryPOI, PlanetarySurfaceInteractionType } from '@/types/planetary';
 
 interface ExplorationPanelProps {
   planetId: string;
@@ -17,7 +17,7 @@ const ExplorationPanel: React.FC<ExplorationPanelProps> = ({ planetId, systemId 
       poiId: 'ruins1',
       poiType: 'AncientRuins',
       iconAsset_SystemMap: '/assets/images/icons/poi/ruins_ancient_map_icon.png',
-      interactionType: 'TextAdventure_ChoiceBased',
+      interactionType: PlanetarySurfaceInteractionType.TextAdventure_ChoiceBased,
       interactionEvent_Or_MiniGame_Key: 'event_ancient_ruins_explore',
       spawnChance: 0.3,
       requiredScanLevel_ToDetect: 2,
@@ -27,7 +27,7 @@ const ExplorationPanel: React.FC<ExplorationPanelProps> = ({ planetId, systemId 
       poiId: 'crashed1',
       poiType: 'CrashedShip',
       iconAsset_SystemMap: '/assets/images/icons/poi/crashed_ship_map_icon.png',
-      interactionType: 'TextAdventure_ChoiceBased',
+      interactionType: PlanetarySurfaceInteractionType.TextAdventure_ChoiceBased,
       interactionEvent_Or_MiniGame_Key: 'event_crashed_ship_explore',
       spawnChance: 0.2,
       requiredScanLevel_ToDetect: 1,

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { 
   PlanetaryContextType,
@@ -11,7 +10,9 @@ import {
   PlanetaryResource,
   EnvironmentalHazard,
   SurfaceExplorationEvent,
-  PlanetaryPOI
+  PlanetaryPOI,
+  PlanetaryBaseModuleInstance,
+  PlanetType
 } from '@/types/planetary';
 import { toast } from 'sonner';
 import { useGameContext } from './GameContext';
@@ -33,10 +34,10 @@ const mockBaseDefinitions: PlanetaryBaseDefinition[] = [
     iconAsset_Map: 'assets/images/bases/icons/research_outpost_icon.png',
     buildConditions: {
       allowedPlanetTypes: [
-        PlanetaryBaseType.Research_Outpost,
-        PlanetaryBaseType.Mining_Facility,
-        PlanetaryBaseType.Trade_Depot, 
-        PlanetaryBaseType.Military_Stronghold
+        PlanetType.Terran,
+        PlanetType.Desert,
+        PlanetType.Ice,
+        PlanetType.Ocean
       ],
       initialResourceCost_ToEstablish: [
         { itemId: 'metal_parts', quantity: 50 },
@@ -60,6 +61,7 @@ const mockBaseDefinitions: PlanetaryBaseDefinition[] = [
   // More base types would be defined here
 ];
 
+// Mock data for development - will be replaced with proper data from APIs or config files
 const mockModuleDefinitions: PlanetaryBaseModuleDefinition[] = [
   {
     moduleId: PlanetaryBaseModuleType.Power_SolarArray,
