@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShipEditorProvider } from "@/contexts/ShipEditorContext";
 import SpaceBackground from '@/components/game/SpaceBackground';
@@ -10,6 +10,7 @@ import ShipStatsPanel from "@/components/ship-editor/ShipStatsPanel";
 import ModuleInfoPanel from "@/components/ship-editor/ModuleInfoPanel";
 import ConfirmationCostPanel from "@/components/ship-editor/ConfirmationCostPanel";
 import ShipEditorFilters from "@/components/ship-editor/ShipEditorFilters";
+import GameNavigation from '@/components/game/GameNavigation';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
@@ -26,11 +27,14 @@ const ShipEditorScreen = () => {
         {/* Background */}
         <SpaceBackground />
         
+        {/* Game Navigation */}
+        <GameNavigation />
+        
         {/* Cockpit overlay for consistency with other screens */}
         <CockpitOverlay />
         
         {/* Ship Editor UI */}
-        <div className="relative z-20 flex flex-col h-full w-full p-4">
+        <div className="relative z-10 flex flex-col h-full w-full p-4 pt-16">
           {/* Top navigation and header */}
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">

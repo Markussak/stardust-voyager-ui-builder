@@ -23,6 +23,7 @@ import CrewManagementScreen from './pages/CrewManagementScreen';
 import DiplomacyScreen from './pages/DiplomacyScreen';
 import GalaxyMapScreen from './pages/GalaxyMapScreen';
 import Index from './pages/Index';
+import GameMenuScreen from './pages/GameMenuScreen';
 import InventoryScreen from './pages/InventoryScreen';
 import KnowledgeLibraryScreen from './pages/KnowledgeLibraryScreen';
 import MissionLogScreen from './pages/MissionLogScreen';
@@ -59,6 +60,7 @@ function App() {
                                   <Router>
                                     <Routes>
                                       <Route path="/" element={<Index />} />
+                                      <Route path="/game-menu" element={<GameMenuScreen />} />
                                       <Route path="/galaxy-map" element={<GalaxyMapScreen />} />
                                       <Route path="/star-system/:systemId" element={<StarSystemScreen />} />
                                       <Route path="/ship-details" element={<ShipDetailsScreen />} />

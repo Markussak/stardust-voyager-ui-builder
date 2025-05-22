@@ -23,6 +23,8 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
   const [isAlienShip, setIsAlienShip] = useState<boolean>(false);
   
   useEffect(() => {
+    console.log("ShipVisualizer mounting with shipClassId:", shipClassId);
+    
     // First check if it's a regular ship
     let foundShip = shipClasses.find(s => s.classId === shipClassId);
     
@@ -38,15 +40,34 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
     
     setShipClass(foundShip);
     
-    if (!foundShip) return;
+    if (!foundShip) {
+      console.log("Ship not found for id:", shipClassId);
+      setImageUrl('/assets/ships/nomad_ship.png');
+      setImageLoaded(true);
+      return;
+    }
+    
+    console.log("Found ship:", foundShip.defaultClassName);
     
     // Generate ship image URL and ensure it uses the correct format
     const variant = 1; // Default variant
-    const baseSprite = foundShip.baseSprite_AssetPath_Template.replace('{variant}', variant.toString());
+    let baseSprite;
+    
+    try {
+      baseSprite = foundShip.baseSprite_AssetPath_Template.replace('{variant}', variant.toString());
+    } catch (error) {
+      console.error("Error creating baseSprite path:", error);
+      baseSprite = isAlienShip 
+        ? '/assets/ships/aliens/unknown_alien_ship.png'
+        : '/assets/ships/nomad_ship.png';
+    }
+    
+    console.log("Using baseSprite path:", baseSprite);
     
     // Create a temp image to check if the ship asset exists
     const tempImg = new Image();
     tempImg.onload = () => {
+      console.log("Ship image loaded successfully:", baseSprite);
       setImageUrl(baseSprite);
       setImageLoaded(true);
     };
@@ -58,6 +79,16 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
         : '/assets/ships/nomad_ship.png');
       setImageLoaded(true);
     };
+    
+    // Add a default fallback in case of errors
+    setTimeout(() => {
+      if (!imageLoaded) {
+        console.log("Image load timeout - using fallback");
+        setImageUrl('/assets/ships/nomad_ship.png');
+        setImageLoaded(true);
+      }
+    }, 3000);
+    
     tempImg.src = baseSprite;
     
     return () => {
@@ -67,7 +98,7 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
   }, [shipClassId]);
   
   if (!shipClass) {
-    return <div className="text-space-ui-subtext">Loď nenalezena</div>;
+    return <div className="text-space-ui-subtext">Loď nenalezena - {shipClassId}</div>;
   }
   
   const getSizeClass = () => {
@@ -107,6 +138,11 @@ const ShipVisualizer: React.FC<ShipVisualizerProps> = ({
             className={`w-full h-full bg-contain bg-center bg-no-repeat ${getGlowEffect()}`} 
             style={{ backgroundImage: `url(${imageUrl})` }}
           />
+        )}
+        {imageLoaded && (
+          <div className="absolute top-0 left-0 text-xs text-space-ui-subtext opacity-50">
+            {imageUrl}
+          </div>
         )}
       </div>
       
