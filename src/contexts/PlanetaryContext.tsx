@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from 'react';
 import { 
   PlanetaryContextType,
@@ -40,8 +41,8 @@ const mockBaseDefinitions: PlanetaryBaseDefinition[] = [
         PlanetType.Ocean
       ],
       initialResourceCost_ToEstablish: [
-        { itemId: 'metal_parts', quantity: 50 },
-        { itemId: 'electronics', quantity: 25 }
+        { itemId: 'metal_parts', quantityRequired: 50 },
+        { itemId: 'electronics', quantityRequired: 25 }
       ]
     },
     maxModules_Initial: 5,
@@ -71,8 +72,8 @@ const mockModuleDefinitions: PlanetaryBaseModuleDefinition[] = [
     defaultDescription: 'Generuje energii ze slunečního záření. Méně účinné na planetách daleko od hvězdy.',
     iconAsset: 'assets/images/bases/modules/icons/power_solar_array_icon.png',
     constructionCost_Materials: [
-      { itemId: 'metal_parts', quantity: 20 },
-      { itemId: 'electronics', quantity: 10 }
+      { itemId: 'metal_parts', quantityRequired: 20 },
+      { itemId: 'electronics', quantityRequired: 10 }
     ],
     constructionTime_GameHours: 24,
     powerGeneration_MW: 50,
@@ -83,8 +84,8 @@ const mockModuleDefinitions: PlanetaryBaseModuleDefinition[] = [
       {
         level: 2,
         upgradeCost_Materials: [
-          { itemId: 'metal_parts', quantity: 15 },
-          { itemId: 'electronics', quantity: 15 }
+          { itemId: 'metal_parts', quantityRequired: 15 },
+          { itemId: 'electronics', quantityRequired: 15 }
         ],
         upgradeTime_GameHours: 12
       }

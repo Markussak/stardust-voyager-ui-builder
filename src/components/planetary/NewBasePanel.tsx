@@ -106,7 +106,7 @@ const NewBasePanel: React.FC<NewBasePanelProps> = ({ onCreated }) => {
                   {selectedBaseDefinition.buildConditions.initialResourceCost_ToEstablish.map((cost, index) => (
                     <li key={index} className="flex justify-between text-sm">
                       <span className="text-space-ui-subtext">{cost.itemId}</span>
-                      <span className="text-space-ui-text">{cost.quantity}</span>
+                      <span className="text-space-ui-text">{cost.quantityRequired}</span>
                     </li>
                   ))}
                 </ul>

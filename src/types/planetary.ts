@@ -1,7 +1,12 @@
 import { CrewSkillId } from "./crew";
-import { CraftingMaterial } from "./crafting";
+import { CraftingMaterial as BaseCraftingMaterial } from "./crafting";
 import { FactionId } from "./diplomacy";
 import { Vector2D } from "./game";
+
+// Extend the CraftingMaterial interface to include quantityRequired
+export interface CraftingMaterial extends BaseCraftingMaterial {
+  quantityRequired: number;
+}
 
 export enum PlanetarySurfaceInteractionType {
     TextAdventure_ChoiceBased = "TextAdventure_ChoiceBased",

@@ -23,6 +23,11 @@ export interface GameSettings {
   };
 }
 
+export interface Vector2D {
+  x: number;
+  y: number;
+}
+
 export interface GameContextType {
   isGameStarted: boolean;
   startNewGame: () => void;
