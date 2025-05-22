@@ -1,4 +1,3 @@
-
 import { Vector2D } from './galaxy';
 import { FactionId } from './diplomacy';
 
@@ -43,7 +42,12 @@ export enum MissionType {
   Delivery_Transport = "Delivery_Transport",
   Mining_ResourceCollection = "Mining_ResourceCollection",
   PersonalCrewQuest = "PersonalCrewQuest",
-  SideQuest_Generic = "SideQuest_Generic"
+  SideQuest_Generic = "SideQuest_Generic",
+  // Add the missing mission types referenced in factions.ts
+  CaptureOutpost = "CaptureOutpost", 
+  DefendBase = "DefendBase",
+  TradeAgreement = "TradeAgreement",
+  InvestigateAnomaly = "InvestigateAnomaly"
 }
 
 export interface MissionRequirement {

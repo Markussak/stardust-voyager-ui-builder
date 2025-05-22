@@ -583,23 +583,28 @@ export const getPlayableFactions = (): FactionDefinition[] => {
 
 // Function to get initial faction relations
 export const getInitialFactionRelations = (): Record<FactionId, Record<FactionId, DiplomaticStatus>> => {
-  const relations: Record<FactionId, Record<FactionId, DiplomaticStatus>> = {};
+  const relations: Record<FactionId, Record<FactionId, DiplomaticStatus>> = {} as Record<FactionId, Record<FactionId, DiplomaticStatus>>;
   
-  factions.forEach(faction => {
-    relations[faction.factionId] = {};
+  // Initialize all faction IDs first
+  Object.values(FactionId).forEach(factionId => {
+    relations[factionId] = {} as Record<FactionId, DiplomaticStatus>;
     
     // Set default neutral relation with all factions
-    factions.forEach(otherFaction => {
-      relations[faction.factionId][otherFaction.factionId] = DiplomaticStatus.Neutral;
+    Object.values(FactionId).forEach(otherFactionId => {
+      relations[factionId][otherFactionId] = DiplomaticStatus.Neutral;
     });
     
     // Set self relation to allied
-    relations[faction.factionId][faction.factionId] = DiplomaticStatus.Ally_DefensivePact;
-    
-    // Set specific relations from faction definition
-    faction.diplomacyAI.initialRelations_WithOtherFactions.forEach(relation => {
-      relations[faction.factionId][relation.factionId] = relation.status;
-    });
+    relations[factionId][factionId] = DiplomaticStatus.Ally_DefensivePact;
+  });
+  
+  // Then set specific relations from faction definitions
+  factions.forEach(faction => {
+    if (faction.diplomacyAI.initialRelations_WithOtherFactions) {
+      faction.diplomacyAI.initialRelations_WithOtherFactions.forEach(relation => {
+        relations[faction.factionId][relation.factionId] = relation.status;
+      });
+    }
   });
   
   return relations;
