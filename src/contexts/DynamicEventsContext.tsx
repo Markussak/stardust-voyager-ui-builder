@@ -201,7 +201,7 @@ export const DynamicEventsProvider: React.FC<{ children: React.ReactNode }> = ({
             id: newsId,
             title: eventDefinition.defaultEventName,
             content: eventDefinition.defaultEventDescription_Short,
-            sourceIcon: `${config.galacticNewsNetwork_UI.icon_EventType_AssetPathPrefix}${getIconNameForEventType(eventDefinition.eventType)}.png`,
+            sourceIcon: `${config.galacticNewsNetwork_UI.messageStyle.icon_EventType_AssetPathPrefix}${getIconNameForEventType(eventDefinition.eventType)}.png`,
             timestamp: Date.now(),
             read: false,
             priority: getEventPriority(eventDefinition.eventType)
