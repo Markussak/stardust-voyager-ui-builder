@@ -29,4 +29,6 @@ export interface GameContextType {
   exitGame: () => void;
   settings: GameSettings;
   updateSettings: (category: string, key: string, value: any) => void;
+  gameState: any;
+  updateGameState: (newState: any) => void;
 }

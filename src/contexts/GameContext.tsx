@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { GameContextType, GameSettings } from '../types/game';
 
@@ -31,6 +30,24 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [settings, setSettings] = useState<GameSettings>(defaultSettings);
+  
+  // Let's add a simple gameState object for crew management
+  const [gameState, setGameState] = useState({
+    player: {
+      credits: 1000,
+      currentShip: {
+        crewCapacity: 8
+      },
+      location: {
+        type: 'station', // for testing purposes, player starts at a station
+      }
+    },
+    crew: []
+  });
+
+  const updateGameState = (newState: any) => {
+    setGameState(newState);
+  };
 
   const startNewGame = () => {
     setIsGameStarted(true);
@@ -60,13 +77,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       startNewGame,
       exitGame,
       settings,
-      updateSettings
+      updateSettings,
+      gameState,
+      updateGameState
     }}>
       {children}
     </GameContext.Provider>
   );
 };
 
+// Keep the original useGame function
 export const useGame = () => {
   const context = useContext(GameContext);
   if (!context) {
@@ -74,3 +94,6 @@ export const useGame = () => {
   }
   return context;
 };
+
+// Add useGameContext as an alias for useGame to maintain compatibility
+export const useGameContext = useGame;
