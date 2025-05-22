@@ -15,8 +15,10 @@ import { ShipMovementProvider } from './contexts/ShipMovementContext';
 import { TradeProvider } from './contexts/TradeContext';
 import { CodexProvider } from './contexts/CodexContext';
 import { CraftingProvider } from './contexts/CraftingContext';
+import { CrewProvider } from './contexts/CrewContext';
 
 import CombatTestScreen from './pages/CombatTestScreen';
+import CrewManagementScreen from './pages/CrewManagementScreen';
 import DiplomacyScreen from './pages/DiplomacyScreen';
 import GalaxyMapScreen from './pages/GalaxyMapScreen';
 import Index from './pages/Index';
@@ -50,27 +52,30 @@ function App() {
                         <TradeProvider>
                           <CodexProvider>
                             <CraftingProvider>
-                              <Router>
-                                <Routes>
-                                  <Route path="/" element={<Index />} />
-                                  <Route path="/galaxy-map" element={<GalaxyMapScreen />} />
-                                  <Route path="/star-system/:systemId" element={<StarSystemScreen />} />
-                                  <Route path="/ship-details" element={<ShipDetailsScreen />} />
-                                  <Route path="/ship-editor" element={<ShipEditorScreen />} />
-                                  <Route path="/inventory" element={<InventoryScreen />} />
-                                  <Route path="/research" element={<ResearchTreeScreen />} />
-                                  <Route path="/mission-log" element={<MissionLogScreen />} />
-                                  <Route path="/knowledge-library" element={<KnowledgeLibraryScreen />} />
-                                  <Route path="/diplomacy" element={<DiplomacyScreen />} />
-                                  <Route path="/trade" element={<TradeScreen />} />
-                                  <Route path="/settings" element={<SettingsScreen />} />
-                                  <Route path="/ship-test" element={<ShipTestScreen />} />
-                                  <Route path="/combat-test" element={<CombatTestScreen />} />
-                                  <Route path="/crafting" element={<CraftingScreen />} />
-                                  <Route path="*" element={<NotFound />} />
-                                </Routes>
-                              </Router>
-                              <Toaster position="top-right" />
+                              <CrewProvider>
+                                <Router>
+                                  <Routes>
+                                    <Route path="/" element={<Index />} />
+                                    <Route path="/galaxy-map" element={<GalaxyMapScreen />} />
+                                    <Route path="/star-system/:systemId" element={<StarSystemScreen />} />
+                                    <Route path="/ship-details" element={<ShipDetailsScreen />} />
+                                    <Route path="/ship-editor" element={<ShipEditorScreen />} />
+                                    <Route path="/inventory" element={<InventoryScreen />} />
+                                    <Route path="/research" element={<ResearchTreeScreen />} />
+                                    <Route path="/mission-log" element={<MissionLogScreen />} />
+                                    <Route path="/knowledge-library" element={<KnowledgeLibraryScreen />} />
+                                    <Route path="/diplomacy" element={<DiplomacyScreen />} />
+                                    <Route path="/trade" element={<TradeScreen />} />
+                                    <Route path="/settings" element={<SettingsScreen />} />
+                                    <Route path="/ship-test" element={<ShipTestScreen />} />
+                                    <Route path="/combat-test" element={<CombatTestScreen />} />
+                                    <Route path="/crafting" element={<CraftingScreen />} />
+                                    <Route path="/crew" element={<CrewManagementScreen />} />
+                                    <Route path="*" element={<NotFound />} />
+                                  </Routes>
+                                </Router>
+                                <Toaster position="top-right" />
+                              </CrewProvider>
                             </CraftingProvider>
                           </CodexProvider>
                         </TradeProvider>
