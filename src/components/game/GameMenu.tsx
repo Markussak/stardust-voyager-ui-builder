@@ -20,10 +20,10 @@ const GameMenu = () => {
         <MenuButton to="/mission-log">Misijní Log</MenuButton>
         <MenuButton to="/knowledge-library">Knihovna Znalostí</MenuButton>
         <MenuButton to="/crew">Posádka</MenuButton>
-        <MenuButton to="/nexus">Nexus</MenuButton>
         <MenuButton to="/planetary">Planetární Interakce</MenuButton>
         <MenuButton to="/diplomacy">Diplomacie</MenuButton>
         <MenuButton to="/trade">Obchod</MenuButton>
+        <MenuButton to="/crafting">Výroba</MenuButton>
         <MenuButton to="/dynamic-events-test">Testování Událostí</MenuButton>
         <MenuButton to="/settings">Nastavení</MenuButton>
         <MenuButton to="/ship-editor">Editor Lodi</MenuButton>
