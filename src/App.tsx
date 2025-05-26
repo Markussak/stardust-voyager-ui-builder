@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'; // Added useNavigate
 import { Toaster } from 'sonner';
 import { CombatSystemProvider } from './contexts/CombatSystemContext';
 import { DiplomacyProvider } from './contexts/DiplomacyContext';
@@ -40,8 +40,77 @@ import TradeScreen from './pages/TradeScreen';
 import CraftingScreen from './pages/CraftingScreen';
 import PlanetaryScreen from './pages/PlanetaryScreen';
 import DynamicEventsTestScreen from './pages/DynamicEventsTestScreen';
+import NewGameSetupScreen from './pages/NewGameSetupScreen';
+import InSystemScene from './pages/InSystemScene';
+import LoadGameScreen from './pages/LoadGameScreen';
+import CreditsScreen from './pages/CreditsScreen';
+import { useGame } from './contexts/GameContext'; // Or useGameContext
+import InGameMenuScreen from './components/game/InGameMenuScreen'; // For ModalRenderer
+import StationServicesScreen from './components/station/StationServicesScreen'; // For ModalRenderer
+
 
 import './App.css';
+
+const ModalRenderer = () => {
+  const { activeModal, closeModal, openModal } = useGame();
+  const navigate = useNavigate(); // Added for navigation
+
+  if (!activeModal) return null;
+
+  // Updated prop functions for InGameMenuScreen
+  const igmOnContinue = () => closeModal();
+  const igmOnSaveGame = () => {
+      alert('Hra Uložena (TODO: Implement SaveLoadManager.saveGame())');
+      console.log("SaveLoadManager.saveGame() called - Placeholder");
+      // closeModal(); // Optional: close menu after save
+  };
+  const igmOnLoadGame = () => {
+      closeModal();
+      navigate('/load-game');
+  };
+  const igmOnSettings = () => {
+      closeModal();
+      openModal('Settings');
+  };
+  const igmOnExitToMainMenu = () => {
+      closeModal();
+      navigate('/game-menu');
+  };
+  const igmOnExitToDesktop = () => {
+      alert('Ukončuji hru... (TODO: Implement actual exit)');
+      console.log("Application Exit called - Placeholder");
+      closeModal();
+      // window.close(); // This has limitations in browsers
+  };
+
+  const dummyStationProps = { // Keep existing dummy props for other modals if not being updated
+      stationName: "Terra Station",
+      factionId: "SolarConfederacy",
+      onUndock: () => closeModal(),
+  };
+
+  switch (activeModal) {
+      case 'Settings':
+          // SettingsScreen might need props like onBack={closeModal}
+          // This assumes SettingsScreen can be adapted to be a modal or uses a global close mechanism.
+          return <SettingsScreen />; 
+      case 'InGameMenu':
+          return <InGameMenuScreen 
+                      onContinue={igmOnContinue}
+                      onSaveGame={igmOnSaveGame}
+                      onLoadGame={igmOnLoadGame}
+                      onSettings={igmOnSettings}
+                      onExitToMainMenu={igmOnExitToMainMenu}
+                      onExitToDesktop={igmOnExitToDesktop}
+                  />;
+      case 'StationServices':
+          return <StationServicesScreen {...dummyStationProps} />;
+      // Add cases for other modals as needed
+      default:
+          console.warn("Unknown modal requested:", activeModal);
+          return null;
+  }
+};
 
 function App() {
   return (
@@ -63,6 +132,7 @@ function App() {
                                   <DynamicEventsProvider>
                                     <ProceduralLoreProvider>
                                       <Router>
+                                        <ModalRenderer /> {/* ModalRenderer added here */}
                                         <Routes>
                                           <Route path="/" element={<Index />} />
                                           <Route path="/game-menu" element={<GameMenuScreen />} />
@@ -83,6 +153,10 @@ function App() {
                                           <Route path="/crew" element={<CrewManagementScreen />} />
                                           <Route path="/planetary" element={<PlanetaryScreen />} />
                                           <Route path="/dynamic-events-test" element={<DynamicEventsTestScreen />} />
+                                          <Route path="/new-game-setup" element={<NewGameSetupScreen />} />
+                                          <Route path="/in-system" element={<InSystemScene />} />
+                                          <Route path="/load-game" element={<LoadGameScreen />} />
+                                          <Route path="/credits" element={<CreditsScreen />} />
                                           <Route path="*" element={<NotFound />} />
                                         </Routes>
                                       </Router>

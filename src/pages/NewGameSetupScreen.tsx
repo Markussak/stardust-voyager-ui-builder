@@ -1,4 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { GameSetupLogic, NewGameSettingsData } from '../services/GameSetupService';
+import { GalaxyGenerator } from '../services/GalaxyGeneratorService';
+import { PlayerInitializationLogic } from '../services/PlayerInitializationService';
+import { TutorialManager } from '../services/TutorialManagerService';
+// import { useGame } from '../contexts/GameContext'; // Optional for now
+
 // Import necessary types from the newGameSetup.ts file
 import {
     NewGameSetupScreenConfig,
@@ -82,6 +89,9 @@ const newGameConfiguration: NewGameSetupScreenConfig = {
 };
 
 const NewGameSetupScreen: React.FC = () => {
+    const navigate = useNavigate(); // Added for navigation
+    // const { initializeNewGameState } = useGame(); // Optional for now
+
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [gameData, setGameData] = useState<Record<string, any>>({}); // To store selections
 
@@ -93,7 +103,56 @@ const NewGameSetupScreen: React.FC = () => {
         } else {
             // Handle start game
             console.log("Attempting to start game with data:", gameData);
-            // alert("Game Started with data: " + JSON.stringify(gameData)); // Placeholder action
+
+            // 1. Adapt gameData to NewGameSettingsData format (assume gameData is correctly populated by steps)
+            // This is a placeholder mapping. Actual mapping depends on how gameData is structured.
+            const newGameSettings: NewGameSettingsData = {
+                difficulty: gameData.difficulty || "Normal",
+                playerName: gameData.playerName || "Jules",
+                shipClassId: gameData.shipClassId || "nomad_mk1_player_start",
+                galaxySeed: gameData.galaxySeed,
+                // ... map other fields from gameData ...
+            };
+
+            // 2. Call GameSetupLogic to save selections
+            const selectionsSaved = GameSetupLogic.saveSelections(newGameSettings);
+            if (!selectionsSaved) {
+                alert("Error: Could not save new game settings!"); // Or a more user-friendly error
+                return;
+            }
+
+            // 3. Call GalaxyGenerator
+            // Pass newGameSettings if it influences galaxy generation (e.g., seed)
+            const generatedGalaxy = GalaxyGenerator.generateNewGalaxy(newGameSettings);
+            if (!generatedGalaxy) {
+                alert("Error: Could not generate galaxy!");
+                return;
+            }
+            // Potentially store generatedGalaxy.playerStartSystemId in a global state if needed by InSystemScene immediately
+
+            // 4. Call PlayerInitializationLogic
+            // Pass newGameSettings and generatedGalaxy
+            const initialPlayerState = PlayerInitializationLogic.initializePlayer(newGameSettings, generatedGalaxy);
+            if (!initialPlayerState) {
+                alert("Error: Could not initialize player!");
+                return;
+            }
+            // Here, you would typically update a global game state / player state with initialPlayerState
+            // e.g., initializeNewGameState(initialPlayerState);
+            // For now, we'll assume this data is implicitly available or stored by the service.
+
+            // 5. (Optional) Cutscene/Intro text - Skip for now
+
+            // 6. Navigate to InSystemScene
+            console.log("Navigating to In-System Scene...");
+            navigate('/in-system');
+
+            // 7. Call TutorialManager
+            // This should ideally happen after the InSystemScene is loaded and ready.
+            // Calling it immediately after navigate might be too soon.
+            // For this step, calling it here is acceptable.
+            // A more robust solution might use an event or a flag checked by InSystemScene.
+            TutorialManager.startInitialTutorial();
         }
     };
 
