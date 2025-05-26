@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useGame } from '../contexts/GameContext'; // Or useGameContext
 
 // Import core types from inSystemScene.ts
 import {
@@ -64,6 +66,9 @@ const ACTIVE_CELL_RADIUS = 1; // For a 3x3 grid (current cell + 1 layer around)
 
 
 const InSystemScene: React.FC = () => {
+    const navigate = useNavigate();
+    const { openModal } = useGame();
+
     const [currentSystemId, setCurrentSystemId] = useState<string | null>(null);
     const [currentSystemData, setCurrentSystemData] = useState<StarSystemData_Full | null>(null);
     const [playerPosition, setPlayerPosition] = useState<Vector2D>({ x: 500, y: 500 }); // Initial position
@@ -79,6 +84,23 @@ const InSystemScene: React.FC = () => {
 
     // Ref for a potential canvas element if using direct canvas rendering or a library like PixiJS
     const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    // Keyboard listener for ESC (In-Game Menu) and M (Galaxy Map)
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                openModal('InGameMenu');
+            }
+            if (event.key === 'm' || event.key === 'M') { // For Galaxy Map
+                navigate('/galaxy-map');
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [openModal, navigate]); // Add openModal and navigate to dependencies
 
     // Initialization: Load initial system, player data, etc.
     useEffect(() => {
@@ -455,6 +477,9 @@ const InSystemScene: React.FC = () => {
                 <p>Game Time: {gameTime}</p>
                 <p>Scene Objects: {sceneObjects.length}</p>
                 <p>Loaded Cells (Debug): {debugLoadedCells.join(', ')}</p>
+                <button onClick={() => navigate('/galaxy-map')} style={{padding: '5px', margin: '5px', color: 'white', backgroundColor: 'rgba(0,0,0,0.7)', border: '1px solid white'}}>
+                    Open Galaxy Map (M)
+                </button>
             </div>
         </div>
     );

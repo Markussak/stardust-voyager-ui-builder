@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react'; // Added useCallback
 import { GameContextType, GameSettings } from '../types/game';
 
 const defaultSettings: GameSettings = {
@@ -30,6 +30,7 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [settings, setSettings] = useState<GameSettings>(defaultSettings);
+  const [activeModal, setActiveModal] = useState<string | null>(null); // Added for modal management
   
   // Let's add a simple gameState object for crew management
   const [gameState, setGameState] = useState({
@@ -71,6 +72,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
+  // Helper functions for modal management, wrapped with useCallback for performance
+  const openModal = useCallback((modalName: string) => {
+    setActiveModal(modalName);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setActiveModal(null);
+  }, []);
+
   return (
     <GameContext.Provider value={{
       isGameStarted,
@@ -79,7 +89,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       settings,
       updateSettings,
       gameState,
-      updateGameState
+      updateGameState,
+      activeModal,
+      openModal,
+      closeModal
     }}>
       {children}
     </GameContext.Provider>
@@ -97,3 +110,16 @@ export const useGame = () => {
 
 // Add useGameContext as an alias for useGame to maintain compatibility
 export const useGameContext = useGame;
+
+// Define modal control functions
+export const useModalControls = () => {
+  const context = useGame();
+  return {
+    openModal: context.openModal,
+    closeModal: context.closeModal,
+    activeModal: context.activeModal,
+  };
+};
+
+// Updated GameContextType to include modal fields
+export type { GameContextType, GameSettings };
