@@ -1,4 +1,15 @@
 import React from 'react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"; // Adjust path if necessary
 
 interface InGameMenuScreenProps {
     onContinue: () => void;
@@ -30,8 +41,43 @@ const InGameMenuScreen: React.FC<InGameMenuScreenProps> = ({
                     <li style={{ margin: '10px 0' }}><button onClick={onSaveGame} style={{width: '200px', padding: '10px'}}>Uložit Hru</button></li>
                     <li style={{ margin: '10px 0' }}><button onClick={onLoadGame} style={{width: '200px', padding: '10px'}}>Načíst Hru</button></li>
                     <li style={{ margin: '10px 0' }}><button onClick={onSettings} style={{width: '200px', padding: '10px'}}>Nastavení</button></li>
-                    <li style={{ margin: '10px 0' }}><button onClick={onExitToMainMenu} style={{width: '200px', padding: '10px'}}>Opustit do Hlavního Menu</button></li>
-                    <li style={{ margin: '10px 0' }}><button onClick={onExitToDesktop} style={{width: '200px', padding: '10px'}}>Ukončit Hru (Desktop)</button></li>
+                    
+                    <li style={{ margin: '10px 0' }}>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <button style={{width: '200px', padding: '10px'}}>Opustit do Hlavního Menu</button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Opravdu si přejete opustit do hlavního menu?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Jakýkoliv neuložený postup bude ztracen.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Ne</AlertDialogCancel>
+                                    <AlertDialogAction onClick={onExitToMainMenu}>Ano</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </li>
+
+                    <li style={{ margin: '10px 0' }}>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <button style={{width: '200px', padding: '10px'}}>Ukončit Hru (Desktop)</button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Opravdu si přejete ukončit hru?</AlertDialogTitle>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Ne</AlertDialogCancel>
+                                    <AlertDialogAction onClick={onExitToDesktop}>Ano</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </li>
                 </ul>
             </div>
         </div>

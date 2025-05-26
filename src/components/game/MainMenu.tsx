@@ -2,6 +2,7 @@
 import React from 'react';
 // Link is not directly used if MenuButton handles 'to' prop or if using onClick
 // import { Link } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom'; // Added
 import MenuButton from './MenuButton';
 import GameLogo from './GameLogo';
 import VersionInfo from './VersionInfo';
@@ -19,7 +20,8 @@ import {
 } from "@/components/ui/alert-dialog"; // Assuming this path is correct
 
 const MainMenu = () => {
-  const { openModal } = useGame();
+  const { openModal, showTransition } = useGame(); // Added showTransition
+  const navigate = useNavigate(); // Added
 
   // Placeholder for hasSavedGames logic
   const hasSavedGames = true; // For now, always enable "Načíst Hru"
@@ -32,10 +34,12 @@ const MainMenu = () => {
       
       {/* Updated grid to accommodate more buttons, perhaps 3 columns or adjust layout as needed */}
       <div className="grid grid-cols-3 gap-4 max-w-5xl w-full"> 
-        <MenuButton to="/new-game-setup">Nová Hra</MenuButton>
-        <MenuButton to="/load-game" disabled={!hasSavedGames}>Načíst Hru</MenuButton>
-        {/* Assuming MenuButton can take an onClick prop and render as a button. 
-            If not, this would be <button onClick={() => openModal('Settings')} className={...styles...}>Nastavení</button> */}
+        <MenuButton onClick={() => showTransition("Příprava nové hry...", () => navigate('/new-game-setup'))}>
+            Nová Hra
+        </MenuButton>
+        <MenuButton onClick={() => showTransition("Načítání seznamu her...", () => navigate('/load-game'))} disabled={!hasSavedGames}>
+            Načíst Hru
+        </MenuButton>
         <MenuButton onClick={() => openModal('Settings')}>Nastavení</MenuButton>
         
         <MenuButton to="/galaxy-map">Galaktická Mapa</MenuButton>
