@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom'; // Removed
+import { useGame } from '../contexts/GameContext'; // Added
 import SpaceBackground from '../components/game/SpaceBackground';
 import CockpitOverlay from '../components/game/CockpitOverlay';
 import VersionInfo from '../components/game/VersionInfo';
@@ -39,7 +40,8 @@ const defaultSettings = {
 };
 
 const SettingsScreen = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Removed
+  const { closeModal } = useGame(); // Added
   const [settings, setSettings] = useState(() => {
     // Load settings from localStorage if available
     const savedSettings = localStorage.getItem('game_settings');
@@ -98,24 +100,25 @@ const SettingsScreen = () => {
   const handleBackToMenu = () => {
     if (hasUnsavedChanges) {
       // In a real implementation, you should show a confirmation dialog
-      if (window.confirm("You have unsaved changes. Save before going back?")) {
+      if (window.confirm("You have unsaved changes. Save before going back?")) { // Or use a custom AlertDialog
         handleApplySettings();
       }
+      // If user cancels confirmation, they might still want to close, or not.
+      // For simplicity, if they confirm save, we save. If they don't save, we still close.
+      // A more complex dialog would handle "Save and Close", "Close without Saving", "Cancel".
     }
-    navigate('/');
+    closeModal(); // Changed from navigate('/')
   };
   
+  // The main panel becomes the root returned element.
+  // Added max-w-4xl, max-h-[700px], shadow-2xl for modal appearance.
+  // Removed outer full-screen div, SpaceBackground, CockpitOverlay, VersionInfo.
   return (
-    <div className="h-screen w-screen overflow-hidden bg-space-dark relative">
-      {/* Background */}
-      <SpaceBackground />
-      
-      {/* Settings panel */}
-      <div className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="w-[85%] h-[80%] bg-opacity-90 bg-[#080818] border-2 border-[#3388FF] p-5 rounded-lg overflow-auto">
-          <h1 className="text-2xl text-space-ui-text font-pixel mb-4 text-center">NASTAVENÍ</h1>
-          
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+    // <div className="absolute inset-0 flex items-center justify-center z-20"> // This part is handled by ModalRenderer
+    <div className="w-[85%] max-w-4xl h-[80%] max-h-[700px] bg-opacity-95 bg-[#080818] border-2 border-[#3388FF] p-5 rounded-lg overflow-auto shadow-2xl">
+        <h1 className="text-2xl text-space-ui-text font-pixel mb-4 text-center">NASTAVENÍ</h1>
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full grid grid-cols-3 mb-6">
               <TabsTrigger 
                 value="graphics" 
@@ -208,12 +211,9 @@ const SettingsScreen = () => {
         </div>
       </div>
       
-      {/* Cockpit overlay */}
-      <CockpitOverlay />
-      
-      {/* Version info */}
-      <VersionInfo />
+      {/* CockpitOverlay and VersionInfo removed as they are not part of the modal content itself */}
     </div>
+    // </div> // This part is handled by ModalRenderer
   );
 };
 

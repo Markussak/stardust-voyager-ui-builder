@@ -31,6 +31,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [settings, setSettings] = useState<GameSettings>(defaultSettings);
   const [activeModal, setActiveModal] = useState<string | null>(null); // Added for modal management
+  const [isLoadingTransition, setIsLoadingTransition] = useState(false);
+  const [loadingTransitionText, setLoadingTransitionText] = useState<string | null>(null);
   
   // Let's add a simple gameState object for crew management
   const [gameState, setGameState] = useState({
@@ -81,6 +83,45 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setActiveModal(null);
   }, []);
 
+  const applyLoadedGameState = (gameState: any) => {
+    console.log("GameContext: Applying loaded game state...", gameState);
+    // Here you would update various specific states within GameContext or call setters from Zustand stores
+    // For example, if player data is part of GameContext's state:
+    // setPlayer(gameState.playerData);
+    // setGalaxy(gameState.galaxyData);
+    // For now, just log.
+    // This might also involve setIsGameStarted(true);
+    setIsGameStarted(true); // Assuming loading a game means it's started
+    // Potentially update the main gameState as well, if the loaded structure matches
+    // For example:
+    // setGameState(prev => ({
+    //   ...prev, // Keep some parts of existing state if needed (e.g., settings not in save file)
+    //   player: gameState.playerData || prev.player,
+    //   // Potentially map other parts of gameState from the loaded 'gameState' object
+    //   // This depends heavily on the structure of GameStateToSave and GameContext's gameState
+    // }));
+  };
+
+  const showTransition = (text: string | null, actionAfterTransition?: () => void) => {
+    setLoadingTransitionText(text);
+    setIsLoadingTransition(true);
+    
+    const minDisplayTime = 500; // ms, example
+
+    setTimeout(() => {
+        if (actionAfterTransition) {
+            actionAfterTransition();
+        }
+        setIsLoadingTransition(false);
+        setLoadingTransitionText(null);
+    }, minDisplayTime);
+  };
+
+  const hideTransition = () => { 
+      setIsLoadingTransition(false);
+      setLoadingTransitionText(null);
+  };
+
   return (
     <GameContext.Provider value={{
       isGameStarted,
@@ -92,7 +133,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateGameState,
       activeModal,
       openModal,
-      closeModal
+      closeModal,
+      applyLoadedGameState, // Added
+      isLoadingTransition,  // Added
+      loadingTransitionText, // Added
+      showTransition,       // Added
+      hideTransition        // Added
     }}>
       {children}
     </GameContext.Provider>

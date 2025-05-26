@@ -17,6 +17,10 @@ const GalaxyMapContent = () => {
     navigate('/');
   };
 
+  const handleReturnToSystem = () => {
+    navigate('/in-system');
+  };
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-space-dark relative">
       <div className="absolute top-4 left-4 z-10">
@@ -24,6 +28,11 @@ const GalaxyMapContent = () => {
           text="ZPĚT DO MENU" 
           onClick={handleBackToMenu}
           className="w-48"
+        />
+        <MenuButton
+          text="ZPĚT DO SYSTÉMU" // "Return to System"
+          onClick={handleReturnToSystem}
+          className="w-48 mt-2" // Added margin-top for spacing if below
         />
       </div>
       

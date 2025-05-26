@@ -44,12 +44,40 @@ import NewGameSetupScreen from './pages/NewGameSetupScreen';
 import InSystemScene from './pages/InSystemScene';
 import LoadGameScreen from './pages/LoadGameScreen';
 import CreditsScreen from './pages/CreditsScreen';
+import InitialLoadingScreen from './pages/InitialLoadingScreen'; // Added for root route
 import { useGame } from './contexts/GameContext'; // Or useGameContext
 import InGameMenuScreen from './components/game/InGameMenuScreen'; // For ModalRenderer
 import StationServicesScreen from './components/station/StationServicesScreen'; // For ModalRenderer
+import TransitionLoadingScreen from './components/ui/TransitionLoadingScreen'; // Added
+import { TransitionLoadingScreenConfig } from './types/uiScreens'; // Added
 
 
 import './App.css';
+
+// Default config for TransitionLoadingScreen (as per Sub-Task B instructions)
+const defaultTransitionConfig: TransitionLoadingScreenConfig = {
+    id: "DefaultTransitionScreen",
+    backgroundAsset_Subtle_Animated_Path: "assets/images/ui/loading_screens/transition_warp_lines_subtle_anim.png", // Placeholder
+    loadingIndicator_Type: 'Spinning_Galaxy_Icon',
+    // loadingText_cz is set dynamically via GameContext's loadingTransitionText
+    fontStyleKey_LoadingText: "StandardText_HUD_White", // Placeholder
+    displayDuration_IfNoAsyncTask_ms: 500 // This is used by showTransition in GameContext
+};
+
+const CurrentTransitionScreen = () => {
+    const { isLoadingTransition, loadingTransitionText } = useGame();
+    if (!isLoadingTransition) return null;
+    
+    return (
+        <TransitionLoadingScreen 
+            config={{
+                ...defaultTransitionConfig, 
+                loadingText_cz: loadingTransitionText || defaultTransitionConfig.loadingText_cz || "Načítání..."
+            }} 
+            isActive={true} 
+        />
+    );
+};
 
 const ModalRenderer = () => {
   const { activeModal, closeModal, openModal } = useGame();
@@ -133,8 +161,9 @@ function App() {
                                     <ProceduralLoreProvider>
                                       <Router>
                                         <ModalRenderer /> {/* ModalRenderer added here */}
+                                        <CurrentTransitionScreen /> {/* Added for transition loading */}
                                         <Routes>
-                                          <Route path="/" element={<Index />} />
+                                          <Route path="/" element={<InitialLoadingScreen />} /> {/* Changed from Index */}
                                           <Route path="/game-menu" element={<GameMenuScreen />} />
                                           <Route path="/galaxy-map" element={<GalaxyMapScreen />} />
                                           <Route path="/star-system/:systemId" element={<StarSystemScreen />} />

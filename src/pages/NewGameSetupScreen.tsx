@@ -4,7 +4,7 @@ import { GameSetupLogic, NewGameSettingsData } from '../services/GameSetupServic
 import { GalaxyGenerator } from '../services/GalaxyGeneratorService';
 import { PlayerInitializationLogic } from '../services/PlayerInitializationService';
 import { TutorialManager } from '../services/TutorialManagerService';
-// import { useGame } from '../contexts/GameContext'; // Optional for now
+import { useGame } from '../contexts/GameContext'; // Uncommented and path assumed correct
 
 // Import necessary types from the newGameSetup.ts file
 import {
@@ -90,7 +90,7 @@ const newGameConfiguration: NewGameSetupScreenConfig = {
 
 const NewGameSetupScreen: React.FC = () => {
     const navigate = useNavigate(); // Added for navigation
-    // const { initializeNewGameState } = useGame(); // Optional for now
+    const { showTransition } = useGame(); // Added showTransition
 
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [gameData, setGameData] = useState<Record<string, any>>({}); // To store selections
@@ -143,16 +143,18 @@ const NewGameSetupScreen: React.FC = () => {
 
             // 5. (Optional) Cutscene/Intro text - Skip for now
 
-            // 6. Navigate to InSystemScene
-            console.log("Navigating to In-System Scene...");
-            navigate('/in-system');
+            // 6. Show transition, then navigate and start tutorial
+            showTransition("Vytváření herního světa...", () => {
+                console.log("Transition complete. Navigating to In-System Scene...");
+                navigate('/in-system');
 
-            // 7. Call TutorialManager
-            // This should ideally happen after the InSystemScene is loaded and ready.
-            // Calling it immediately after navigate might be too soon.
-            // For this step, calling it here is acceptable.
-            // A more robust solution might use an event or a flag checked by InSystemScene.
-            TutorialManager.startInitialTutorial();
+                // Call TutorialManager after navigation and when the new scene is presumably ready.
+                // A slight delay or a more robust mechanism might be needed in a real game
+                // to ensure the tutorial targets elements in the loaded InSystemScene.
+                setTimeout(() => { // Simple delay to simulate scene load before tutorial
+                    TutorialManager.startInitialTutorial();
+                }, 100); // Small delay
+            });
         }
     };
 
